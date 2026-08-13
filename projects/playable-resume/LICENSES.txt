@@ -1,0 +1,40 @@
+THIRD-PARTY ART LICENSES
+========================
+
+RPG Town Pixel Art Assets
+Author: Luis Zuno / Ansimuz
+Source: https://opengameart.org/content/rpg-town-pixel-art-assets
+License: Creative Commons Zero (CC0 1.0)
+
+Used as the visual foundation for selected outdoor environment elements,
+including building, tree and cobblestone-road pixel artwork. The final
+Resume Town composition, recoloring, layout, interactions, UI and code in
+this project are newly assembled/customized for this playable resume.
+
+The source page explicitly lists the asset license as CC0.
+
+OTHER CONTENT
+=============
+
+- Canvas game engine/code: created for this project.
+- Resume/web UI: created for this project.
+- Interior room compositions: created for this project.
+- Hero sprite: created for this project.
+- town-theme.wav: generated/original for this project.
+- User resume/profile data: belongs to the site owner after replacement.
+
+No Pokemon, Zelda, Mario, Nintendo, Square Enix or other commercial-game
+characters, maps, logos, music, sprites or branded UI are included.
+
+V4 DELUXE ART UPDATE
+====================
+V4 adds original/custom architecture, interiors, hero/NPC sprites, portraits,
+UI iconography, lighting layers, props and animation code while retaining only
+CC0-compatible third-party environment texture elements noted above.
+
+V5 CHINESE HD UPDATE
+====================
+V5 adds newly generated 32x48 hero/NPC spritesheets, a Chinese title image,
+Chinese game UI/localization, high-DPI rendering, micro-detail map polish,
+atmospheric cloud/light effects and movement/input fixes. These V5 additions
+were created specifically for this project.

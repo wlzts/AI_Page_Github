@@ -1,0 +1,7 @@
+{
+  "name":"cao-jixian-ai-page-v8-integrated",
+  "private":true,
+  "version":"8.0.0",
+  "type":"module",
+  "engines":{"node":">=20"}
+}

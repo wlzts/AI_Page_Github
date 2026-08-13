@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="description" content="曹继贤的可玩像素 RPG 个人简历：探索后端研发经历、项目、技能、教育背景与联系方式。" id="metaDescription"/>
+<title>曹继贤的履历冒险｜后端研发工程师</title>
+<link href="style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header" id="siteHeader">
+  <a class="brand" href="#home"><span class="brand-gem">✦</span><span data-name>曹继贤</span></a>
+  <nav aria-label="主要导航" class="nav">
+    <a href="#about">关于我</a><a href="#experience">工作经历</a><a href="#education">教育</a><a href="#projects">项目</a><a href="#ai-lab">AI 实验</a><a href="#skills">技能</a><a href="#achievements">成就</a><a href="#contact">联系</a>
+  </nav>
+  <div class="header-actions">
+    <a class="pixel-button small ghost" href="../../" title="返回 AI 网页实验室">🧪 AI 实验室</a><button class="pixel-button small editor-entry" id="editModeBtn">🔐 管理后台</button>
+    <button class="pixel-button small" id="questNav">▶ 游戏模式</button>
+    <a class="pixel-button small ghost" href="resume.pdf" id="headerResumeLink" target="_blank" hidden>简历 PDF ↗</a>
+  </div>
+</header>
+
+<main id="resumeMode">
+  <section class="hero" id="home">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">可玩的个人简历 · 后端研发工程师</div>
+        <h1><span data-name>曹继贤</span><br/><em>履历冒险。</em></h1>
+        <p class="hero-motto" data-motto></p>
+        <p class="hero-copy" data-short-bio></p>
+        <div class="hero-actions"><button class="pixel-button primary" id="startQuestHome">开始冒险</button><a class="pixel-button" href="#experience">快速看简历</a></div>
+        <div class="hero-meta"><span>⌖ <span data-location></span></span><span>✦ <span data-role></span></span></div>
+      </div>
+      <div aria-hidden="true" class="hero-card">
+        <div class="hero-card-top"><span>工程师角色卡</span><span>持续进阶</span></div>
+        <img alt="" src="assets/images/avatar.png"/>
+        <div class="hero-card-name" data-name></div><div class="hero-card-role" data-role-detail></div>
+        <div class="stat"><span>实干</span><i style="--v:94%"></i></div>
+        <div class="stat"><span>学习</span><i style="--v:96%"></i></div>
+        <div class="stat"><span>韧性</span><i style="--v:92%"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="resume-section" id="about">
+    <div class="section-kicker">01 · 关于我的小屋</div><h2>关于我</h2>
+    <div class="about-grid"><div><div class="lead" id="aboutCopy"></div><h3 class="subheading">职业方向</h3><p id="careerDirection" class="detail-copy"></p></div><div><div class="value-grid" id="values"></div><h3 class="subheading">兴趣</h3><div class="chips" id="interests"></div></div></div>
+  </section>
+
+  <section class="resume-section alt" id="experience">
+    <div class="section-kicker">02 · 职业高塔</div><h2>工作经历</h2><div class="timeline" id="experienceList"></div>
+  </section>
+
+  <section class="resume-section" id="education">
+    <div class="section-kicker">03 · 大学与学院</div><h2>教育经历</h2><div id="educationList"></div>
+  </section>
+
+  <section class="resume-section alt" id="projects">
+    <div class="section-kicker">04 · 项目实验室</div><h2>核心工程项目</h2><div class="project-grid" id="projectList"></div>
+  </section>
+
+  <section class="resume-section ai-lab-section" id="ai-lab">
+    <div class="section-kicker">04B · AI 创意实验室</div><h2>好像有用网页实验室</h2>
+    <p class="lead ai-lab-lead">除企业后端项目外，我也持续用 AI 完成小型互动网页、工具和游戏实验。每个作品都可以直接打开体验。</p>
+    <div class="ai-project-grid" id="aiProjectList"></div>
+    <div class="ai-lab-footer"><a class="pixel-button" href="../../">查看完整 AI 网页实验室 ↗</a></div>
+  </section>
+
+  <section class="resume-section" id="skills">
+    <div class="section-kicker">05 · 技能训练馆</div><h2>技术能力</h2><div class="skill-grid" id="skillList"></div>
+  </section>
+
+  <section class="resume-section alt" id="achievements">
+    <div class="section-kicker">06 · 成就博物馆</div><h2>证书与里程碑</h2><div class="achievement-grid" id="achievementList"></div>
+  </section>
+
+  <section class="resume-section" id="contact">
+    <div class="section-kicker">07 · 联系车站</div><h2>开启下一段旅程</h2>
+    <p class="lead contact-lead">如果你正在寻找一名重视落地、稳定性与持续成长的后端研发工程师，欢迎联系我。</p>
+    <div class="contact-row" id="contactLinks"></div>
+  </section>
+</main>
+
+<section aria-label="履历冒险游戏" hidden="" id="questMode">
+<div class="quest-shell">
+<div class="start-screen" id="startScreen">
+<div class="start-noise"></div>
+<div class="start-panel">
+<img alt="履历冒险" class="quest-logo" src="assets/images/quest-logo-cn.png"/><div class="start-eyebrow">原创像素职业冒险 · 曹继贤的工程师履历</div><h2 data-name="">曹继贤</h2><p>进入履历小镇，探索我的后端研发经历、项目实践、技术能力与成长路径。</p>
+<div class="start-buttons"><button class="pixel-button primary wide" id="beginQuest">开始冒险</button><button class="pixel-button wide" id="continueQuest">继续探索</button><button class="pixel-button wide ghost" id="howToPlay">操作说明</button><button class="text-button" id="backToResume">← 返回普通简历</button></div>
+<div class="controls-copy"><span>WASD / 方向键 · 移动</span><span>Shift · 加速奔跑</span><span>空格 / Enter · 互动</span><span>M · 地图</span><span>R · 脱困</span></div>
+</div>
+</div>
+<div class="game-screen" hidden="" id="gameScreen">
+<canvas aria-label="可玩的像素履历游戏画面" height="540" id="gameCanvas" tabindex="0" width="960"></canvas>
+<div class="screen-glass"></div>
+<div class="game-hud">
+<div class="portrait-chip"><span class="hud-level">01</span><img alt="" src="assets/images/avatar.png"/><div><small>玩家 // 探索者</small><strong data-name="">曹继贤</strong><i class="story-meter"><b></b></i></div></div>
+<div class="area-chip"><small>当前区域</small><strong id="areaName">履历小镇</strong><span class="day-phase" id="dayPhase">白天 · 10:20</span></div>
+<div class="hud-actions"><div class="progress-chip"><small>探索进度</small><strong id="progressText">0 / 7</strong></div><button aria-label="切换昼夜" class="hud-btn icon-btn icon-sun" id="dayCycleBtn" title="切换昼夜"></button><button aria-label="音乐开关" class="hud-btn icon-btn icon-music" id="muteBtn" title="音乐开关"></button><button aria-label="打开地图" class="hud-btn icon-btn icon-map" id="mapBtn" title="打开地图"></button><button aria-label="全屏" class="hud-btn icon-btn icon-full" id="fullscreenBtn" title="全屏"></button><button aria-label="退出游戏" class="hud-btn icon-btn icon-exit" id="exitQuest" title="退出游戏"></button></div>
+</div>
+<div class="interaction-prompt" hidden="" id="interactionPrompt"><span>空格</span><b id="interactionLabel">互动</b></div>
+<div class="game-tip">WASD / 方向键 · 移动　　Shift · 奔跑　　空格 / Enter · 互动　　M · 地图　　R · 脱困</div>
+<div class="mobile-controls" id="mobileControls"><div class="dpad"><button data-key="ArrowUp">▲</button><button data-key="ArrowLeft">◀</button><button data-key="ArrowDown">▼</button><button data-key="ArrowRight">▶</button></div><button class="interact-touch" data-action="interact">◎<small>互动</small></button></div>
+<div class="keyboard-status" id="keyboardStatus">⌨ 键盘控制已启用</div></div>
+<div aria-live="polite" class="dialog-box" hidden="" id="dialogBox" role="dialog"><div class="dialog-portrait"><span class="portrait-corners"></span><img alt="" id="dialogPortrait" src="assets/images/avatar.png"/><small>通讯</small></div><div class="dialog-body"><div class="dialog-kicker">对话 // 进行中</div><div class="dialog-name" id="dialogName"></div><div class="dialog-text" id="dialogText"></div><div class="dialog-next"><kbd>空格</kbd> / 点击继续 <span>▼</span></div></div></div>
+<div aria-modal="true" class="info-modal" hidden="" id="infoModal" role="dialog"><div class="info-window"><div class="info-top"><span id="modalKicker">发现内容</span><button id="closeModal">×</button></div><div id="modalContent"></div></div></div>
+<div class="map-modal" hidden="" id="mapModal" role="dialog"><div class="map-window"><div class="map-title"><span>履历小镇 · 探索地图</span><button id="closeMap">×</button></div><div class="mini-map"><div class="map-road h"></div><div class="map-road v"></div><button class="map-place career" data-area="career">经历</button><button class="map-place awards" data-area="awards">成就</button><button class="map-place edu" data-area="education">教育</button><button class="map-place projects" data-area="projects">项目</button><button class="map-place about" data-area="about">关于我</button><button class="map-place contact" data-area="contact">联系</button><button class="map-place skills" data-area="skills">技能</button><div class="you-marker" id="youAreHere">✦</div></div><p>✦ 你在这里 · 探索全部七个职业区域。</p></div></div>
+<div class="info-modal" hidden="" id="howModal"><div class="info-window compact"><div class="info-top"><span>操作说明</span><button id="closeHow">×</button></div><div class="how-grid"><div><kbd>WASD / 方向键</kbd><b>移动</b></div><div><kbd>Shift</kbd><b>奔跑</b></div><div><kbd>空格 / Enter</kbd><b>互动</b></div><div><kbd>M</kbd><b>地图</b></div><div><kbd>R</kbd><b>脱困 / 重置位置</b></div></div><p>靠近建筑入口、NPC、告示牌或互动物体。出现提示后按空格或 Enter。开场对话期间直接按 WASD 也会自动收起提示并开始移动。</p></div></div>
+</div>
+</section>
+<!-- 管理员登录：GitHub Token 只保存在服务端，浏览器仅持有短时会话 -->
+<section class="admin-login-modal" id="adminLoginModal" hidden aria-label="管理员登录">
+  <div class="admin-login-card">
+    <button class="admin-login-close" id="adminLoginClose" aria-label="关闭">×</button>
+    <div class="admin-login-icon">◆</div>
+    <div class="admin-login-kicker">ONLINE ADMIN</div>
+    <h2>个人站管理员登录</h2>
+    <p class="admin-login-copy">登录后可直接修改资料并发布到 GitHub。GitHub Token 只存在安全后端，不会发送到浏览器。</p>
+    <label class="admin-login-field"><span>后台 API 地址</span><input id="adminApiUrl" type="url" inputmode="url" placeholder="https://你的项目.vercel.app" autocomplete="url"><small>使用 GitHub Pages 时首次填写一次 Vercel API 地址，浏览器会记住。</small></label>
+    <label class="admin-login-field"><span>管理员密码</span><input id="adminPassword" type="password" placeholder="输入管理员密码" autocomplete="current-password"></label>
+    <div class="admin-login-status" id="adminLoginStatus">尚未登录</div>
+    <div class="admin-login-actions"><button id="adminOfflineEdit" type="button">仅本机编辑</button><button id="adminLoginBtn" type="button" class="primary">登录管理后台</button></div>
+  </div>
+</section>
+
+<!-- 可视化资料编辑器：在线发布 + 本地草稿双模式 -->
+<section class="editor-modal" id="editorModal" hidden aria-label="简历资料编辑模式">
+  <div class="editor-shell">
+    <header class="editor-header">
+      <div class="editor-title">
+        <span class="editor-badge" id="editorModeBadge">ONLINE ADMIN</span>
+        <div><h2>个人站在线管理后台 <i id="editorDirtyDot" hidden></i></h2><p id="editorModeDescription">修改后可一键发布到 GitHub，AI_Page 首页、普通简历与 RPG 游戏同步更新</p></div>
+      </div>
+      <button class="editor-close" id="editorClose" aria-label="关闭编辑模式">×</button>
+    </header>
+    <div class="editor-toolbar">
+      <div class="editor-status" id="editorStatus">未连接在线发布后台</div>
+      <div class="editor-tools">
+        <button id="editorImportBtn" type="button">导入备份</button>
+        <button id="editorExport" type="button">导出 JSON</button>
+        <button id="editorExportJs" type="button">导出 JS 数据</button>
+        <button id="editorReset" type="button" class="danger-soft">恢复线上默认</button><button id="editorLogout" type="button">退出登录</button>
+        <input id="editorImportFile" type="file" accept="application/json,.json" hidden>
+      </div>
+    </div>
+    <div class="editor-layout">
+      <nav class="editor-tabs" id="editorTabs" aria-label="编辑分类"></nav>
+      <main class="editor-body" id="editorBody"></main>
+    </div>
+    <footer class="editor-footer">
+      <div><strong>提示：</strong>“保存草稿”仅影响当前浏览器；“发布到 GitHub”会同时更新简历与 AI 作品库。</div>
+      <div class="editor-footer-actions"><button id="editorCancel" type="button">取消</button><button id="editorSave" type="button">保存本地草稿</button><button id="editorPublish" type="button" class="save publish">发布到 GitHub</button></div>
+    </footer>
+  </div>
+</section>
+
+<script src="../../projects-data.js"></script><script src="resume-data.js"></script><script src="editor.js"></script><script src="app.js"></script><script src="game.js"></script>
+</body>
+</html>
