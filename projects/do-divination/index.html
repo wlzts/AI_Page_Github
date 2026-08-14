@@ -1,0 +1,3576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#211c17" />
+<title>今日野卦</title>
+<style>
+:root{
+  --ink:#211c17;
+  --ink-2:#3b3026;
+  --paper:#efe3ca;
+  --paper-2:#e6d5b3;
+  --paper-3:#f7edd9;
+  --red:#a73020;
+  --red-dark:#7f2418;
+  --gold:#9f7c46;
+  --muted:#746957;
+  --line:rgba(33,28,23,.18);
+  --line-strong:rgba(33,28,23,.42);
+  --shadow:0 22px 52px rgba(49,38,27,.16);
+  --radius-xl:26px;
+  --radius-lg:18px;
+  --radius-md:13px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(167,48,32,.11),transparent 26%),
+    radial-gradient(circle at 92% 14%,rgba(159,124,70,.08),transparent 22%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(33,28,23,.018) 0,
+      rgba(33,28,23,.018) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    #d6c39f;
+  font-family:"Songti SC","STSong","SimSun","PingFang SC","Microsoft YaHei",serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+button,input{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.app{
+  width:min(100%,760px);
+  margin:0 auto;
+  padding:14px 13px 56px;
+}
+.utility-font{
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+}
+
+/* 顶部牌匾 */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 1px 12px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+.brand-seal{
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border:2px solid var(--red);
+  color:var(--red);
+  font-size:15px;
+  font-weight:900;
+  transform:rotate(-4deg);
+  background:rgba(239,227,202,.48);
+  box-shadow:inset 0 0 0 2px rgba(167,48,32,.08);
+}
+.open-note{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#695f50;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;
+}
+.open-note::before{
+  content:"";
+  width:7px;height:7px;border-radius:50%;
+  background:var(--red);
+  box-shadow:0 0 0 4px rgba(167,48,32,.08);
+}
+
+/* 首屏 */
+.hero{
+  position:relative;
+  overflow:hidden;
+  padding:27px 19px 22px;
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius-xl);
+  background:
+    linear-gradient(rgba(247,237,217,.48),rgba(247,237,217,.48)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 34px,
+      rgba(33,28,23,.027) 35px
+    ),
+    var(--paper);
+  box-shadow:var(--shadow);
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  width:170px;height:170px;
+  right:-72px;top:-50px;
+  border:1px dashed rgba(167,48,32,.28);
+  border-radius:50%;
+  transform:rotate(18deg);
+}
+.hero::after{
+  content:"野卦";
+  position:absolute;
+  right:15px;top:18px;
+  width:74px;height:74px;
+  display:grid;place-items:center;
+  border:2px solid rgba(167,48,32,.26);
+  color:rgba(167,48,32,.18);
+  font-size:21px;
+  font-weight:900;
+  transform:rotate(9deg);
+}
+.eyebrow{
+  position:relative;z-index:2;
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:12px;
+  color:var(--red);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;font-weight:900;letter-spacing:.14em;
+}
+.eyebrow::before{
+  content:"";width:19px;height:2px;background:currentColor;
+}
+h1{
+  position:relative;z-index:2;
+  margin:0;
+  font-size:clamp(42px,11vw,72px);
+  line-height:.98;
+  letter-spacing:-.075em;
+  font-weight:900;
+}
+.hero-copy{
+  position:relative;z-index:2;
+  max-width:520px;
+  margin:16px 0 0;
+  color:#655a4a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;
+  line-height:1.72;
+}
+.method-slip{
+  position:relative;z-index:2;
+  margin-top:18px;
+  padding:13px 13px 12px 17px;
+  border:1px solid rgba(33,28,23,.2);
+  background:rgba(255,249,235,.35);
+  box-shadow:inset 4px 0 0 rgba(167,48,32,.78);
+}
+.method-label{
+  color:#867963;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.method-name{
+  margin-top:5px;
+  font-size:20px;
+  font-weight:900;
+}
+.method-desc{
+  margin-top:5px;
+  color:#6d6252;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;
+  line-height:1.55;
+}
+.method-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:11px;
+}
+.ghost-small{
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:7px 10px;
+  color:#675c4e;
+  background:rgba(247,237,217,.3);
+  cursor:pointer;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+  transition:.15s ease;
+}
+.ghost-small:hover{border-color:var(--ink);color:var(--ink);transform:translateY(-1px)}
+.ghost-small:active{transform:scale(.98)}
+.method-code{
+  color:#9a8c76;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:7px;
+}
+.notice{
+  margin:12px 0 0;
+  padding:10px 12px;
+  border-left:3px solid var(--red);
+  color:#6e6250;
+  background:rgba(239,227,202,.72);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;
+  line-height:1.65;
+}
+
+/* 进度 */
+.progress{
+  margin:19px 3px 8px;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+}
+.progress-head{
+  display:flex;justify-content:space-between;
+  margin-bottom:7px;
+  color:#766b5a;
+  font-size:8px;
+}
+.progress-track{
+  height:3px;overflow:hidden;background:rgba(33,28,23,.14);
+}
+.progress-track span{
+  display:block;width:0;height:100%;
+  background:var(--red);
+  transition:width .28s ease;
+}
+
+/* 步骤卡 */
+.step{
+  position:relative;
+  margin-top:12px;
+  padding:18px 15px 16px;
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  background:
+    linear-gradient(rgba(247,237,217,.52),rgba(247,237,217,.52)),
+    var(--paper);
+  box-shadow:0 8px 22px rgba(49,38,27,.05);
+  animation:stepIn .35s ease both;
+}
+.step::after{
+  content:"";
+  position:absolute;
+  width:10px;height:10px;
+  right:10px;bottom:10px;
+  border-right:1px solid rgba(33,28,23,.18);
+  border-bottom:1px solid rgba(33,28,23,.18);
+}
+.step.missing{
+  border-color:rgba(167,48,32,.75);
+  animation:shake .28s ease;
+}
+.step-head{
+  display:flex;align-items:flex-start;gap:10px;
+}
+.step-no{
+  flex:0 0 auto;
+  width:25px;height:25px;
+  display:grid;place-items:center;
+  border:1px solid var(--ink);
+  border-radius:50%;
+  color:var(--paper);
+  background:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;font-weight:900;
+}
+.step h2{
+  margin:1px 0 0;
+  font-size:17px;
+  line-height:1.42;
+}
+.step-desc{
+  margin:7px 0 14px 35px;
+  color:#776b59;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;
+  line-height:1.6;
+}
+
+/* 通用选项 */
+.choice-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.choice{
+  min-height:66px;
+  padding:11px 10px;
+  border:1px solid rgba(33,28,23,.17);
+  border-radius:12px;
+  background:rgba(247,237,217,.62);
+  text-align:left;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.choice:hover{
+  border-color:#746654;
+  transform:translateY(-1px);
+}
+.choice:active{transform:scale(.985)}
+.choice.selected{
+  border-color:var(--red);
+  background:#ead5c7;
+  box-shadow:inset 0 0 0 1px rgba(167,48,32,.7);
+}
+.choice strong{
+  display:block;
+  font-size:13px;
+  line-height:1.35;
+}
+.choice small{
+  display:block;
+  margin-top:5px;
+  color:#786d5d;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+  line-height:1.4;
+}
+
+/* 摸字 */
+.word-board{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  max-width:420px;
+  margin:auto;
+  padding:9px;
+  border:1px solid var(--ink);
+  background:rgba(255,249,235,.18);
+}
+.word-tile{
+  position:relative;
+  aspect-ratio:1/1;
+  display:grid;place-items:center;
+  border:1px solid rgba(33,28,23,.16);
+  background:rgba(247,237,217,.52);
+  cursor:pointer;
+  transition:.15s ease;
+}
+.word-tile:active{transform:scale(.96)}
+.word-tile.selected{
+  color:var(--paper);
+  background:var(--ink);
+}
+.word-tile.selected::after{
+  content:"";
+  position:absolute;inset:5px;
+  border:1px solid var(--red);
+}
+.word-char{
+  font-size:29px;
+  font-weight:900;
+}
+.word-note{
+  position:absolute;
+  bottom:5px;
+  color:inherit;
+  opacity:.6;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:6px;
+}
+.pick-count{
+  display:flex;justify-content:space-between;
+  margin-bottom:8px;
+  color:#766b5a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+}
+.pick-count b{color:var(--red)}
+
+/* 报数 */
+.num-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+}
+.num-btn{
+  min-height:52px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:rgba(247,237,217,.62);
+  cursor:pointer;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:17px;font-weight:800;
+  transition:.15s ease;
+}
+.num-btn.selected{
+  color:var(--paper);
+  border-color:var(--ink);
+  background:var(--ink);
+  box-shadow:inset 0 0 0 2px var(--red);
+}
+
+/* 敲卦 */
+.tap-wrap{text-align:center}
+.tap-wood{
+  width:126px;height:126px;
+  margin:3px auto 10px;
+  display:grid;place-items:center;
+  border:1px solid #5b4630;
+  border-radius:50%;
+  color:#e8d2aa;
+  background:
+    radial-gradient(circle at 38% 32%,rgba(255,255,255,.08),transparent 20%),
+    repeating-radial-gradient(circle at center,#5e432b 0,#5e432b 5px,#553c27 6px,#553c27 9px);
+  box-shadow:
+    inset 0 0 0 5px rgba(255,255,255,.03),
+    0 7px 16px rgba(54,39,25,.18);
+  cursor:pointer;
+  user-select:none;
+  transition:.1s ease;
+}
+.tap-wood:active{transform:scale(.94)}
+.tap-big{display:block;font-size:30px;line-height:1}
+.tap-small{
+  display:block;margin-top:6px;
+  color:#d4bd98;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;
+}
+.tap-count{
+  color:var(--red);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;font-weight:800;
+}
+.tap-lock{
+  margin-top:8px;
+  padding:7px 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:transparent;
+  cursor:pointer;
+  color:#6d6252;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+}
+.tap-lock:disabled{opacity:.35;cursor:not-allowed}
+
+/* 方位 */
+.direction-wheel{
+  position:relative;
+  width:min(100%,330px);
+  aspect-ratio:1/1;
+  margin:0 auto;
+  border:1px solid var(--ink);
+  border-radius:50%;
+  background:
+    linear-gradient(45deg,transparent 49.8%,rgba(33,28,23,.08) 50%,transparent 50.2%),
+    linear-gradient(-45deg,transparent 49.8%,rgba(33,28,23,.08) 50%,transparent 50.2%),
+    rgba(247,237,217,.35);
+}
+.dir-btn{
+  position:absolute;
+  width:66px;height:44px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(239,227,202,.94);
+  cursor:pointer;
+  font-size:11px;
+  font-weight:800;
+  transition:.15s ease;
+}
+.dir-btn.selected{
+  color:var(--paper);
+  border-color:var(--red);
+  background:var(--ink);
+  box-shadow:0 0 0 2px rgba(167,48,32,.22);
+}
+.dir-n{left:50%;top:7%;transform:translateX(-50%)}
+.dir-ne{right:5%;top:22%}
+.dir-e{right:1%;top:50%;transform:translateY(-50%)}
+.dir-se{right:5%;bottom:22%}
+.dir-s{left:50%;bottom:7%;transform:translateX(-50%)}
+.dir-sw{left:5%;bottom:22%}
+.dir-w{left:1%;top:50%;transform:translateY(-50%)}
+.dir-nw{left:5%;top:22%}
+.dir-center{
+  position:absolute;
+  left:50%;top:50%;
+  width:74px;height:74px;
+  display:grid;place-items:center;
+  transform:translate(-50%,-50%);
+  border:1px solid var(--red);
+  border-radius:50%;
+  color:var(--red);
+  font-size:20px;font-weight:900;
+}
+
+/* 命线 */
+.line-read{
+  display:flex;align-items:baseline;gap:7px;
+  margin-bottom:11px;
+}
+.line-read strong{
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:37px;
+  letter-spacing:-.05em;
+}
+.line-read span{
+  color:#766b5a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+}
+input[type="range"]{
+  width:100%;
+  height:29px;
+  appearance:none;
+  -webkit-appearance:none;
+  background:transparent;
+}
+input[type="range"]::-webkit-slider-runnable-track{
+  height:4px;
+  background:
+    linear-gradient(90deg,var(--ink) 0 var(--fill,50%),rgba(33,28,23,.14) var(--fill,50%) 100%);
+}
+input[type="range"]::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;
+  width:23px;height:23px;
+  margin-top:-10px;
+  border:5px solid var(--paper);
+  border-radius:50%;
+  background:var(--red);
+  box-shadow:0 2px 8px rgba(33,28,23,.18);
+}
+.line-labels{
+  display:flex;justify-content:space-between;
+  color:#766b5a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;
+}
+
+/* 铜钱 */
+.coin-wrap{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+.coin{
+  aspect-ratio:1/1;
+  display:grid;place-items:center;
+  border:0;
+  border-radius:50%;
+  color:#4c331d;
+  background:
+    radial-gradient(circle at 38% 33%,#d9b36c 0,#bd8d46 58%,#966833 100%);
+  box-shadow:
+    inset 0 0 0 4px rgba(86,52,20,.16),
+    0 5px 12px rgba(69,47,27,.13);
+  cursor:pointer;
+  font-size:22px;font-weight:900;
+  transition:.2s ease;
+}
+.coin.flipped{transform:rotateY(180deg)}
+.coin.done{cursor:default}
+.coin-hint{
+  margin-top:10px;
+  color:#766b5a;
+  text-align:center;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+}
+
+/* 红纸点位 */
+.redpaper{
+  position:relative;
+  height:210px;
+  overflow:hidden;
+  border:1px solid #8d2519;
+  background:
+    repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 1px,transparent 1px,transparent 9px),
+    #9f2d20;
+  box-shadow:inset 0 0 40px rgba(70,15,10,.18);
+  cursor:crosshair;
+}
+.redpaper::before{
+  content:"随手按一下";
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  color:rgba(248,223,191,.36);
+  font-size:20px;font-weight:900;
+}
+.red-dot{
+  position:absolute;
+  width:18px;height:18px;
+  border:2px solid #f4d8a6;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 0 5px rgba(244,216,166,.1);
+  pointer-events:none;
+}
+
+/* 最终长按 */
+.finish-zone{margin-top:15px}
+.hold-btn{
+  position:relative;
+  width:100%;height:62px;
+  overflow:hidden;
+  border:0;
+  border-radius:16px;
+  color:var(--paper);
+  background:var(--ink);
+  cursor:pointer;
+  user-select:none;
+  touch-action:none;
+  box-shadow:0 11px 26px rgba(33,28,23,.18);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;font-weight:900;letter-spacing:.08em;
+}
+.hold-btn:hover{transform:translateY(-1px)}
+.hold-btn:active{transform:scale(.992)}
+.hold-fill{
+  position:absolute;left:0;top:0;bottom:0;width:0;
+  background:var(--red);
+}
+.hold-text{position:relative;z-index:2}
+.error{
+  min-height:18px;
+  margin-top:8px;
+  color:var(--red);
+  text-align:center;
+  opacity:0;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+}
+.error.show{opacity:1}
+
+/* 推演遮罩 */
+.overlay{
+  position:fixed;inset:0;z-index:100;
+  display:none;place-items:center;
+  padding:23px;
+  color:var(--paper);
+  background:rgba(30,24,19,.96);
+}
+.overlay.show{display:grid;animation:fadeIn .2s ease}
+.reading{
+  width:min(100%,390px);
+  text-align:center;
+}
+.divine-plate{
+  position:relative;
+  width:156px;height:156px;
+  margin:0 auto 24px;
+}
+.divine-ring{
+  position:absolute;border-radius:50%;
+  border:1px solid rgba(239,227,202,.28);
+}
+.r1{inset:0}
+.r2{inset:19px;border-style:dashed;animation:spin 4s linear infinite}
+.r3{inset:41px;border-color:#b64a37;animation:spinReverse 2.8s linear infinite}
+.divine-plate::before,
+.divine-plate::after{
+  content:"";
+  position:absolute;left:50%;top:50%;
+  width:100%;height:1px;
+  background:rgba(239,227,202,.14);
+}
+.divine-plate::before{transform:translate(-50%,-50%) rotate(30deg)}
+.divine-plate::after{transform:translate(-50%,-50%) rotate(-30deg)}
+.divine-center{
+  position:absolute;inset:57px;
+  display:grid;place-items:center;
+  border:1px solid #d66e58;
+  border-radius:50%;
+  color:#e1b48c;
+  font-size:16px;font-weight:900;
+  background:#6c261f;
+  animation:pulse .9s ease-in-out infinite alternate;
+}
+.read-title{margin:0;font-size:19px}
+.read-sub{
+  margin:6px 0 0;
+  color:#9f978b;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+}
+.read-line{
+  height:2px;margin:17px 0 13px;
+  background:rgba(239,227,202,.13);
+}
+.read-line span{display:block;width:0;height:100%;background:#b94a37}
+.overlay.show .read-line span{animation:load 2.85s linear forwards}
+.read-msg{
+  min-height:38px;
+  margin:0;
+  color:#bdb4a5;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;line-height:1.75;
+}
+.read-code{
+  margin-top:13px;
+  color:#6f685f;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:7px;letter-spacing:.14em;
+}
+
+/* 结果 */
+.result{display:none;margin-top:18px}
+.result.show{display:block;animation:resultIn .58s cubic-bezier(.2,.85,.3,1)}
+.report{
+  overflow:hidden;
+  border-radius:27px;
+  color:var(--paper);
+  background:
+    radial-gradient(circle at 88% 4%,rgba(167,48,32,.28),transparent 24%),
+    repeating-linear-gradient(0deg,transparent 0,transparent 29px,rgba(255,255,255,.018) 30px),
+    #211c17;
+  box-shadow:0 24px 58px rgba(33,28,23,.27);
+}
+.report-inner{padding:23px 18px 21px}
+.report-head{
+  display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(239,227,202,.12);
+}
+.report-overline{
+  margin-bottom:5px;
+  color:#9b9285;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;font-weight:900;letter-spacing:.15em;
+}
+.report h2{
+  margin:0;
+  font-size:23px;
+  line-height:1.18;
+}
+.red-seal{
+  flex:0 0 auto;
+  width:58px;height:58px;
+  display:grid;place-items:center;
+  border:2px solid #c65b46;
+  color:#df7a66;
+  font-size:10px;font-weight:900;line-height:1.15;text-align:center;
+  transform:rotate(8deg);
+}
+.one-line{
+  padding:22px 0 17px;
+}
+.one-label{
+  color:#8e867a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;font-weight:900;letter-spacing:.15em;
+}
+.one-answer{
+  margin-top:6px;
+  color:#fff2dd;
+  font-size:clamp(31px,9vw,50px);
+  line-height:1.12;
+  letter-spacing:-.055em;
+  font-weight:900;
+}
+.one-time{
+  margin-top:8px;
+  color:#c7b99f;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;
+}
+.meta-row{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
+  margin-top:18px;
+}
+.score-caption{
+  color:#8e867a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;
+}
+.score{
+  margin-top:3px;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:46px;font-weight:900;letter-spacing:-.06em;
+}
+.score small{font-size:10px;color:#8e867a;font-weight:400}
+.gua-name{
+  max-width:145px;
+  padding:9px 10px;
+  border:1px solid rgba(239,227,202,.14);
+  border-radius:10px;
+}
+.gua-name span{
+  display:block;
+  color:#80786e;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;
+}
+.gua-name strong{
+  display:block;margin-top:4px;
+  font-size:12px;line-height:1.45;
+}
+.report-section{
+  padding:15px 0;
+  border-top:1px solid rgba(239,227,202,.11);
+}
+.section-title{
+  margin-bottom:8px;
+  color:#81796e;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;font-weight:900;letter-spacing:.15em;
+}
+.reasoning{
+  margin:0;
+  color:#e9e0d2;
+  font-size:12px;
+  line-height:1.88;
+}
+.reasoning b{
+  color:#f4c6aa;
+  font-weight:900;
+}
+.human-translation{
+  margin-top:12px;
+  padding:12px 13px;
+  border-left:2px solid #c25742;
+  background:rgba(167,48,32,.1);
+}
+.human-label{
+  color:#a7907a;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;font-weight:900;letter-spacing:.12em;
+}
+.human-text{
+  margin-top:5px;
+  color:#fff2dd;
+  font-size:16px;
+  font-weight:900;
+  line-height:1.55;
+}
+.three-lines{
+  display:grid;
+  gap:7px;
+}
+.keep-line{
+  display:flex;gap:9px;align-items:flex-start;
+  padding:9px 10px;
+  border:1px solid rgba(239,227,202,.11);
+  border-radius:10px;
+  background:rgba(239,227,202,.035);
+}
+.keep-num{
+  color:#d26a53;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;font-weight:900;
+}
+.keep-text{
+  color:#e0d7ca;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:9px;line-height:1.55;
+}
+.folk-tip{
+  padding:12px 13px;
+  border-radius:11px;
+  color:var(--ink);
+  background:var(--paper);
+}
+.folk-title{
+  margin-bottom:5px;
+  color:var(--red);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:7px;font-weight:900;letter-spacing:.12em;
+}
+.folk-tip p{
+  margin:0;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;font-weight:700;line-height:1.68;
+}
+.yiji{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.yiji-card{
+  min-height:105px;
+  padding:11px;
+  border-radius:10px;
+}
+.yi{border:1px solid rgba(239,227,202,.14);background:rgba(239,227,202,.04)}
+.ji{border:1px solid rgba(167,48,32,.3);background:rgba(167,48,32,.09)}
+.yiji-title{
+  margin-bottom:8px;
+  font-size:9px;font-weight:900;
+}
+.ji .yiji-title{color:#df765f}
+.yiji-items{
+  display:grid;gap:6px;
+  color:#d8cfc2;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;line-height:1.45;
+}
+.data-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+.data{
+  min-width:0;
+  padding:10px 4px;
+  border:1px solid rgba(239,227,202,.11);
+  border-radius:9px;
+  text-align:center;
+}
+.data strong{
+  display:block;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:14px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.data span{
+  display:block;
+  margin-top:4px;
+  color:#7d756c;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:6px;line-height:1.3;
+}
+.share-line{
+  margin:0;
+  padding:17px 0;
+  border-top:1px solid rgba(239,227,202,.11);
+  color:#fff0d9;
+  font-size:17px;
+  line-height:1.58;
+  font-weight:900;
+}
+.report-foot{
+  display:flex;justify-content:space-between;gap:8px;
+  color:#686159;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:6px;
+}
+.result-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.action-btn{
+  min-height:49px;
+  border-radius:13px;
+  cursor:pointer;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;font-weight:900;
+  transition:.15s ease;
+}
+.action-btn:active{transform:scale(.985)}
+.copy-btn{border:0;color:white;background:var(--red)}
+.reset-btn{border:1px solid var(--line);color:var(--ink);background:rgba(239,227,202,.7)}
+.toast{
+  position:fixed;left:50%;bottom:26px;z-index:120;
+  padding:9px 13px;
+  border-radius:999px;
+  color:var(--paper);
+  background:var(--ink);
+  opacity:0;pointer-events:none;
+  transform:translate(-50%,8px);
+  transition:.2s ease;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;
+  box-shadow:0 8px 22px rgba(33,28,23,.2);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{
+  padding:27px 5px 0;
+  color:#766b5c;
+  text-align:center;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:8px;line-height:1.7;
+}
+footer small{
+  display:block;margin-top:3px;
+  color:#9a8e7a;
+  font-size:7px;
+}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  30%{transform:translateX(-4px)}
+  70%{transform:translateX(4px)}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinReverse{to{transform:rotate(-360deg)}}
+@keyframes pulse{from{transform:scale(.86);opacity:.7}to{transform:scale(1.12);opacity:1}}
+@keyframes load{from{width:0}to{width:100%}}
+@keyframes resultIn{
+  from{opacity:0;transform:translateY(16px) scale(.985)}
+  to{opacity:1;transform:none}
+}
+@keyframes stepIn{
+  from{opacity:0;transform:translateY(7px)}
+  to{opacity:1;transform:none}
+}
+/* ===== 可读性与响应式增强：手机 / 平板 / 桌面 ===== */
+body{
+  font-size:16px;
+}
+.app{
+  width:min(100%,820px);
+  padding:16px clamp(14px,3vw,24px) 64px;
+}
+.brand{font-size:14px}
+.open-note{font-size:12px}
+.eyebrow{font-size:12px}
+.hero-copy{font-size:15px;line-height:1.75}
+.method-label{font-size:11px}
+.method-name{font-size:23px}
+.method-desc{font-size:13px;line-height:1.65}
+.ghost-small{font-size:12px;padding:9px 13px}
+.method-code{font-size:10px}
+.notice{font-size:13px;line-height:1.7}
+.progress-head{font-size:12px}
+.progress-track{height:4px}
+.step-no{font-size:11px}
+.step h2{font-size:20px;line-height:1.42}
+.step-desc{font-size:13px;line-height:1.65}
+.choice{min-height:78px;padding:14px 13px}
+.choice strong{font-size:16px;line-height:1.4}
+.choice small{font-size:12px;line-height:1.5}
+.word-char{font-size:34px}
+.word-note{font-size:10px;bottom:7px}
+.pick-count{font-size:12px}
+.num-btn{min-height:58px;font-size:20px}
+.tap-small{font-size:11px}
+.tap-count{font-size:13px}
+.tap-lock{font-size:12px;padding:9px 14px}
+.dir-btn{font-size:13px}
+.dir-center{font-size:23px}
+.line-read span{font-size:12px}
+.line-labels{font-size:11px}
+.coin-hint{font-size:12px}
+.hold-btn{font-size:15px;min-height:64px;height:auto;padding:18px 16px}
+.error{font-size:12px;line-height:1.5}
+.read-title{font-size:22px}
+.read-sub{font-size:12px}
+.read-msg{font-size:13px;line-height:1.8}
+.read-code{font-size:10px}
+.report-overline{font-size:10px}
+.report h2{font-size:26px}
+.red-seal{font-size:12px}
+.one-label{font-size:10px}
+.one-answer{font-size:clamp(34px,9vw,54px)}
+.one-time{font-size:13px}
+.score-caption{font-size:11px}
+.score small{font-size:13px}
+.gua-name span{font-size:10px}
+.gua-name strong{font-size:15px}
+.section-title{font-size:11px}
+.reasoning{font-size:15px;line-height:1.9}
+.human-label{font-size:10px}
+.human-text{font-size:19px;line-height:1.55}
+.keep-num{font-size:12px}
+.keep-text{font-size:13px;line-height:1.6}
+.folk-title{font-size:10px}
+.folk-tip p{font-size:13px;line-height:1.72}
+.yiji-title{font-size:12px}
+.yiji-items{font-size:12px;line-height:1.55}
+.data strong{font-size:16px}
+.data span{font-size:10px;line-height:1.4}
+.share-line{font-size:20px;line-height:1.6}
+.report-foot{font-size:9px}
+.action-btn{font-size:13px;min-height:52px}
+.toast{font-size:12px}
+footer{font-size:12px}
+footer small{font-size:10px}
+
+/* 手机优先：375–430px */
+@media(max-width:699px){
+  .hero{padding:28px 19px 24px}
+  h1{font-size:clamp(43px,13vw,58px);line-height:1.02}
+  .method-slip{padding:15px 14px 14px 18px}
+  .step{padding:20px 16px 18px}
+  .choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .word-board{gap:8px;padding:10px}
+  .word-tile{min-height:94px}
+  .direction-wheel{width:min(100%,340px)}
+  .report-inner{padding:25px 19px 23px}
+  .data-grid{gap:8px}
+  .data{padding:12px 6px}
+}
+
+/* 窄屏手机：不再缩字号，只调整布局 */
+@media(max-width:374px){
+  .app{padding-left:11px;padding-right:11px}
+  .topbar{align-items:flex-start}
+  .open-note{max-width:110px;text-align:right;line-height:1.4}
+  .choice-grid{grid-template-columns:1fr}
+  .num-grid{grid-template-columns:repeat(4,1fr)}
+  .word-char{font-size:31px}
+  .dir-btn{width:62px;height:42px;font-size:12px}
+  .human-text{font-size:18px}
+  .share-line{font-size:18px}
+}
+
+/* 平板 / 桌面：放宽内容，但不把文字缩小 */
+
+
+/* ===== 玄学插图增强 + 字号优化 ===== */
+.brand{font-size:13px}
+.open-note{font-size:12px}
+.eyebrow,.method-label,.method-code,.progress-head,.pick-count span,.one-label,.score-caption,.section-title,.report-overline,.folk-overline,.keep-num,.data span,.report-footer,.yiji-title,.share-caption,footer,footer small{font-size:11px}
+.hero-copy{font-size:15px;max-width:560px}
+.notice{font-size:13px;line-height:1.75}
+.method-desc{font-size:12px;line-height:1.65}
+.ghost-small{font-size:12px;padding:8px 12px}
+.step h2{font-size:18px}
+.step-desc{font-size:13px;line-height:1.7}
+.choice strong{font-size:15px}
+.choice small{font-size:12px;line-height:1.5}
+.one-time{font-size:15px}
+.reasoning,.human-text{font-size:15px;line-height:1.9}
+.keep-text,.folk-tip p,.yiji-items{font-size:13px;line-height:1.7}
+.share-line{font-size:20px;line-height:1.6}
+
+.hero-deco-row{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:14px;
+}
+.mystic-ribbon{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.mystic-card{
+  min-height:78px;
+  padding:10px 6px 9px;
+  border:1px solid rgba(33,28,23,.15);
+  border-radius:14px;
+  background:rgba(255,249,235,.4);
+  text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+}
+.mystic-card b{
+  display:block;
+  font-size:24px;
+  line-height:1;
+  color:var(--red-dark);
+}
+.mystic-card span{
+  display:block;
+  margin-top:7px;
+  color:#6a5f4f;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+  line-height:1.35;
+}
+.hero-sketch{
+  position:relative;
+}
+.sketch-board{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 13px;
+  border:1px dashed rgba(167,48,32,.32);
+  border-radius:16px;
+  background:rgba(247,237,217,.34);
+}
+.sketch-diagram{
+  position:relative;
+  width:94px;
+  height:94px;
+  flex:0 0 auto;
+}
+.sketch-ring,
+.sketch-ring::before,
+.sketch-ring::after{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+}
+.sketch-ring{
+  border:1px solid rgba(33,28,23,.3);
+}
+.sketch-ring::before{
+  content:"";
+  inset:12px;
+  border:1px dashed rgba(167,48,32,.42);
+}
+.sketch-ring::after{
+  content:"";
+  inset:26px;
+  border:1px solid rgba(33,28,23,.22);
+}
+.sketch-cross::before,
+.sketch-cross::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:88px;
+  height:1px;
+  background:rgba(33,28,23,.17);
+}
+.sketch-cross::before{transform:translate(-50%,-50%) rotate(45deg)}
+.sketch-cross::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.sketch-core{
+  position:absolute;
+  inset:30px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:rgba(167,48,32,.1);
+  border:1px solid rgba(167,48,32,.45);
+  color:var(--red-dark);
+  font-size:25px;
+  font-weight:900;
+}
+.sketch-copy{min-width:0}
+.sketch-label{
+  color:#8b7f6c;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+.sketch-copy p{
+  margin:6px 0 0;
+  color:#6b6153;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;
+  line-height:1.65;
+}
+
+.report-illustration{
+  padding:14px 0 10px;
+}
+.folk-diagram{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:13px;
+  border:1px solid rgba(239,227,202,.12);
+  border-radius:14px;
+  background:rgba(255,248,236,.05);
+}
+.folk-wheel{
+  position:relative;
+  width:98px;
+  height:98px;
+  flex:0 0 auto;
+}
+.folk-wheel::before,
+.folk-wheel::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:94px;
+  height:1px;
+  background:rgba(239,227,202,.13);
+}
+.folk-wheel::before{transform:translate(-50%,-50%) rotate(45deg)}
+.folk-wheel::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.folk-ring-a,
+.folk-ring-b,
+.folk-ring-c{
+  position:absolute;
+  border-radius:50%;
+}
+.folk-ring-a{inset:0;border:1px solid rgba(239,227,202,.26)}
+.folk-ring-b{inset:13px;border:1px dashed rgba(167,48,32,.35)}
+.folk-ring-c{inset:30px;border:1px solid rgba(239,227,202,.12)}
+.folk-core{
+  position:absolute;
+  inset:34px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:rgba(167,48,32,.15);
+  border:1px solid rgba(167,48,32,.55);
+  color:#fff1dd;
+  font-size:25px;
+  font-weight:900;
+}
+.folk-copy{min-width:0}
+.folk-overline{
+  color:#9d9588;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-weight:800;
+  letter-spacing:.14em;
+}
+.folk-title{
+  margin-top:4px;
+  color:#fff6ea;
+  font-size:18px;
+  font-weight:900;
+  line-height:1.35;
+}
+.folk-figure-text{
+  margin:6px 0 0;
+  color:#d9d0c3;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;
+  line-height:1.7;
+}
+
+
+
+/* ===== 具体问事版 / editorial inquiry sheet ===== */
+.ask-sheet{
+  position:relative;
+  margin:16px 0 0;
+  padding:22px 18px 19px;
+  border:1px solid var(--line-strong);
+  background:
+    linear-gradient(rgba(247,237,217,.76),rgba(247,237,217,.76)),
+    repeating-linear-gradient(0deg,transparent 0,transparent 27px,rgba(33,28,23,.027) 28px),
+    var(--paper-3);
+  box-shadow:0 12px 34px rgba(49,38,27,.08);
+}
+.ask-sheet::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:4px;
+  background:var(--red);
+}
+.ask-kicker{
+  color:var(--red);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.16em;
+}
+.ask-heading-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-top:10px;
+}
+.ask-heading-row h2{
+  margin:0;
+  font-size:28px;
+  line-height:1.12;
+  letter-spacing:-.045em;
+}
+.ask-heading-row p{
+  max-width:560px;
+  margin:9px 0 0;
+  color:#6d6253;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;
+  line-height:1.7;
+}
+.ask-stamp{
+  flex:0 0 auto;
+  width:54px;height:54px;
+  display:grid;
+  place-items:center;
+  border:2px solid rgba(167,48,32,.62);
+  color:var(--red);
+  font-size:15px;
+  font-weight:900;
+  transform:rotate(7deg);
+}
+.question-label,.ask-type-label{
+  display:block;
+  margin-top:19px;
+  color:#5e5447;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:12px;
+  font-weight:800;
+}
+.question-input-wrap{
+  position:relative;
+  margin-top:8px;
+}
+#questionInput{
+  display:block;
+  width:100%;
+  min-height:94px;
+  resize:vertical;
+  padding:15px 14px 28px;
+  border:1px solid rgba(33,28,23,.28);
+  border-radius:0;
+  outline:none;
+  color:var(--ink);
+  background:rgba(255,250,239,.6);
+  font-family:"Songti SC","STSong","PingFang SC",serif;
+  font-size:17px;
+  line-height:1.65;
+  transition:.18s ease;
+}
+#questionInput::placeholder{color:#a29683}
+#questionInput:focus{
+  border-color:var(--red);
+  box-shadow:inset 3px 0 0 var(--red);
+}
+.question-count{
+  position:absolute;
+  right:10px;
+  bottom:8px;
+  color:#9c907c;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10px;
+}
+.ask-type-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:8px;
+}
+.ask-type{
+  min-height:70px;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  background:rgba(255,250,239,.44);
+  text-align:left;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.ask-type:hover{border-color:var(--ink);transform:translateY(-1px)}
+.ask-type:active{transform:scale(.985)}
+.ask-type.selected{
+  color:#fff6e9;
+  border-color:var(--ink);
+  background:var(--ink);
+  box-shadow:inset 3px 0 0 var(--red);
+}
+.ask-type b{
+  display:block;
+  font-size:15px;
+}
+.ask-type span{
+  display:block;
+  margin-top:5px;
+  color:#817461;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+  line-height:1.35;
+}
+.ask-type.selected span{color:#cbbfae}
+.example-strip{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px;
+  margin-top:14px;
+  color:#877a66;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+}
+.example-chip{
+  padding:7px 9px;
+  border:1px dashed rgba(33,28,23,.24);
+  border-radius:999px;
+  color:#675b4c;
+  background:transparent;
+  cursor:pointer;
+  font-size:11px;
+}
+.example-chip:hover{border-color:var(--red);color:var(--red)}
+.ask-warning{
+  margin-top:14px;
+  padding-top:11px;
+  border-top:1px solid rgba(33,28,23,.12);
+  color:#90836f;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;
+  line-height:1.55;
+}
+.ask-error{
+  min-height:18px;
+  margin-top:5px;
+  color:var(--red);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:11px;
+  font-weight:700;
+}
+.ask-sheet.missing{animation:shake .3s ease;border-color:var(--red)}
+
+.asked-question-card{
+  position:relative;
+  margin:18px 0 3px;
+  padding:15px 16px 15px 18px;
+  border-left:3px solid var(--red);
+  background:rgba(167,48,32,.055);
+}
+.asked-overline{
+  color:#8b806f;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+.asked-question{
+  margin-top:7px;
+  color:var(--ink);
+  font-size:21px;
+  line-height:1.5;
+  font-weight:900;
+}
+.asked-mode{
+  display:inline-block;
+  margin-top:8px;
+  padding:4px 8px;
+  border:1px solid rgba(167,48,32,.28);
+  color:var(--red-dark);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;
+  font-weight:800;
+}
+.fallback-note{
+  margin-top:10px;
+  padding:12px 13px;
+  border:1px dashed rgba(33,28,23,.22);
+  background:rgba(255,250,239,.34);
+}
+.fallback-label{
+  color:var(--red);
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.fallback-note p{
+  margin:6px 0 0;
+  color:#655b4d;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:13px;
+  line-height:1.7;
+}
+
+@media(min-width:700px){
+  .ask-sheet{padding:28px 28px 24px;margin-top:20px}
+  .ask-heading-row h2{font-size:34px}
+  .ask-heading-row p{font-size:14px}
+  #questionInput{min-height:104px;font-size:19px;padding:17px 16px 30px}
+  .ask-type-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .ask-type{min-height:78px;padding:13px 14px}
+  .ask-type b{font-size:16px}
+  .ask-type span{font-size:12px}
+  .asked-question{font-size:25px}
+  .fallback-note p{font-size:14px}
+}
+
+@media(min-width:700px){
+  .hero-copy{font-size:16px}
+  .notice{font-size:14px}
+  .method-desc,.step-desc,.choice small,.sketch-copy p,.folk-figure-text,.keep-text,.folk-tip p,.yiji-items{font-size:14px}
+  .step h2{font-size:22px}
+  .choice strong{font-size:17px}
+  .hero-deco-row{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px;align-items:stretch}
+  .mystic-card{min-height:95px;padding:14px 8px 11px}
+  .mystic-card b{font-size:28px}
+  .mystic-card span{font-size:12px}
+  .sketch-board{height:100%}
+  .sketch-diagram{width:110px;height:110px}
+  .sketch-core{inset:36px;font-size:28px}
+  .report-illustration{padding:16px 0 12px}
+  .folk-wheel{width:112px;height:112px}
+  .folk-wheel::before,.folk-wheel::after{width:108px}
+  .folk-core{inset:39px;font-size:29px}
+  .folk-title{font-size:20px}
+}
+
+@media(min-width:700px){
+  .app{padding-top:30px;padding-bottom:80px}
+  .hero{padding:40px 36px 34px}
+  h1{font-size:clamp(58px,7vw,78px)}
+  .hero-copy{font-size:16px;max-width:590px}
+  .method-slip{margin-top:22px;padding:16px 18px 15px 22px}
+  .step{padding:26px 25px 24px;margin-top:16px}
+  .step h2{font-size:22px}
+  .step-desc{font-size:14px}
+  .choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .choice{min-height:88px;padding:16px 15px}
+  .choice strong{font-size:17px}
+  .choice small{font-size:13px}
+  .word-board{max-width:500px;gap:9px;padding:11px}
+  .word-char{font-size:38px}
+  .num-grid{grid-template-columns:repeat(4,1fr);gap:10px}
+  .num-btn{min-height:64px;font-size:22px}
+  .direction-wheel{width:360px}
+  .report-inner{padding:34px 34px 30px}
+  .report h2{font-size:30px}
+  .reasoning{font-size:16px}
+  .human-text{font-size:22px}
+  .keep-text{font-size:14px}
+  .folk-tip p{font-size:14px}
+  .yiji-items{font-size:13px}
+  .share-line{font-size:22px}
+  .result-actions{max-width:520px;margin:12px auto 0}
+}
+
+/* 大桌面：限制行宽，避免一行太长 */
+@media(min-width:1024px){
+  .app{width:860px}
+  .reasoning,.hero-copy{max-width:680px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+
+
+/* =========================================================
+   HIGH-END MYSTIC MAGAZINE EDITION
+   高级玄学杂志：编辑排版 / 线稿插画 / 截图友好
+========================================================= */
+:root{
+  --mag-paper:#f4eddf;
+  --mag-paper-deep:#e8ddc9;
+  --mag-ink:#191714;
+  --mag-red:#9f2e22;
+  --mag-bronze:#887458;
+  --mag-soft:#d8cbb5;
+}
+body{
+  color:var(--mag-ink);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(159,46,34,.08),transparent 28%),
+    radial-gradient(circle at 94% 26%,rgba(136,116,88,.09),transparent 25%),
+    linear-gradient(180deg,#dcd1bf 0%,#cfc1aa 100%);
+}
+.app{width:min(100%,900px);padding:18px 14px 68px}
+.magazine-topbar{
+  padding:10px 2px 14px;
+  margin-bottom:14px;
+  border-bottom:1px solid rgba(25,23,20,.35);
+}
+.magazine-brand{gap:12px}
+.brand-seal{
+  width:38px;height:38px;
+  border-radius:50%;
+  border:1px solid var(--mag-red);
+  font-size:17px;
+  background:transparent;
+  box-shadow:none;
+}
+.brand-copy{display:grid;gap:1px;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+.brand-copy b{font-size:13px;letter-spacing:.17em;font-weight:800}
+.brand-copy small{font-size:11px;color:#746959;letter-spacing:.05em}
+.issue-meta{
+  display:grid;
+  gap:2px;
+  text-align:right;
+  color:#706655;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10px;
+  letter-spacing:.08em;
+}
+.issue-meta b{color:var(--mag-red);font-size:13px}
+
+.magazine-hero{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:22px;
+  padding:24px 18px 20px;
+  border:1px solid rgba(25,23,20,.35);
+  border-radius:0;
+  background:
+    linear-gradient(90deg,rgba(25,23,20,.022) 1px,transparent 1px) 0 0/32px 32px,
+    linear-gradient(rgba(25,23,20,.022) 1px,transparent 1px) 0 0/32px 32px,
+    var(--mag-paper);
+  box-shadow:0 20px 55px rgba(60,48,34,.12);
+}
+.magazine-hero::before,.magazine-hero::after{display:none}
+.hero-editorial-copy{position:relative;z-index:2}
+.eyebrow{
+  margin-bottom:18px;
+  color:var(--mag-red);
+  font-size:10px;
+  letter-spacing:.18em;
+}
+.magazine-hero h1{
+  font-size:clamp(44px,11vw,78px);
+  line-height:.99;
+  letter-spacing:-.065em;
+  max-width:610px;
+}
+.magazine-hero .hero-copy{
+  max-width:575px;
+  margin-top:20px;
+  font-size:15px;
+  line-height:1.85;
+  color:#5f5649;
+}
+.magazine-method{
+  margin-top:24px;
+  padding:15px 0 15px 18px;
+  border:0;
+  border-left:2px solid var(--mag-red);
+  background:transparent;
+  box-shadow:none;
+}
+.magazine-method .method-label{font-size:10px;color:#817563;letter-spacing:.13em}
+.magazine-method .method-name{font-size:26px;letter-spacing:-.025em}
+.magazine-method .method-desc{font-size:13px;line-height:1.75;max-width:530px;color:#645b4d}
+.magazine-method .method-foot{justify-content:flex-start;gap:14px}
+.magazine-method .ghost-small{
+  border-color:rgba(25,23,20,.32);
+  border-radius:0;
+  background:transparent;
+  padding:8px 11px;
+  font-size:11px;
+}
+.magazine-method .method-code{font-size:10px;color:#8a7d69}
+.hero-caption-row{
+  display:flex;align-items:center;flex-wrap:wrap;gap:9px;
+  margin-top:20px;
+  color:#827664;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:10px;
+  letter-spacing:.08em;
+}
+.hero-caption-row i{width:18px;height:1px;background:rgba(25,23,20,.25)}
+
+.oracle-cover-figure{
+  position:relative;
+  min-height:355px;
+  margin:0;
+  padding:24px 10px 14px;
+  border-top:1px solid rgba(25,23,20,.22);
+  border-bottom:1px solid rgba(25,23,20,.22);
+  color:#2b2721;
+  background:linear-gradient(180deg,rgba(255,255,255,.14),transparent);
+}
+.figure-paper-label{
+  position:absolute;right:4px;top:8px;
+  color:#8c806c;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:9px;
+  letter-spacing:.15em;
+}
+.oracle-cover-figure svg{display:block;width:min(100%,310px);margin:0 auto;color:#332d26;overflow:visible}
+.oracle-cover-figure .svg-red{color:var(--mag-red)}
+.oracle-cover-figure .svg-labels{font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.15em;fill:#877966}
+.oracle-cover-figure .svg-glyph{font-family:"Songti SC","STSong",serif;font-size:21px;fill:var(--mag-red)}
+.oracle-cover-figure figcaption{
+  display:grid;gap:4px;
+  max-width:310px;margin:4px auto 0;
+  padding-top:10px;
+  border-top:1px solid rgba(25,23,20,.18);
+}
+.oracle-cover-figure figcaption b{font-size:14px;font-weight:800}
+.oracle-cover-figure figcaption span{font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:11px;line-height:1.6;color:#776b5a}
+
+.notice{
+  margin-top:14px;
+  padding:13px 15px;
+  border:0;
+  border-left:1px solid var(--mag-red);
+  color:#665c4d;
+  background:rgba(244,237,223,.72);
+  font-size:12px;
+}
+.progress{margin:20px 3px 10px}
+.progress-head{font-size:10px;letter-spacing:.08em}
+.progress-track{height:2px;background:rgba(25,23,20,.14)}
+.progress-track span{background:var(--mag-red)}
+
+/* 互动页 = 杂志专题页 */
+.step{
+  position:relative;
+  overflow:hidden;
+  margin-top:14px;
+  padding:22px 16px 18px;
+  border:1px solid rgba(25,23,20,.23);
+  border-radius:0;
+  background:rgba(244,237,223,.94);
+  box-shadow:0 8px 24px rgba(55,43,29,.045);
+}
+.step::after{
+  content:"FIELD NOTE";
+  position:absolute;right:12px;top:11px;
+  color:#a0927d;
+  font:8px ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.16em;
+}
+.step-head{gap:13px;padding-right:68px}
+.step-no{
+  width:auto;height:auto;
+  flex:0 0 auto;
+  color:var(--mag-red);
+  background:transparent;
+  border-radius:0;
+  font:700 24px Georgia,"Times New Roman",serif;
+  line-height:1;
+}
+.step h2{font-size:18px;line-height:1.45;letter-spacing:-.015em}
+.step-desc{margin:9px 0 17px 37px;font-size:12px;line-height:1.75;color:#756957}
+.choice-grid{gap:9px}
+.choice{
+  min-height:76px;
+  border:1px solid rgba(25,23,20,.18);
+  border-radius:0;
+  background:rgba(255,252,245,.55);
+  padding:13px 12px;
+}
+.choice:hover{border-color:rgba(25,23,20,.55);background:rgba(255,252,245,.9)}
+.choice.selected{
+  border-color:var(--mag-red);
+  box-shadow:inset 3px 0 0 var(--mag-red);
+  background:#eee1cc;
+}
+.choice strong{font-size:15px}
+.choice small{margin-top:7px;font-size:11px;line-height:1.5;color:#776c5b}
+.word-board,.symbol-board{border-radius:0;background:transparent;border-color:rgba(25,23,20,.35)}
+.word-btn,.symbol{border-radius:0;background:rgba(255,252,245,.42)}
+.num-btn,.time-btn,.object-btn{border-radius:0}
+
+.finish-zone{margin-top:16px}
+.hold-btn{
+  height:62px;
+  border-radius:0;
+  background:#1b1916;
+  letter-spacing:.12em;
+  box-shadow:0 12px 30px rgba(25,23,20,.13);
+}
+.hold-fill{background:var(--mag-red)}
+.error{font-size:11px}
+
+/* 结果 = 可截图收藏页 */
+.result{max-width:680px;margin:24px auto 0}
+.report{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(25,23,20,.42);
+  border-radius:0;
+  color:var(--mag-ink);
+  background:
+    linear-gradient(90deg,rgba(25,23,20,.018) 1px,transparent 1px) 0 0/34px 34px,
+    var(--mag-paper);
+  box-shadow:0 28px 70px rgba(45,35,24,.2);
+}
+.report::before{
+  content:"WILD ORACLE · TODAY'S FOLK NOTE";
+  position:absolute;right:-118px;top:48%;
+  transform:rotate(90deg);
+  color:#a69782;
+  font:8px ui-monospace,SFMono-Regular,Menlo,monospace;
+  letter-spacing:.18em;
+}
+.report-inner{padding:22px 18px 20px}
+.report-head{
+  align-items:center;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(25,23,20,.25);
+}
+.report-overline{color:#80725f;font-size:9px;letter-spacing:.16em}
+.report h2{font-size:20px;color:#4d4438;font-weight:600}
+.red-seal{
+  width:55px;height:55px;
+  border:1px solid var(--mag-red);
+  border-radius:50%;
+  color:var(--mag-red);
+  font-size:9px;
+  background:transparent;
+}
+.magazine-plate{padding:18px 0;border-bottom:1px solid rgba(25,23,20,.18)}
+.plate-index{margin-bottom:9px;color:#897b66;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em}
+.editorial-oracle-figure{display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;align-items:center}
+.editorial-orbit{position:relative;width:112px;height:112px;color:var(--mag-red)}
+.orbit{position:absolute;border-radius:50%;border:1px solid rgba(25,23,20,.28)}
+.o1{inset:0}.o2{inset:14px;border-style:dashed;border-color:rgba(159,46,34,.42)}.o3{inset:34px}
+.orbit-ray{position:absolute;left:50%;top:50%;width:104px;height:1px;background:rgba(25,23,20,.13);transform-origin:center}
+.orbit-ray.r1{transform:translate(-50%,-50%) rotate(38deg)}
+.orbit-ray.r2{transform:translate(-50%,-50%) rotate(-38deg)}
+.orbit-dot{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--mag-red)}
+.d1{left:16px;top:27px}.d2{right:12px;top:50px}.d3{left:51px;bottom:4px}
+.editorial-orbit strong{position:absolute;inset:38px;display:grid;place-items:center;font-size:27px;color:var(--mag-red)}
+.folk-overline{color:#8e806c;font-size:9px}
+.folk-title{margin-top:4px;color:#2c2822;font-size:20px;line-height:1.35}
+.folk-figure-text{margin-top:6px;color:#665c4d;font-size:12px;line-height:1.7}
+
+.one-line{padding:24px 0 20px}
+.one-label{color:var(--mag-red);font-size:9px;letter-spacing:.18em}
+.one-answer{
+  max-width:580px;
+  margin-top:8px;
+  color:#171512;
+  font-size:clamp(34px,9vw,58px);
+  line-height:1.06;
+  letter-spacing:-.065em;
+}
+.one-time{margin-top:10px;color:#716553;font-size:14px}
+.meta-row{margin-top:22px;padding-top:16px;border-top:1px solid rgba(25,23,20,.18)}
+.score-caption{color:#827563;font-size:9px}
+.score{color:#171512}
+.score span{font-size:52px}
+.gua-name{border:1px solid rgba(25,23,20,.22);border-radius:0;background:transparent;padding:10px 12px}
+.gua-name span{color:#897c68;font-size:9px}
+.gua-name strong{color:#2b2721;font-size:14px}
+.report-section{padding:19px 0;border-top:1px solid rgba(25,23,20,.18)}
+.section-title{color:#81735f;font-size:9px;letter-spacing:.17em}
+.reasoning{
+  color:#3c352c;
+  font-size:14px;
+  line-height:1.95;
+  text-align:justify;
+}
+.reasoning::first-letter{float:left;margin:7px 7px 0 0;color:var(--mag-red);font-size:44px;line-height:.7;font-family:Georgia,"Times New Roman",serif}
+.reasoning b{font-weight:700;color:#171512}
+.human-translation{
+  margin-top:15px;
+  padding:15px 16px;
+  border:0;
+  border-left:3px solid var(--mag-red);
+  border-radius:0;
+  background:#e9ddc8;
+}
+.human-label{color:#857663;font-size:9px;letter-spacing:.15em}
+.human-text{margin-top:5px;color:#211e1a;font-size:18px;line-height:1.55;font-weight:800}
+.keep-line{border-radius:0;border-color:rgba(25,23,20,.18);background:rgba(255,252,245,.48)}
+.keep-num{color:var(--mag-red);font-size:10px}
+.keep-text{color:#302a23;font-size:13px}
+.folk-tip{border-radius:0;background:#1d1a16;color:#efe4d2}
+.folk-tip .folk-title{color:#f2e7d5;font-size:15px}
+.folk-tip p{color:#cfc4b3;font-size:12px}
+.yiji{gap:9px}
+.yiji-card{border-radius:0;min-height:118px}
+.yiji-card.yi{background:rgba(255,252,245,.42);border-color:rgba(25,23,20,.18)}
+.yiji-card.ji{background:rgba(159,46,34,.055);border-color:rgba(159,46,34,.24)}
+.yiji-title{font-size:11px;color:#302a23}
+.yiji-card.ji .yiji-title{color:var(--mag-red)}
+.yiji-items{color:#51483c;font-size:12px}
+.data{border-radius:0;border-color:rgba(25,23,20,.18);background:transparent}
+.data strong{color:#211d19;font-size:17px}
+.data span{color:#847865;font-size:9px}
+.share-line{
+  margin:0;
+  padding:22px 0 19px;
+  border-top:2px solid var(--mag-red);
+  color:#211d19;
+  font-size:21px;
+  line-height:1.55;
+}
+.report-foot{color:#817561;font-size:8px}
+.action-btn{border-radius:0;min-height:50px}
+.copy-btn{background:var(--mag-red)}
+.reset-btn{background:rgba(244,237,223,.8)}
+footer{font-size:10px;color:#756a59}
+footer small{font-size:9px}
+
+/* 分析遮罩也改成杂志插页 */
+.overlay{background:rgba(21,19,17,.96)}
+.reading{max-width:430px}
+.divine-plate{filter:none}
+.read-title{font-size:21px;line-height:1.4}
+.read-sub,.read-msg{font-size:11px}
+.read-code{font-size:9px}
+
+@media(min-width:700px){
+  .app{width:min(100%,980px);padding-top:28px}
+  .magazine-hero{grid-template-columns:minmax(0,1.28fr) minmax(300px,.72fr);gap:28px;padding:38px 34px 30px}
+  .oracle-cover-figure{border-top:0;border-bottom:0;border-left:1px solid rgba(25,23,20,.22);padding:18px 0 8px 28px;min-height:480px;display:flex;flex-direction:column;justify-content:center}
+  .magazine-hero h1{font-size:72px}
+  .magazine-hero .hero-copy{font-size:16px}
+  .magazine-method .method-name{font-size:30px}
+  .magazine-method .method-desc{font-size:14px}
+  .notice{font-size:13px}
+  .step{padding:27px 24px 24px}
+  .step-no{font-size:30px}
+  .step h2{font-size:22px}
+  .step-desc{margin-left:46px;font-size:13px}
+  .choice{min-height:90px;padding:16px 15px}
+  .choice strong{font-size:17px}.choice small{font-size:12px}
+  .report-inner{padding:30px 30px 26px}
+  .editorial-oracle-figure{grid-template-columns:145px minmax(0,1fr)}
+  .editorial-orbit{width:130px;height:130px}.orbit-ray{width:122px}.editorial-orbit strong{inset:43px;font-size:31px}
+  .folk-title{font-size:23px}.folk-figure-text{font-size:13px}
+  .one-answer{font-size:58px}
+  .reasoning{font-size:15px}.human-text{font-size:21px}
+  .share-line{font-size:24px}
+}
+
+@media(min-width:1024px){
+  .app{width:980px}
+  .result{max-width:720px}
+}
+
+@media(max-width:430px){
+  .app{padding-left:10px;padding-right:10px}
+  .magazine-topbar{padding-left:2px;padding-right:2px}
+  .brand-copy b{font-size:11px}.brand-copy small{font-size:9px}
+  .issue-meta{font-size:8px}
+  .brand-seal{width:34px;height:34px}
+  .magazine-hero{padding:22px 15px 18px;gap:18px}
+  .magazine-hero h1{font-size:46px}
+  .magazine-hero .hero-copy{font-size:14px;line-height:1.8}
+  .magazine-method{padding-left:14px;margin-top:20px}
+  .magazine-method .method-name{font-size:24px}
+  .magazine-method .method-desc{font-size:12px}
+  .oracle-cover-figure{min-height:330px;padding-top:18px}
+  .oracle-cover-figure svg{max-height:280px}
+  .step{padding:20px 13px 17px}
+  .step h2{font-size:17px}
+  .step-desc{margin-left:34px;font-size:12px}
+  .choice-grid{grid-template-columns:1fr 1fr}
+  .choice{min-height:82px;padding:12px 10px}
+  .choice strong{font-size:14px}.choice small{font-size:11px}
+  .report-inner{padding:20px 15px 18px}
+  .editorial-oracle-figure{grid-template-columns:104px minmax(0,1fr);gap:12px}
+  .editorial-orbit{width:98px;height:98px}.orbit-ray{width:92px}.editorial-orbit strong{inset:32px;font-size:24px}
+  .folk-title{font-size:18px}.folk-figure-text{font-size:11px}
+  .one-answer{font-size:38px}
+  .score span{font-size:46px}
+  .reasoning{font-size:13px}.human-text{font-size:17px}
+  .keep-text{font-size:12px}.folk-tip p,.yiji-items{font-size:11px}
+  .share-line{font-size:19px}
+}
+
+</style>
+</head>
+<body>
+<main class="app">
+
+  <div class="topbar magazine-topbar">
+    <div class="brand magazine-brand">
+      <span class="brand-seal">卦</span>
+      <span class="brand-copy">
+        <b>WILD ORACLE</b>
+        <small>今日野卦 · 小事民间刊</small>
+      </span>
+    </div>
+    <div class="issue-meta">
+      <span>ISSUE <b id="issueNo">08</b></span>
+      <span id="issueDate">AUG · 2026</span>
+    </div>
+  </div>
+
+  <section class="hero magazine-hero">
+    <div class="hero-editorial-copy">
+      <div class="eyebrow">FOLK DIVINATION FOR SMALL THINGS</div>
+      <h1>有件小事，<br>问完再决定。</h1>
+      <p class="hero-copy">
+        先把今天真正拿不准的那一件事写下来。后面的摸字、听数、看方位都会围着这件事绕，最后只回你一个能执行的答案。
+      </p>
+
+      <div class="method-slip magazine-method">
+        <div class="method-label">本期起卦路数 / METHOD OF THE DAY</div>
+        <div class="method-name" id="methodName">门槛起卦</div>
+        <div class="method-desc" id="methodDesc">据说适合看那些不大，但很占时间的小麻烦。</div>
+        <div class="method-foot">
+          <button type="button" class="ghost-small" id="changeMethod">换一个野路子</button>
+          <span class="method-code" id="methodCode">NO. 000000</span>
+        </div>
+      </div>
+
+      <div class="hero-caption-row">
+        <span>只问一件</span><i></i><span>只断小事</span><i></i><span>今天有效</span>
+      </div>
+    </div>
+
+    <figure class="oracle-cover-figure" aria-label="抽象玄学线稿插图">
+      <div class="figure-paper-label">PLATE 01</div>
+      <svg viewBox="0 0 320 390" role="img" aria-hidden="true">
+        <defs>
+          <filter id="roughen" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="4" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.45"/>
+          </filter>
+        </defs>
+        <g class="svg-ink" fill="none" stroke="currentColor" stroke-width="1.15" filter="url(#roughen)">
+          <circle cx="170" cy="154" r="105"/>
+          <circle cx="170" cy="154" r="78" stroke-dasharray="2 7"/>
+          <circle cx="170" cy="154" r="46"/>
+          <path d="M170 31V277M47 154H293M83 67L257 241M257 67L83 241" opacity=".26"/>
+          <path d="M127 256c-13 17-23 35-25 54-2 23 13 42 35 47 28 7 56-9 66-35 7-18 5-41-6-58"/>
+          <path d="M129 260c4-26 2-52 4-79 1-12 4-22 12-23 10-1 13 10 13 20l1 44"/>
+          <path d="M159 226l1-74c0-13 5-22 13-22 10 0 13 10 13 22v69"/>
+          <path d="M186 223v-55c0-11 5-19 13-19 9 0 12 9 11 20l-3 62"/>
+          <path d="M207 233l4-42c1-10 6-17 13-16 8 1 10 10 7 21l-11 56"/>
+          <path d="M127 300c18-14 40-17 61-9" opacity=".6"/>
+          <path d="M137 317c19-12 38-13 55-7" opacity=".45"/>
+          <path d="M151 283c8 7 16 9 25 7" opacity=".48"/>
+          <path d="M121 114c13-9 25-13 36-12M203 99c11 1 20 5 29 13" opacity=".55"/>
+        </g>
+        <g class="svg-red" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M45 231c42-8 58-35 71-59 21-39 43-45 67-27 27 20 33 61 81 63 12 1 26-2 38-8"/>
+          <circle cx="115" cy="174" r="4" fill="currentColor" stroke="none"/>
+          <circle cx="184" cy="145" r="4" fill="currentColor" stroke="none"/>
+          <circle cx="264" cy="208" r="4" fill="currentColor" stroke="none"/>
+        </g>
+        <g class="svg-labels" fill="currentColor">
+          <text x="165" y="24">N</text><text x="300" y="159">E</text><text x="166" y="290">S</text><text x="28" y="159">W</text>
+          <text x="154" y="161" class="svg-glyph">卦</text>
+        </g>
+      </svg>
+      <figcaption>
+        <b>手上没答案，只有一点偏向。</b>
+        <span>民间小事占，最爱拿这种偏向说事。</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="ask-sheet" id="askSheet">
+    <div class="ask-kicker">00 / BEFORE THE ORACLE</div>
+    <div class="ask-heading-row">
+      <div>
+        <h2>先把那件事说清楚。</h2>
+        <p>只问一件，越具体越好。别问一生，别问宇宙，问今天能不能做、要不要去、现在该不该回。</p>
+      </div>
+      <span class="ask-stamp">问事</span>
+    </div>
+
+    <label class="question-label" for="questionInput">你今天拿不准的是——</label>
+    <div class="question-input-wrap">
+      <textarea id="questionInput" maxlength="80" rows="3" placeholder="例如：今晚要不要去这个饭局？"></textarea>
+      <div class="question-count"><span id="questionCount">0</span> / 80</div>
+    </div>
+
+    <div class="ask-type-label">这件事属于哪一路？</div>
+    <div class="ask-type-grid" id="askTypeGrid">
+      <button type="button" class="ask-type" data-mode="go"><b>去留</b><span>去不去 / 做不做</span></button>
+      <button type="button" class="ask-type" data-mode="timing"><b>时机</b><span>现在 / 晚点 / 明天</span></button>
+      <button type="button" class="ask-type" data-mode="people"><b>人事</b><span>回不回 / 主不主动</span></button>
+      <button type="button" class="ask-type" data-mode="money"><b>钱物</b><span>买不买 / 值不值</span></button>
+      <button type="button" class="ask-type" data-mode="work"><b>工作</b><span>提不提 / 接不接</span></button>
+      <button type="button" class="ask-type" data-mode="misc"><b>杂事</b><span>不好归类，直接断</span></button>
+    </div>
+
+    <div class="example-strip">
+      <span>不会问？随便点一个：</span>
+      <button type="button" class="example-chip" data-example="今晚要不要去这个饭局？" data-mode="go">饭局去不去</button>
+      <button type="button" class="example-chip" data-example="这条消息现在要不要回？" data-mode="people">消息回不回</button>
+      <button type="button" class="example-chip" data-example="这个东西今天要不要买？" data-mode="money">今天买不买</button>
+      <button type="button" class="example-chip" data-example="今天适不适合跟老板提这件事？" data-mode="work">要不要跟老板提</button>
+    </div>
+
+    <div class="ask-warning" id="askWarning">这摊只断日常低风险小事。医疗、投资、法律、安全类决定请看可靠信息，不拿野卦作依据。</div>
+    <div class="ask-error" id="askError"></div>
+  </section>
+
+  <div class="notice" id="notice">
+    先看，后点。不要选吉利的，选第一眼让你停了一下的。
+  </div>
+
+  <div class="progress">
+    <div class="progress-head">
+      <span>本卦已走</span>
+      <span id="progressText">0 / 4</span>
+    </div>
+    <div class="progress-track"><span id="progressBar"></span></div>
+  </div>
+
+  <div id="steps"></div>
+
+  <div class="finish-zone">
+    <button type="button" class="hold-btn" id="holdBtn">
+      <span class="hold-fill" id="holdFill"></span>
+      <span class="hold-text" id="holdText">长按收卦 · 松手不算</span>
+    </button>
+    <div class="error" id="error">东西还没取全，这卦不能硬断。</div>
+  </div>
+
+  <section class="result" id="result">
+    <article class="report">
+      <div class="report-inner">
+
+        <div class="report-head">
+          <div>
+            <div class="report-overline" id="reportMethod">今日野卦 · 一纸断</div>
+            <h2>这卦只回你这件事</h2>
+          </div>
+          <div class="red-seal">今日<br>有效</div>
+        </div>
+
+        <div class="asked-question-card">
+          <div class="asked-overline">YOU ASKED / 你问的是</div>
+          <div class="asked-question" id="resultQuestion">今晚要不要去这个饭局？</div>
+          <div class="asked-mode" id="resultQuestionMode">问去留</div>
+        </div>
+
+        <div class="report-illustration magazine-plate">
+          <div class="plate-index">PLATE / II</div>
+          <div class="editorial-oracle-figure">
+            <div class="editorial-orbit" aria-hidden="true">
+              <span class="orbit o1"></span>
+              <span class="orbit o2"></span>
+              <span class="orbit o3"></span>
+              <span class="orbit-ray r1"></span>
+              <span class="orbit-ray r2"></span>
+              <span class="orbit-dot d1"></span>
+              <span class="orbit-dot d2"></span>
+              <span class="orbit-dot d3"></span>
+              <strong id="folkCore">门</strong>
+            </div>
+            <div class="editorial-figure-copy">
+              <div class="folk-overline">卦象摘记 / FIGURE NOTE</div>
+              <div class="folk-title" id="folkTitle">先见门，后见数</div>
+              <p class="folk-figure-text" id="folkFigureText">多半不是大事，是小事来缠。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="one-line">
+          <div class="one-label">这一问 · 一断</div>
+          <div class="one-answer" id="oneAnswer">今天别替别人接活。</div>
+          <div class="one-time" id="oneTime">尤其 17:20 以后。</div>
+
+          <div class="meta-row">
+            <div>
+              <div class="score-caption">这一断的倾向</div>
+              <div class="score"><span id="score">67</span><small>%</small></div>
+            </div>
+
+            <div class="gua-name">
+              <span>本卦叫</span>
+              <strong id="guaName">半截门局</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-title">这卦是怎么绕出来的</div>
+          <p class="reasoning" id="reasoning"></p>
+
+          <div class="human-translation">
+            <div class="human-label">说人话</div>
+            <div class="human-text" id="humanText">今天很可能有人拿一点破事来占你的时间。</div>
+          </div>
+
+          <div class="fallback-note">
+            <div class="fallback-label">如果你非要反着卦做</div>
+            <p id="fallbackText">也不是不行，给自己留个退出口。</p>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-title">今天记住三句话</div>
+          <div class="three-lines" id="threeLines"></div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-title">民间土办法</div>
+          <div class="folk-tip">
+            <div class="folk-title">没法力，但有点用</div>
+            <p id="folkTip"></p>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-title">今日宜忌</div>
+          <div class="yiji">
+            <div class="yiji-card yi">
+              <div class="yiji-title">宜</div>
+              <div class="yiji-items" id="yi"></div>
+            </div>
+            <div class="yiji-card ji">
+              <div class="yiji-title">忌</div>
+              <div class="yiji-items" id="ji"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-title">顺手附送三样没法解释的东西</div>
+          <div class="data-grid">
+            <div class="data">
+              <strong id="dangerTime">17:20</strong>
+              <span>今天最容易起小事</span>
+            </div>
+            <div class="data">
+              <strong id="luckyObject">黑笔</strong>
+              <span>临时压一压的东西</span>
+            </div>
+            <div class="data">
+              <strong id="avoidWord">顺便</strong>
+              <span>今天少接这个词</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="share-line" id="shareLine">
+          我今天的卦很简单：17点以后，不要看起来太有空。
+        </p>
+
+        <div class="report-foot">
+          <span id="dateText"></span>
+          <span id="reportId"></span>
+        </div>
+
+      </div>
+    </article>
+
+    <div class="result-actions">
+      <button type="button" class="action-btn copy-btn" id="copyBtn">复制这句判词</button>
+      <button type="button" class="action-btn reset-btn" id="resetBtn">再问一件</button>
+    </div>
+  </section>
+
+  <footer>
+    每天用 AI 做一个好像有用，又好像没什么用的网页。
+    <small>纯娱乐。大事看事实，小事拿不准时，偶尔听听野路子。</small>
+  </footer>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="readTitle">
+  <div class="reading">
+    <div class="divine-plate">
+      <div class="divine-ring r1"></div>
+      <div class="divine-ring r2"></div>
+      <div class="divine-ring r3"></div>
+      <div class="divine-center">断</div>
+    </div>
+    <h3 class="read-title" id="readTitle">正在把几样没关系的东西硬凑成一卦</h3>
+    <p class="read-sub">老法子不讲明白，讲明白就不玄了</p>
+    <div class="read-line"><span></span></div>
+    <p class="read-msg" id="readMsg">先看前手，再看后手……</p>
+    <div class="read-code" id="readCode">卦纸正在压平 / 01</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+"use strict";
+
+const $ = s => document.querySelector(s);
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
+function esc(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function makeSeed(){
+  if(window.crypto?.getRandomValues){
+    const a=new Uint32Array(1);
+    crypto.getRandomValues(a);
+    return a[0];
+  }
+  return Date.now()+Math.floor(Math.random()*99999);
+}
+
+const TYPES=["work","money","social","night","delay","mood","phone","food","commute"];
+
+const ASK_MODES={
+  go:{label:"问去留",bias:{social:2,commute:2,mood:1}},
+  timing:{label:"问时机",bias:{delay:3,mood:1,work:1}},
+  people:{label:"问人事",bias:{social:5,phone:1}},
+  money:{label:"问钱物",bias:{money:6}},
+  work:{label:"问工作",bias:{work:6,delay:1}},
+  misc:{label:"问杂事",bias:{mood:1,delay:1}}
+};
+
+const HIGH_RISK_RE=/(股票|基金|期货|加密|币价|投资|理财|贷款|借贷|疾病|症状|药物|用药|手术|怀孕|法律|诉讼|官司|报警|合同纠纷|自杀|自残|伤害自己)/i;
+
+let askState={text:"",mode:null};
+
+function selectAskMode(mode){
+  askState.mode=mode;
+  document.querySelectorAll(".ask-type").forEach(btn=>{
+    btn.classList.toggle("selected",btn.dataset.mode===mode);
+  });
+  $("#askSheet")?.classList.remove("missing");
+  $("#askError").textContent="";
+}
+
+function validateQuestion(){
+  const raw=$("#questionInput").value.trim();
+  askState.text=raw;
+  if(!raw){
+    $("#askError").textContent="先把那件事写下来。不然这卦没地方落。";
+    $("#askSheet").classList.add("missing");
+    $("#askSheet").scrollIntoView({behavior:"smooth",block:"center"});
+    return false;
+  }
+  if(raw.length>80){
+    $("#askError").textContent="一件事就够了，别把整个人生塞进八十个字。";
+    return false;
+  }
+  if(HIGH_RISK_RE.test(raw)){
+    $("#askError").textContent="这摊只断日常小事。医疗、投资、法律、安全类决定别拿野卦作依据。";
+    $("#askSheet").classList.add("missing");
+    $("#askSheet").scrollIntoView({behavior:"smooth",block:"center"});
+    return false;
+  }
+  if(!askState.mode){
+    $("#askError").textContent="再点一下这是问去留、时机、人事、钱物还是工作。";
+    $("#askSheet").classList.add("missing");
+    $("#askSheet").scrollIntoView({behavior:"smooth",block:"center"});
+    return false;
+  }
+  $("#askSheet").classList.remove("missing");
+  $("#askError").textContent="";
+  return true;
+}
+
+function getDecision(mode,score,danger){
+  const high=score>=72, mid=score>=54, low=score>=38;
+  const cooldown=rand(12,24);
+  const replyDelay=rand(8,22);
+  const map={
+    go: high
+      ? {answer:"可以去。",time:`但别把行程排满，${danger} 前后给自己留个退路。`,human:"这件事本身没那么拧，去可以，重点是别为了已经去了就硬撑到底。",fallback:"真不想去也可以临时收口；已经去的话，提前给自己定一个离场时间。"}
+      : mid
+      ? {answer:"可以去，但别待太久。",time:`把 ${danger} 当成一个收口点。`,human:"这卦不是劝你彻底不去，而是提醒你别把一次普通露面升级成整晚任务。",fallback:"非去不可就晚一点到、早一点走，别接第二场。"}
+      : low
+      ? {answer:"不太建议去。",time:"如果你现在已经有点不想去，这个感觉可以信一次。",human:"去未必出事，但消耗很可能大于收获。今天没必要为了人情把自己硬塞进去。",fallback:"一定要去就只完成最低限度社交，吃到第一轮就撤。"}
+      : {answer:"今天先别去。",time:"这卦更像“去了也会想走”。",human:"这件事今天的阻力偏多，硬去大概率只是给自己增加一段来回。",fallback:"非去不可就缩短停留时间，不临时加项目，也别答应下一摊。"},
+
+    timing: high
+      ? {answer:"现在可以做。",time:"不用再等一个更完美的时机。",human:"这件事目前阻力不高，继续等反而容易把普通决定拖成心理负担。",fallback:"如果还想等等，给自己一个明确截止点，别无限延后。"}
+      : mid
+      ? {answer:"可以做，但晚一点更顺。",time:`避开 ${danger} 前后那段乱气。`,human:"不是不能做，是现在容易多想一步。稍微错开时间，你会更容易按原计划收尾。",fallback:"现在必须做的话，先只做最小动作，不一次性把事情做满。"}
+      : low
+      ? {answer:"先等等。",time:`至少过了 ${danger} 再看一眼。`,human:"你现在的判断里混着一点急。缓一轮之后，真正需要做的部分会更清楚。",fallback:"不能等的话，先做可撤回的部分，别一次把话说死。"}
+      : {answer:"今天别急着定。",time:"能留到明天的，先留到明天。",human:"这卦最重的是“急着收口”。今天硬定容易只是为了结束纠结，而不是真想清楚。",fallback:"必须今天拍板，就选那个损失更容易撤回的方案。"},
+
+    people: high
+      ? {answer:"可以主动。",time:`但别在 ${danger} 前后一口气说太多。`,human:"这件人事有来往的象，主动并不吃亏。重点是轻一点，不要把一次联系变成一场说明会。",fallback:`想更稳一点，就先发一句短的，${replyDelay} 分钟后再决定要不要继续。`}
+      : mid
+      ? {answer:"可以回，但少说一点。",time:`晚 ${replyDelay} 分钟再回也不迟。`,human:"今天适合保持联系，不适合一次解释太满。让对话留一点空，反而更顺。",fallback:"非要马上回，就只回答对方真正问的那一句。"}
+      : low
+      ? {answer:"先别主动。",time:`等 ${replyDelay} 分钟，让第一反应过去。`,human:"这卦里你这边的心气比对方那边更响。现在主动容易把普通消息带上额外情绪。",fallback:"真想联系，就发最轻的一句，不问关系、不问态度、不追着解释。"}
+      : {answer:"今天先别追。",time:"留一点没说完，比把话说尽更合适。",human:"这件事今天不适合靠更多消息解决。越想马上确认，越容易让自己反复看对方反应。",fallback:"必须沟通就只处理事实，不处理“你到底怎么想”。"},
+
+    money: high
+      ? {answer:"可以买。",time:`但先确认它不是为了凑单，最好在 ${danger} 前把预算想清楚。`,human:"这卦里想要和实际用途没有明显打架。可以买，但别顺势再加第二件。",fallback:"还不放心就先删掉购物车里的附带品，只留你真正来问的这个。"}
+      : mid
+      ? {answer:"可以买，但别现在秒付。",time:`先放 ${cooldown} 小时，过后还想要再买。`,human:"东西未必不值，问题在于你今天的起念稍微偏急。给欲望一轮自然降温会更准。",fallback:"非买不可就只买这一件，不凑单、不升级配置、不顺便囤。"}
+      : low
+      ? {answer:"今天先别买。",time:`截图留着，${cooldown} 小时后再看。`,human:"你现在想买它是真的，但“今天就得拥有”这部分比较可疑。",fallback:"真急用就买最基础版本，别把一次购买顺手升级成改善人生工程。"}
+      : {answer:"别买。",time:"至少睡一觉再说。",human:"这卦更像拿东西填一个临时空缺。东西可能没问题，时机不太对。",fallback:"如果必须买，只处理真正的使用需求，不碰任何“提升幸福感”的附加理由。"},
+
+    work: high
+      ? {answer:"可以提。",time:`尽量别卡在 ${danger} 前后，先把要点说短。`,human:"这件工作上的事目前可以往前走。你只需要把范围说清，不用先替所有人想完后续。",fallback:"如果现场气氛不对，就先抛事实和需求，别当场逼出最终答案。"}
+      : mid
+      ? {answer:"可以提，但先留余地。",time:"别用“必须今天定”的语气。",human:"事情能谈，只是今天不适合把边界说死。先让对方知道，再看反馈。",fallback:"非要今天定，就把“决定”拆成“先确认下一步”。"}
+      : low
+      ? {answer:"今天先别硬提。",time:`避开 ${danger} 前后，换个更干净的窗口。`,human:"不是这件事不该提，而是今天容易在表达时顺手多承担一层。",fallback:"必须说的话，先写成三句话：现状、你需要什么、你不负责什么。"}
+      : {answer:"先别接，也先别承诺。",time:"今天适合问清楚，不适合先扛下来。",human:"这卦最怕你为了推进事情先把责任拿到自己手里。",fallback:"非接不可就先问截止时间、完成标准和谁负责最后确认。"},
+
+    misc: high
+      ? {answer:"可以做。",time:"但做到够用就停。",human:"这件小事今天总体不拧，别再为了求一个完美答案把它复杂化。",fallback:"如果途中开始反复纠结，就回到最初那个最简单的版本。"}
+      : mid
+      ? {answer:"能做，但别加码。",time:`${danger} 前后尤其别临时改变主意。`,human:"事情本身可以推进，真正的风险是做到一半突然给自己加条件。",fallback:"反着做也行，只保留可撤回空间。"}
+      : low
+      ? {answer:"先缓一下。",time:"等第一阵想法过去，再看还需不需要。",human:"这件事今天更像“现在很想解决”，不一定是“现在必须解决”。",fallback:"必须做就先做最小、最容易撤回的一步。"}
+      : {answer:"今天先算了。",time:"不做这一步，不会损失太多。",human:"这一问的卦气偏散，硬推进更容易制造额外步骤。",fallback:"真要做，只做最低配版本，别追求一次到位。"}
+  };
+  return map[mode]||map.misc;
+}
+
+
+const METHODS=[
+  {
+    name:"门槛起卦",
+    desc:"先看你往哪边偏，再看手里落了什么字。民间说这种卦最会抓“本来没事，后来被人叫住”的小麻烦。",
+    notice:"别选顺眼的。哪一个让你停了一下，就算它先开口。",
+    modules:["word","direction","number","tap","time","line"],
+    intro:["门先开，事后到；前手若急，后手多半有人来叫。","这一路不看吉凶，专看今天哪件小事最容易黏上来。"]
+  },
+  {
+    name:"灯下摸字",
+    desc:"旧说灯下看字，不看字义，看你先碰哪一个。碰得快，是外事；碰得慢，是心事。",
+    notice:"看三秒，别解释。你越能解释，越不算第一眼。",
+    modules:["word","redpaper","coin","number","line","time"],
+    intro:["灯下字不问好坏，只看先后。先落外字，事从外来；先落内字，事从心起。","这一法最怕你认真，认真以后就只剩审美，没有卦了。"]
+  },
+  {
+    name:"鞋底听数",
+    desc:"民间很野的一路：取个数、看个方、再敲几下。数不算吉利，算你今天哪处容易踩空。",
+    notice:"不要选生日、手机号尾数和所谓幸运数字。那些都被你提前训练过。",
+    modules:["number","tap","direction","coin","time","object"],
+    intro:["数落前，方落后，前数带脚，后方带路。两边若拧，就是今天容易多走一步。","这卦不问你顺不顺，只看哪件事最容易让你多费一次劲。"]
+  },
+  {
+    name:"三碰断事",
+    desc:"先碰一个东西，再翻三枚钱，最后留一个时辰。老话叫“物先应，钱后响”。",
+    notice:"第一碰别改。改了以后就是你在挑，不是它在应。",
+    modules:["object","coin","time","word","redpaper","line"],
+    intro:["物应在前，钱响在后，若中间再见偏位，多半是小事反复，不伤大局。","三碰法不看大命，专门收拾“怎么又来一次”的破事。"]
+  },
+  {
+    name:"回头卦",
+    desc:"专看今天什么事最容易让你回头：回消息、回去拿东西、回看聊天、回头补一手。",
+    notice:"今天看到“回”字就别多想，这一路本来就专断反复。",
+    modules:["direction","time","tap","word","object","redpaper"],
+    intro:["前步若直，后步若偏，叫回头；回头不一定坏，但最耗时间。","这卦看的是反复，不看成败。很多烦就是多做那一下。"]
+  },
+  {
+    name:"饭前野断",
+    desc:"不算饭，算人在饿的时候最容易把什么判断弄复杂。适合看消费、外卖、脾气和晚上乱想。",
+    notice:"如果你现在正饿着，这一卦理论上会更不稳定。也可能只是更诚实。",
+    modules:["object","number","line","time","word","tap"],
+    intro:["腹空则念浮，念浮则事大。老话没这么说，是我们刚给它补上的。","这一法不看财运，只看你今天会不会因为一点空缺，顺手填进太多东西。"]
+  },
+  {
+    name:"红纸压事",
+    desc:"先在红纸上按个位置，再取一个数。上偏主外，下偏主内，边上主别人，中间主自己。",
+    notice:"按哪里都行，但别瞄准正中间。越想准，越不准。",
+    modules:["redpaper","number","word","coin","direction","time"],
+    intro:["红纸先定落处，数再定轻重。偏边见客，偏中见己，左缓右急。","这一路最适合把一堆说不清的感觉，最后翻译成一句能执行的话。"]
+  },
+  {
+    name:"口袋余数法",
+    desc:"像从口袋里掏出几样没关系的东西硬算：一件物、一个数、一处方向。野，但通常能断得很具体。",
+    notice:"不要追求“像算命”。越普通的东西，民间路数越爱拿来做文章。",
+    modules:["object","number","direction","tap","line","word"],
+    intro:["余数不问整，余物不问贵。留下来的，才最容易把今天的小事带出来。","这法最擅长把玄话说半天，最后告诉你别回那条消息。"]
+  }
+];
+
+const WORD_POOLS=[
+  [
+    ["门","外事",{work:3,social:1},"先碰门，外事先动"],
+    ["火","起念",{money:3,mood:1},"火落前手，最怕临时起意"],
+    ["井","往下",{mood:3,delay:1},"井字入手，心容易往深处走"],
+    ["雨","拖着",{delay:3},"雨不伤人，最会把事情往后推"],
+    ["眼","在意",{social:3,mood:1},"眼主看人，也主多想一句"],
+    ["灯","夜起",{night:3,phone:1},"灯见夜象，越晚越容易不收手"],
+    ["鱼","摸行",{work:1,delay:2},"鱼不逆水，今天硬顶反而费劲"],
+    ["锁","卡住",{delay:3,work:1},"锁主一处卡，往往不是大事"],
+    ["杯","空处",{food:2,money:2},"杯为空器，空了就想填"]
+  ],
+  [
+    ["鞋","走动",{commute:3},"鞋先应，事多在路上"],
+    ["线","牵扯",{social:2,work:1},"线主牵，今天少替别人接头"],
+    ["纸","未定",{delay:2,work:1},"纸上事多，落地事少"],
+    ["钟","催促",{work:2,commute:1},"钟催外事，越赶越容易多一步"],
+    ["伞","预防",{mood:1,commute:2},"伞主先防，容易提前担心"],
+    ["饭","肉身",{food:3},"饭落前手，身体会先替你做决定"],
+    ["屏","吸住",{phone:3,night:1},"屏见黏象，拿起容易放不下"],
+    ["票","付出",{money:3},"票带财口，今天容易为一点方便多付"],
+    ["路","回转",{commute:2,delay:1},"路主反复，最怕走到一半再想起"]
+  ]
+];
+
+const OBJECTS=[
+  ["钥匙","开关之物",{commute:2,work:1},"钥匙先应，今天事情多在开关之间"],
+  ["耳机","隔外声",{social:2,phone:1},"耳机主隔，今天少听一点反而顺"],
+  ["黑笔","落字",{work:2},"笔主定，今天适合少解释多落字"],
+  ["纸巾","收尾",{mood:1,food:1},"纸巾主收，今天小事及时收口"],
+  ["杯子","空满",{food:2,money:1},"杯器一空，人容易想填"],
+  ["充电线","续气",{phone:2,night:1},"线主续，今天最怕什么都再续十分钟"],
+  ["工牌","外身",{work:3},"牌是外身份，事多从工作身份来"],
+  ["帆布袋","多装",{money:1,work:1},"袋主装，今天别什么都往自己身上揽"],
+  ["雨伞","先防",{commute:2,mood:1},"伞主防，容易为了没发生的事先费神"],
+  ["饭盒","实事",{food:3},"饭盒主实，不宜空想太久"],
+  ["手机","杂声",{phone:3,social:1},"手机一应，消息会显得比它本来更重要"],
+  ["门卡","出入",{work:1,commute:2},"门卡主进出，今天边界要清楚"]
+];
+
+const TIME_POOL=[
+  ["09:17",{work:2,commute:1},"辰尾见动，早上容易先来一件插队的小事"],
+  ["10:26",{social:2,work:1},"巳中见客，容易被一句话带走注意力"],
+  ["11:43",{food:2,mood:1},"午前气散，饿的时候判断容易变形"],
+  ["14:13",{delay:3},"午后半沉，最容易把五分钟拖成一小时"],
+  ["15:36",{social:2,mood:1},"申前见眼，容易多看一句、多想一层"],
+  ["16:52",{work:3},"酉气将起，临时任务开始长脚"],
+  ["17:41",{work:4},"下班门薄，最怕有人突然想起你"],
+  ["18:06",{commute:2,work:2},"事已过门仍有尾巴，容易多回一次头"],
+  ["21:14",{money:2,phone:1},"夜起财口，购物欲容易穿成合理需求"],
+  ["22:37",{night:3,phone:1},"灯久心浮，越晚越容易失去结束能力"],
+  ["23:19",{night:4},"子前心动，适合睡觉，不适合做人生决定"],
+  ["00:07",{night:3,mood:2},"过零后旧念容易翻出来"]
+];
+
+const NUMBER_POOL=[3,5,7,8,11,13,16,18,21,24,28,31,34,37,41,47];
+
+const DIRECTIONS=[
+  ["北","n",{night:2,mood:1},"北偏静，事情容易往心里收"],
+  ["东北","ne",{work:1,commute:2},"东北带转，容易多走一步"],
+  ["东","e",{work:2},"东主动，外事先来"],
+  ["东南","se",{money:2,social:1},"东南见欲，临时起念偏多"],
+  ["南","s",{mood:1,money:1},"南带火，越急越容易多做"],
+  ["西南","sw",{social:2,work:1},"西南见客，别人容易带事过来"],
+  ["西","w",{delay:2},"西主收，今天适合及时停手"],
+  ["西北","nw",{commute:2,work:1},"西北见路，出门前最好再看一眼"]
+];
+
+const RESULTS={
+  work:[
+    {
+      gua:["半截门局","客事压身","门外多手"],
+      one:["今天别替别人接活。","今天少说“我顺便弄一下”。","下班前别看起来太有空。"],
+      human:["今天很可能有人拿一点破事来占你的时间。","真正麻烦的不是大任务，是一件本来不属于你的“小事”。"],
+      lines:["“顺便”先别答应。","17点以后少主动暴露空闲。","不是你的事，不要替别人补全。"],
+      tip:["下午三点前，把桌上一个没用的东西扔掉。老说法叫“清手”，现代解释：提醒自己别什么都往身上揽。","有人来一句“很快的”，先问清楚做到什么程度。民间叫“先量门框”，其实就是先确认边界。"],
+      yi:["先问范围","留一句缓冲","按时收尾"],
+      ji:["主动接话","过早收桌面","替别人补需求"],
+      shares:["我今天的卦很简单：17点以后，不要看起来太有空。","今日野卦：别替别人顺手办事，尤其下班前。"],
+      avoid:["顺便","很快","你方便吗"]
+    },
+    {
+      gua:["尾事缠门","小客回头","两头见事"],
+      one:["今天别把三分钟的小事当真的只要三分钟。","今天凡是“很快的”，都先当半小时看。"],
+      human:["你今天容易被低估的小事拖住，不大，但很黏。"],
+      lines:["先问截止时间。","先问做到哪一步。","没有结束条件的事先别接。"],
+      tip:["接到临时事先喝一口水再回。不是为了转运，是为了让“没问题”晚三秒出口。"],
+      yi:["先问清楚","给自己留尾巴","明确结束点"],
+      ji:["秒回可以","替人兜底","默认只要三分钟"],
+      shares:["系统没有，老卦倒有一句：今天“很快的”一般都不快。"],
+      avoid:["很快","帮个忙","简单看下"]
+    }
+  ],
+  money:[
+    {
+      gua:["空杯见财","火走偏口","财口先热"],
+      one:["晚上十点以后别下单。","今天想买的东西，先截图别付款。","今天别为了省钱多买东西。"],
+      human:["你今天未必真缺东西，主要是容易突然觉得自己“应该买点什么”。"],
+      lines:["想买先截图。","十点以后不付款。","凑单不算省钱。"],
+      tip:["第一次想付款时先去喝半杯水，等十分钟。老说法叫“压火”，现代解释：让欲望先过一轮。"],
+      yi:["收藏隔夜","先看已有","只买清单内"],
+      ji:["深夜付款","凑满减","把想要叫刚需"],
+      shares:["今日野卦：想买先截图，晚上十点以后别付款。","我的卦说得很土：今天容易把“想要”说成“需要”。"],
+      avoid:["限时","满减","提升幸福感"]
+    }
+  ],
+  social:[
+    {
+      gua:["眼线回潮","一句生枝","客话多想"],
+      one:["今天别研究别人那个句号。","那条消息晚十分钟再回。","今天少替别人补潜台词。"],
+      human:["别人可能只是说了一句话，你的脑子准备替他写完剩下三页。"],
+      lines:["按字面意思理解。","晚回十分钟不会出事。","别把聊天截图拿去会诊。"],
+      tip:["看到让你不舒服的消息，先把手机扣桌上三分钟。民间叫“断气口”，其实就是让第一反应先过去。"],
+      yi:["晚一点回","按字面看","少解释一次"],
+      ji:["研究句号","猜潜台词","反复看聊天"],
+      shares:["今日野卦：不要研究别人那个句号是什么意思。","今天最大的社交劫不是别人，是我替别人补台词。"],
+      avoid:["在吗","嗯。","你怎么想"]
+    }
+  ],
+  night:[
+    {
+      gua:["晚灯压心","月后失守","子前散念"],
+      one:["23点以后别做重大决定。","今晚别相信“再看五分钟”。","夜里突然想通的人生，明早再审批。"],
+      human:["白天的你还能管住事，23点以后的你比较喜欢给明天添项目。"],
+      lines:["23点后不下单。","不搜旧人动态。","年度计划明早再写。"],
+      tip:["第一次想“再看一个”时就去洗漱。老说法叫“灭灯”，现代解释：给今晚一个明确结束点。"],
+      yi:["提前洗漱","手机离床远点","明早再决定"],
+      ji:["凌晨复盘","再刷五分钟","突然励志"],
+      shares:["今日野卦：23点后的我不具备重大决策资格。","今晚最凶的不是时间，是“再看五分钟”。"],
+      avoid:["再看一个","最后一次","明天开始"]
+    }
+  ],
+  delay:[
+    {
+      gua:["山前不动","雨压半步","先整后拖"],
+      one:["今天别等状态，先做五分钟。","今天不许先整理桌面。","先做一个很丑的开头。"],
+      human:["你今天最容易把“准备开始”做得特别完整，就是不开始。"],
+      lines:["先做五分钟。","第一版允许很丑。","准备工作不算进度。"],
+      tip:["开工前别换音乐、别整理桌面、别找新软件。民间叫“别扫门前灰”，其实就是直接碰正事。"],
+      yi:["先动五分钟","清一个旧待办","允许不完整"],
+      ji:["等状态","做复杂计划","先优化工具"],
+      shares:["今日野卦：不许等状态，先做一个很丑的开头。","我今天的劫叫“开始之前先准备”。"],
+      avoid:["等会儿","先准备","状态"]
+    }
+  ],
+  mood:[
+    {
+      gua:["井里见影","旧话回潮","一事压心"],
+      one:["今天别用一件破事总结整个人生。","那个尴尬别复盘了，别人多半早忘了。","今天坏一件事，只算坏一件。"],
+      human:["今天的小问题容易被你往下想三层，最后变成“我最近是不是整体不行”。"],
+      lines:["就事论事。","坏事只许代表自己。","旧尴尬不准重播。"],
+      tip:["突然开始内耗时起身换个位置，走十步再回来。民间叫“换气位”，现代解释：别让一个姿势把一个念头坐实。"],
+      yi:["换个场景","出去走十分钟","给情绪限时"],
+      ji:["总结人生","回放旧尴尬","替过去辩护"],
+      shares:["今日野卦：一件破事，不许代表整个人生。","系统没有，野卦有：旧尴尬今天禁止重播。"],
+      avoid:["最近","是不是我","早知道"]
+    }
+  ],
+  phone:[
+    {
+      gua:["屏光黏手","红点牵心","灯下续线"],
+      one:["今天第三次无意识打开手机时，就放下。","通知栏今天没有指挥权。","别让推荐流替你安排情绪。"],
+      human:["手机今天很容易从工具变成“我也不知道为什么又打开了”的东西。"],
+      lines:["红点不等于急事。","第三次无意识打开就停。","睡前不进推荐流。"],
+      tip:["把最容易点开的那个 App 从首屏挪走一天。老说法叫“移门”，其实就是多给手指一道门槛。"],
+      yi:["批量回消息","主动搜索","关没用提醒"],
+      ji:["无限下滑","每个红点都点","边睡边刷"],
+      shares:["今日野卦：通知栏今天没有指挥权。","今天最该防的不是谁，是我第三次无意识打开手机。"],
+      avoid:["红点","为你推荐","再刷一下"]
+    }
+  ],
+  food:[
+    {
+      gua:["空腹多门","饭前失断","杯空见欲"],
+      one:["今天点外卖最多看三家。","饿的时候别承担太多选择。","吃完就算，别饭后审判自己。"],
+      human:["你今天容易在饿的时候把一个很小的选择做成公开招标。"],
+      lines:["先定品类。","最多比较三家。","吃完不追加道德评价。"],
+      tip:["点外卖前先喝几口水，然后只留三个候选。民间叫“先压空口”，现代解释：别在最饿的时候无限比较。"],
+      yi:["限定选项","复购安全项","认真吃完"],
+      ji:["无限滑店","饿着比较","饭后反悔"],
+      shares:["今日野卦：点外卖最多看三家，饿的时候不适合做复杂决策。","我今天最容易渡的劫，是看四十分钟最后点昨天那家。"],
+      avoid:["猜你喜欢","更多商家","新品"]
+    }
+  ],
+  commute:[
+    {
+      gua:["鞋底回门","路上反手","门卡见迟"],
+      one:["今天出门前摸一下手机和钥匙。","今天别赌“应该刚好赶得上”。","门关之前再看一眼真正必须带的东西。"],
+      human:["你今天的小麻烦容易发生在“已经出门了才想起来”的那一下。"],
+      lines:["提前五分钟。","关门前摸口袋。","不要边走边回忆。"],
+      tip:["出门前站门口两秒，只查手机、钥匙、真正必须带的那个。民间叫“压门槛”，现代解释：别靠信念检查随身物。"],
+      yi:["提前五分钟","东西放门口","关门前复查"],
+      ji:["卡点出门","相信应该记得","边走边刷手机"],
+      shares:["今日野卦：出门前摸一下手机钥匙，别靠信念。","今天不要赌“应该刚好赶得上”。"],
+      avoid:["来得及","应该带了","下一班"]
+    }
+  ]
+};
+
+const LUCKY_OBJECTS=["黑笔","纸巾","门卡","半杯水","充电线","钥匙","帆布袋","耳机盒","购物小票","空白便签","杯盖","工牌"];
+const GENERIC_OMEN=[
+  "若今天连续两次听见“顺便”，第三次就别接。",
+  "如果下午突然很想整理桌面，先看看是不是在躲正事。",
+  "若23点后突然觉得人生方向异常清晰，明早再信。",
+  "如果一个商品连续出现三次，不代表宇宙让你买。",
+  "如果打开手机却忘了要干什么，先退回桌面。",
+  "若某人只回一个“嗯”，今天暂不支持深度解读。"
+];
+
+
+const RIBBON_POOL=[
+  ["门","开门象"],["灯","灯下意"],["火","起意象"],["雨","拖字头"],
+  ["井","藏心象"],["月","晚念头"],["鞋","走动相"],["杯","空口象"],
+  ["锁","卡手象"],["伞","遮身象"],["鱼","滑手象"],["纸","落字相"]
+];
+
+const FIGURE_MAP={
+  work:{glyph:"门",title:["先见门，后见数","门开半寸，事就先来"],text:["多半不是大事，是别人那点小事先挤进来了。","门象偏前，客事就容易抢先开口。"]},
+  money:{glyph:"杯",title:["杯口朝上，火意先动","空杯见火，先想填"],text:["你今天未必真缺，主要容易突然觉得该买点什么。","这类卦不叫破财，叫起念。"]},
+  social:{glyph:"眼",title:["眼先应，话就重了","先见人影，后见心气"],text:["今天容易把一句普通话听出第二层意思。","事不一定大，主要是脑子会替别人补台词。"]},
+  night:{glyph:"月",title:["月落后手，夜里最会说话","晚灯一亮，理智就松"],text:["今天白天没事，晚上反而容易起波澜。","这卦不怕白天，怕深夜那一下突然认真。"]},
+  delay:{glyph:"山",title:["山压前手，起步就慢","先见阻象，后面自然拖"],text:["不是做不了，是开始前容易先绕一圈。","今天的难不在结果，在开头。"]},
+  mood:{glyph:"井",title:["井口偏深，心会往下想","前象一沉，后面就容易放大"],text:["今天要防的不是坏事，是把小事想大。","这卦最怕一件普通事被你顺手概括成人生。"]},
+  phone:{glyph:"屏",title:["屏光先亮，杂念跟着来","小光一闪，心就被拽走"],text:["今天最黏人的东西可能就在手机里。","这类卦不主大祸，只主注意力被不断截走。"]},
+  food:{glyph:"筷",title:["先碰口福，后见犹疑","口欲在前，后手就摇"],text:["今天容易在吃这件事上多想、多比、多后悔。","不是饭有问题，是选择太多。"]},
+  commute:{glyph:"路",title:["路象偏斜，脚下要快半步","一见走动，余手就要收"],text:["今天最好别赌刚刚好。","这一类卦，慢半拍就容易多一段路。"]}
+};
+
+function renderMysticRibbon(){
+  const box=$("#mysticRibbon");
+  if(!box)return;
+  const cards=shuffle(RIBBON_POOL).slice(0,4);
+  box.innerHTML=cards.map(([g,t])=>`<div class="mystic-card"><b>${esc(g)}</b><span>${esc(t)}</span></div>`).join("");
+}
+
+function renderFigure(type){
+  const data=FIGURE_MAP[type]||FIGURE_MAP.work;
+  $("#folkCore").textContent=data.glyph;
+  $("#folkTitle").textContent=pick(data.title);
+  $("#folkFigureText").textContent=pick(data.text);
+}
+
+let method=null;
+let sequence=[];
+let answers={};
+let sealed=false;
+let holdFrame=null;
+let holdStart=0;
+let seed=makeSeed();
+
+const steps=$("#steps");
+
+const questionInput=$("#questionInput");
+questionInput.addEventListener("input",()=>{
+  askState.text=questionInput.value.slice(0,80);
+  $("#questionCount").textContent=questionInput.value.length;
+  $("#askSheet").classList.remove("missing");
+  $("#askError").textContent="";
+});
+
+document.querySelectorAll(".ask-type").forEach(btn=>{
+  btn.addEventListener("click",()=>selectAskMode(btn.dataset.mode));
+});
+
+document.querySelectorAll(".example-chip").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    questionInput.value=btn.dataset.example;
+    askState.text=btn.dataset.example;
+    $("#questionCount").textContent=questionInput.value.length;
+    selectAskMode(btn.dataset.mode);
+    questionInput.focus();
+  });
+});
+
+
+function emptyPoints(){
+  return Object.fromEntries(TYPES.map(t=>[t,0]));
+}
+
+function getNumberPoints(n){
+  const map=["delay","work","money","social","night","phone","food","mood","commute"];
+  const t1=map[Math.abs(n)%map.length];
+  const t2=map[Math.abs(n*3+2)%map.length];
+  return {[t1]:3,[t2]:1};
+}
+
+function renderChoiceModule(index,title,desc,items,type){
+  const opts=shuffle(items);
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>${esc(title)}</h2>
+      </div>
+      <p class="step-desc">${esc(desc)}</p>
+      <div class="choice-grid">
+        ${opts.map((x,i)=>`
+          <button type="button" class="choice" data-i="${i}">
+            <strong>${esc(x[0])}</strong>
+            <small>${esc(x[1])}</small>
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const btns=[...section.querySelectorAll(".choice")];
+  btns.forEach((b,i)=>{
+    b.addEventListener("click",()=>{
+      btns.forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");
+      answers[index]={
+        type,
+        points:opts[i][2],
+        raw:opts[i][0],
+        trail:opts[i][3] || `${opts[i][0]}先应`
+      };
+      section.classList.remove("missing");
+      updateProgress();
+    });
+  });
+}
+
+function renderWord(index){
+  const pool=shuffle(pick(WORD_POOLS));
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>摸三个字。别挑吉利的。</h2>
+      </div>
+      <p class="step-desc">第一眼觉得“怎么偏偏是它”的，反而更算数。</p>
+      <div class="pick-count">
+        <span>最多三字，不可多拿。</span>
+        <b class="count">0 / 3</b>
+      </div>
+      <div class="word-board">
+        ${pool.map((x,i)=>`
+          <button type="button" class="word-tile" data-i="${i}">
+            <span class="word-char">${esc(x[0])}</span>
+            <span class="word-note">${esc(x[1])}</span>
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const count=section.querySelector(".count");
+  let selected=[];
+  section.querySelectorAll(".word-tile").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const i=Number(btn.dataset.i);
+      if(selected.includes(i)){
+        selected=selected.filter(x=>x!==i);
+        btn.classList.remove("selected");
+      }else{
+        if(selected.length>=3){
+          toast("三字够了，再拿就叫贪卦");
+          return;
+        }
+        selected.push(i);
+        btn.classList.add("selected");
+      }
+      count.textContent=`${selected.length} / 3`;
+      if(selected.length===3){
+        const pts={};
+        selected.forEach(si=>{
+          Object.entries(pool[si][2]).forEach(([k,v])=>pts[k]=(pts[k]||0)+v);
+        });
+        answers[index]={
+          type:"word",
+          points:pts,
+          raw:selected.map(i=>pool[i][0]).join("、"),
+          trail:selected.map(i=>pool[i][3]).join("；")
+        };
+        section.classList.remove("missing");
+      }else{
+        delete answers[index];
+      }
+      updateProgress();
+    });
+  });
+}
+
+function renderNumber(index){
+  const nums=shuffle(NUMBER_POOL).slice(0,8);
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>${esc(pick([
+          "报一个数。别想生日，也别挑吉利。",
+          "这几个数里，哪个先让你停一下？",
+          "不要算。随手点一个看着有点意思的数。"
+        ]))}</h2>
+      </div>
+      <p class="step-desc">数不论吉凶，只看先后。你一旦开始算，它就不认了。</p>
+      <div class="num-grid">
+        ${nums.map(n=>`<button type="button" class="num-btn" data-n="${n}">${n}</button>`).join("")}
+      </div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const btns=[...section.querySelectorAll(".num-btn")];
+  btns.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      btns.forEach(x=>x.classList.remove("selected"));
+      btn.classList.add("selected");
+      const n=Number(btn.dataset.n);
+      answers[index]={
+        type:"number",
+        points:getNumberPoints(n),
+        raw:String(n),
+        trail:`数取${n}，${n%2===0?"双数落外":"单数落内"}，尾数${n%5===0?"收":"不收"}`
+      };
+      section.classList.remove("missing");
+      updateProgress();
+    });
+  });
+}
+
+function renderTap(index){
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>凭感觉敲。觉得够了就停。</h2>
+      </div>
+      <p class="step-desc">三下以后才算开。超过二十下，我们默认你不是在起卦，是在发泄。</p>
+      <div class="tap-wrap">
+        <button type="button" class="tap-wood">
+          <span>
+            <span class="tap-big">叩</span>
+            <span class="tap-small">点一下算一下</span>
+          </span>
+        </button>
+        <div class="tap-count">已敲 0 下</div>
+        <button type="button" class="tap-lock" disabled>就到这里</button>
+      </div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const wood=section.querySelector(".tap-wood");
+  const countEl=section.querySelector(".tap-count");
+  const lock=section.querySelector(".tap-lock");
+  let count=0;
+  wood.addEventListener("click",()=>{
+    if(count>=24){toast("够了，桌子都听见了");return}
+    count++;
+    countEl.textContent=`已敲 ${count} 下`;
+    if(count>=3) lock.disabled=false;
+  });
+  lock.addEventListener("click",()=>{
+    if(count<3)return;
+    const p=getNumberPoints(count);
+    answers[index]={
+      type:"tap",
+      points:p,
+      raw:`${count}下`,
+      trail:`手敲${count}下，${count%3===0?"三数成局":"余数未尽"}，${count%2?"末手偏急":"末手偏稳"}`
+    };
+    lock.textContent=`收在 ${count} 下`;
+    lock.disabled=true;
+    wood.disabled=true;
+    section.classList.remove("missing");
+    updateProgress();
+  });
+}
+
+function renderDirection(index){
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>八个方向里，哪个今天看着最别扭？</h2>
+      </div>
+      <p class="step-desc">不是问你要去哪。只是看哪个方向先让你不想选。</p>
+      <div class="direction-wheel">
+        <div class="dir-center">位</div>
+        ${DIRECTIONS.map((d,i)=>`
+          <button type="button" class="dir-btn dir-${d[1]}" data-i="${i}">${d[0]}</button>
+        `).join("")}
+      </div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const btns=[...section.querySelectorAll(".dir-btn")];
+  btns.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      btns.forEach(x=>x.classList.remove("selected"));
+      btn.classList.add("selected");
+      const d=DIRECTIONS[Number(btn.dataset.i)];
+      answers[index]={
+        type:"direction",
+        points:d[2],
+        raw:d[0],
+        trail:`方落${d[0]}，${d[3]}`
+      };
+      section.classList.remove("missing");
+      updateProgress();
+    });
+  });
+}
+
+function renderLine(index){
+  const initial=rand(38,62);
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>${esc(pick([
+          "把这根命线拨到“今天差不多”的位置。",
+          "别看数字，把线停在你觉得刚好的地方。",
+          "今天想躲一点，还是想顶一点？把线放过去。"
+        ]))}</h2>
+      </div>
+      <p class="step-desc">左边主收，右边主顶。中间最普通，也最容易被低估。</p>
+      <div class="line-read">
+        <strong>${initial}</strong>
+        <span>还没落针</span>
+      </div>
+      <input type="range" min="0" max="100" value="${initial}" aria-label="命线" />
+      <div class="line-labels"><span>收</span><span>平</span><span>顶</span></div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const input=section.querySelector("input");
+  const strong=section.querySelector(".line-read strong");
+  const cap=section.querySelector(".line-read span");
+  const visual=()=>{
+    const v=Number(input.value);
+    strong.textContent=v;
+    input.style.setProperty("--fill",`${v}%`);
+    cap.textContent=v<25?"收得太深":v<45?"偏收":v<65?"落在中段":v<82?"偏顶":"顶得有点过";
+  };
+  visual();
+  input.addEventListener("input",()=>{
+    visual();
+    const v=Number(input.value);
+    const points={};
+    if(v<25){points.delay=3;points.mood=2}
+    else if(v<45){points.delay=2;points.social=1}
+    else if(v<65){points.work=1;points.food=1}
+    else if(v<82){points.work=2;points.money=1}
+    else{points.work=3;points.money=2;points.social=1}
+    answers[index]={
+      type:"line",
+      points,
+      raw:String(v),
+      value:v,
+      trail:`命线停在${v}，${v<45?"收气先行":v>70?"外气偏盛":"中位不偏"}`
+    };
+    section.classList.remove("missing");
+    updateProgress();
+  });
+}
+
+function renderCoin(index){
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>三枚钱，一枚一枚翻。</h2>
+      </div>
+      <p class="step-desc">别连点。翻一枚，看一眼，再翻下一枚。</p>
+      <div class="coin-wrap">
+        <button type="button" class="coin" data-i="0">钱</button>
+        <button type="button" class="coin" data-i="1">钱</button>
+        <button type="button" class="coin" data-i="2">钱</button>
+      </div>
+      <div class="coin-hint">三枚都翻开，这一手才算完整。</div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const coins=[...section.querySelectorAll(".coin")];
+  const faces=[];
+  coins.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(btn.classList.contains("done"))return;
+      const face=Math.random()<.5?"正":"背";
+      faces[Number(btn.dataset.i)]=face;
+      btn.textContent=face;
+      btn.classList.add("flipped","done");
+      if(faces.filter(Boolean).length===3){
+        const heads=faces.filter(x=>x==="正").length;
+        const p=heads===0?{night:2,mood:2}:heads===1?{social:2,delay:1}:heads===2?{work:2,money:1}:{money:2,work:1};
+        answers[index]={
+          type:"coin",
+          points:p,
+          raw:faces.join("、"),
+          trail:`三钱见${faces.join("、")}，${heads>=2?"阳面多，外事容易先起":"阴面多，内事容易多想"}`
+        };
+        section.classList.remove("missing");
+        updateProgress();
+      }
+    });
+  });
+}
+
+function renderObject(index){
+  const items=shuffle(OBJECTS).slice(0,4);
+  renderChoiceModule(
+    index,
+    pick(["桌上这几样东西，先碰哪一个？","四件普通东西里，哪个今天最像有话？","别问为什么，先挑一个你现在最想拿起来的。"]),
+    "东西越普通，越适合野路子做文章。",
+    items,
+    "object"
+  );
+}
+
+function renderTime(index){
+  const opts=shuffle(TIME_POOL).slice(0,4);
+  renderChoiceModule(
+    index,
+    pick(["这四个时间，哪个看着最不对劲？","今天哪个时辰最像会突然多一件事？","不要计算，挑一个最像“怎么偏偏现在”的时间。"]),
+    "只看第一眼。觉得都正常也要挑一个最不正常的。",
+    opts.map(x=>[x[0],x[2],x[1],x[2]]),
+    "time"
+  );
+}
+
+function renderRedPaper(index){
+  steps.insertAdjacentHTML("beforeend",`
+    <section class="step" data-index="${index}">
+      <div class="step-head">
+        <span class="step-no">${index+1}</span>
+        <h2>红纸上随手按一下。</h2>
+      </div>
+      <p class="step-desc">别找中心。你第一下落哪，就认哪。</p>
+      <div class="redpaper" role="button" tabindex="0" aria-label="在红纸上按一个位置"></div>
+    </section>
+  `);
+  const section=steps.querySelector(`[data-index="${index}"]`);
+  const paper=section.querySelector(".redpaper");
+  let locked=false;
+  const choose=(clientX,clientY)=>{
+    if(locked)return;
+    const r=paper.getBoundingClientRect();
+    const x=clamp((clientX-r.left)/r.width,0,1);
+    const y=clamp((clientY-r.top)/r.height,0,1);
+    const dot=document.createElement("span");
+    dot.className="red-dot";
+    dot.style.left=`${x*100}%`;
+    dot.style.top=`${y*100}%`;
+    paper.appendChild(dot);
+    locked=true;
+    let zone,points,trail;
+    if(y<.33){zone="上位";points={work:2,social:1};trail="纸点落上，外事在前"}
+    else if(y>.67){zone="下位";points={night:2,mood:1};trail="纸点落下，心事在后"}
+    else if(x<.33){zone="左偏";points={delay:2,commute:1};trail="左偏主缓，事容易拖一步"}
+    else if(x>.67){zone="右偏";points={money:2,work:1};trail="右偏主急，起念容易快一手"}
+    else{zone="中位";points={mood:1,food:1};trail="中位不偏，反倒怕自己多想"}
+    answers[index]={type:"redpaper",points,raw:zone,trail};
+    section.classList.remove("missing");
+    updateProgress();
+  };
+  paper.addEventListener("pointerdown",e=>choose(e.clientX,e.clientY));
+  paper.addEventListener("keydown",e=>{
+    if((e.key==="Enter"||e.key===" ")&&!locked){
+      const r=paper.getBoundingClientRect();
+      choose(r.left+r.width*.56,r.top+r.height*.44);
+    }
+  });
+}
+
+function renderModule(type,index){
+  if(type==="word")renderWord(index);
+  else if(type==="number")renderNumber(index);
+  else if(type==="tap")renderTap(index);
+  else if(type==="direction")renderDirection(index);
+  else if(type==="line")renderLine(index);
+  else if(type==="coin")renderCoin(index);
+  else if(type==="object")renderObject(index);
+  else if(type==="time")renderTime(index);
+  else if(type==="redpaper")renderRedPaper(index);
+}
+
+function buildSequence(m){
+  const unique=shuffle([...new Set(m.modules)]);
+  if(unique.length>=4)return unique.slice(0,4);
+  const all=["word","number","tap","direction","line","coin","object","time","redpaper"];
+  return shuffle([...new Set([...unique,...all])]).slice(0,4);
+}
+
+function updateMagazineDate(){
+  const d=new Date();
+  const months=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  const issue=$("#issueNo");
+  const date=$("#issueDate");
+  if(issue) issue.textContent=String(d.getMonth()+1).padStart(2,"0");
+  if(date) date.textContent=`${months[d.getMonth()]} · ${d.getFullYear()}`;
+}
+
+function startRound(){
+  updateMagazineDate();
+  answers={};
+  sealed=false;
+  seed=makeSeed();
+  method=pick(METHODS);
+  sequence=buildSequence(method);
+
+  $("#methodName").textContent=method.name;
+  $("#methodDesc").textContent=method.desc;
+  $("#notice").textContent=method.notice;
+  $("#methodCode").textContent=`摊号 / ${String(seed).slice(-6)}`;
+  renderMysticRibbon();
+  if(askState.text && questionInput.value!==askState.text){
+    questionInput.value=askState.text;
+    $("#questionCount").textContent=askState.text.length;
+  }
+  if(askState.mode)selectAskMode(askState.mode);
+
+  steps.innerHTML="";
+  sequence.forEach((t,i)=>renderModule(t,i));
+
+  $("#result").classList.remove("show");
+  $("#holdFill").style.width="0%";
+  $("#holdText").textContent="长按收卦 · 松手不算";
+  $("#error").classList.remove("show");
+  updateProgress();
+}
+
+function updateProgress(){
+  const count=Object.keys(answers).length;
+  $("#progressText").textContent=`${count} / ${sequence.length}`;
+  $("#progressBar").style.width=`${count/sequence.length*100}%`;
+}
+
+function validate(){
+  if(!validateQuestion())return false;
+  if(Object.keys(answers).length===sequence.length){
+    $("#error").classList.remove("show");
+    return true;
+  }
+  $("#error").textContent="东西还没取全，这卦不能硬断。";
+  $("#error").classList.add("show");
+  for(let i=0;i<sequence.length;i++){
+    if(!answers[i]){
+      const section=steps.querySelector(`[data-index="${i}"]`);
+      section.classList.add("missing");
+      section.scrollIntoView({behavior:"smooth",block:"center"});
+      break;
+    }
+  }
+  return false;
+}
+
+function calculate(){
+  const pts=emptyPoints();
+  Object.values(answers).forEach(a=>{
+    Object.entries(a.points||{}).forEach(([k,v])=>{
+      if(k in pts)pts[k]+=v;
+    });
+  });
+  // 问法只决定“往哪一路解释”，不直接把吉凶算重。
+  const rawPts={...pts};
+  const askBias=ASK_MODES[askState.mode]?.bias||{};
+  Object.entries(askBias).forEach(([k,v])=>{ if(k in pts)pts[k]+=v; });
+  TYPES.forEach(t=>pts[t]+=Math.random()*.9);
+  const sorted=Object.entries(pts).sort((a,b)=>b[1]-a[1]);
+  const type=sorted[0][0];
+  const rawSorted=Object.entries(rawPts).sort((a,b)=>b[1]-a[1]);
+  const top=rawSorted[0][1], second=rawSorted[1][1];
+
+  let lineValue=50;
+  const l=Object.values(answers).find(a=>a.type==="line");
+  if(l)lineValue=l.value;
+
+  let score=86-top*4.5+(top-second)*2.5-Math.abs(lineValue-50)*.06+rand(-3,3);
+  score=clamp(Math.round(score),18,92);
+
+  return {type,score,points:pts};
+}
+
+function getTime(type){
+  const timeAns=Object.values(answers).find(a=>a.type==="time");
+  if(timeAns)return timeAns.raw;
+  const map={
+    work:["16:52","17:20","17:41","18:06"],
+    money:["21:14","22:37","23:08","00:12"],
+    social:["10:26","15:36","20:17","22:03"],
+    night:["22:37","23:19","23:47","00:07"],
+    delay:["10:44","14:13","15:02","16:28"],
+    mood:["11:17","14:58","21:31","23:09"],
+    phone:["09:08","13:31","18:46","23:24"],
+    food:["11:43","12:16","18:22","21:08"],
+    commute:["08:43","09:02","17:56","18:17"]
+  };
+  return pick(map[type]);
+}
+
+function rank(score){
+  if(score<30)return "这事今天挺黏";
+  if(score<45)return "有点绕，能躲";
+  if(score<60)return "小事偏多";
+  if(score<75)return "顺着点就行";
+  if(score<86)return "今天还算清";
+  return "难得没什么事";
+}
+
+function buildReasoning(result,item,gua){
+  const trails=Object.values(answers).map(a=>a.trail).filter(Boolean);
+  const first=trails[0]||"前手无明显偏象";
+  const second=trails[1]||"中手不露";
+  const third=trails[2]||"后手略收";
+  const fourth=trails[3]||"末手未尽";
+
+  const bridge=pick([
+    "这四样单看都不算什么，偏偏前后挨在一起，就不是同一个意思。",
+    "老法子最爱看先后，不爱看对错。先后只要一拧，事情就容易多出半步。",
+    "这一卦没有大凶，也没有什么大喜，最明显的是“事不大，手会多”。",
+    "民间断小事，不怕象杂，反而怕象太齐。太齐像人挑的，杂一点才像今天真的会发生。"
+  ]);
+
+  const ending=pick([
+    `所以这里不按“大事”断，只按「${gua}」看。`,
+    `落到今天，就是一个很典型的「${gua}」。`,
+    `前后合起来，最像的不是坏运，是「${gua}」。`
+  ]);
+
+  const askIntro={
+    go:"你问的是去留，去留卦先看门动不动，再看后手有没有回头。",
+    timing:"你问的是时机，时机卦不先论好坏，先看前后有没有抢气。",
+    people:"你问的是人事，人事卦先看谁在前、谁在后，最忌一边声音太大。",
+    money:"你问的是钱物，钱物卦不先看贵不贵，先看是实用在前还是起念在前。",
+    work:"你问的是工作，工作卦先看责任往哪边落，再看末手有没有多出一步。",
+    misc:"你问的是一件杂事，这种卦最看先后和犹豫，不太看字面吉凶。"
+  }[askState.mode]||"这是一件小事，先看先后，不先讲吉凶。";
+  return `${esc(askIntro)}<br><br><b>${esc(first)}</b>；${esc(second)}。再往后看，${esc(third)}，${esc(fourth)}。${esc(bridge)}${esc(ending)}<br><br>落到你问的「${esc(askState.text)}」，重点不在大吉大凶，而在今天这一步到底值不值得现在走。`;
+}
+
+function dateInfo(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return {display:`${y}.${m}.${day}`,compact:`${String(y).slice(-2)}${m}${day}`};
+}
+
+function reportId(){
+  const d=dateInfo();
+  return `YG-${d.compact}-${rand(1000,9999)}`;
+}
+
+function renderResult(){
+  const result=calculate();
+  const item=pick(RESULTS[result.type]);
+
+  const gua=pick(item.gua);
+  const one=pick(item.one);
+  const human=pick(item.human);
+  const share=pick(item.shares);
+  const danger=getTime(result.type);
+  const avoid=pick(item.avoid);
+  const lucky=pick(LUCKY_OBJECTS);
+  const decision=getDecision(askState.mode,result.score,danger);
+
+  $("#reportMethod").textContent=`${method.name} · 问事一纸断`;
+  $("#resultQuestion").textContent=askState.text;
+  $("#resultQuestionMode").textContent=ASK_MODES[askState.mode]?.label||"问杂事";
+  $("#oneAnswer").textContent=decision.answer;
+  $("#oneTime").textContent=decision.time;
+  $("#score").textContent=result.score;
+  $("#guaName").textContent=gua;
+  renderFigure(result.type);
+  $("#reasoning").innerHTML=buildReasoning(result,item,gua);
+  $("#humanText").textContent=`${decision.human} ${human}`;
+  $("#fallbackText").textContent=decision.fallback;
+  $("#threeLines").innerHTML=item.lines.slice(0,3).map((x,i)=>`
+    <div class="keep-line">
+      <span class="keep-num">0${i+1}</span>
+      <span class="keep-text">${esc(x)}</span>
+    </div>
+  `).join("");
+  $("#folkTip").textContent=pick(item.tip);
+  $("#yi").innerHTML=shuffle(item.yi).map(x=>`<span>· ${esc(x)}</span>`).join("");
+  $("#ji").innerHTML=shuffle(item.ji).map(x=>`<span>· ${esc(x)}</span>`).join("");
+  $("#dangerTime").textContent=danger;
+  $("#luckyObject").textContent=lucky;
+  $("#avoidWord").textContent=avoid;
+  $("#shareLine").textContent=`我问：「${askState.text}」野卦回我：${decision.answer} ${share}`;
+
+  const d=dateInfo();
+  $("#dateText").textContent=`DATE ${d.display}`;
+  $("#reportId").textContent=`NO. ${reportId()}`;
+
+  $("#result").classList.add("show");
+  setTimeout(()=>$("#result").scrollIntoView({behavior:"smooth",block:"start"}),80);
+}
+
+function runReading(){
+  const overlay=$("#overlay");
+  overlay.classList.add("show");
+  document.body.style.overflow="hidden";
+
+  const msgs=shuffle([
+    `先把你问的「${askState.text}」压在卦底，不先看结论。`,
+    `${pick(method.intro)}`,
+    "先看前手，再看后手，前后不合的地方才有话。",
+    "正在把数、位、物象和你刚才那点犹豫叠在一起……",
+    "这里有一处“先收后放”，不算凶，只算容易多做一步。",
+    "前象偏外，后象偏内，今天的大事反而不用管。",
+    "正在去掉那些一听就很吉利、但其实没什么用的解释……",
+    "这卦不伤根本，主要伤耐心。",
+    "差不多了。再推就属于故意把话说复杂。"
+  ]).slice(0,5);
+
+  let i=0;
+  $("#readTitle").textContent=pick([
+    "正在把几样没关系的东西硬凑成一卦",
+    "正在看前手和后手到底谁在说话",
+    "正在从一堆小象里挑最黏人的那个",
+    "正在按老路子绕一圈再说人话"
+  ]);
+  $("#readMsg").textContent=msgs[0];
+  $("#readCode").textContent="纸上走第一手 / 01";
+
+  const timer=setInterval(()=>{
+    i=Math.min(i+1,msgs.length-1);
+    $("#readMsg").textContent=msgs[i];
+    $("#readCode").textContent=`纸上走第${["一","二","三","四","五"][i]||"五"}手 / 0${i+1}`;
+  },520);
+
+  setTimeout(()=>{
+    clearInterval(timer);
+    $("#readMsg").textContent="行了，这卦再说下去就过了。最后听人话。";
+    $("#readCode").textContent="收口 / 成卦";
+    setTimeout(()=>{
+      overlay.classList.remove("show");
+      document.body.style.overflow="";
+      renderResult();
+    },300);
+  },2700);
+}
+
+const holdBtn=$("#holdBtn");
+const holdFill=$("#holdFill");
+const holdText=$("#holdText");
+
+function beginHold(){
+  if(sealed)return;
+  if(!validate())return;
+  holdStart=performance.now();
+  holdText.textContent="正在收卦 · 手别松";
+  const duration=1250;
+
+  const frame=(now)=>{
+    const p=Math.min((now-holdStart)/duration,1);
+    holdFill.style.width=`${p*100}%`;
+    if(p>=1){
+      sealed=true;
+      holdText.textContent="卦收住了";
+      cancelAnimationFrame(holdFrame);
+      setTimeout(runReading,120);
+      return;
+    }
+    holdFrame=requestAnimationFrame(frame);
+  };
+  holdFrame=requestAnimationFrame(frame);
+}
+function cancelHold(){
+  if(sealed)return;
+  cancelAnimationFrame(holdFrame);
+  holdFill.style.width="0%";
+  holdText.textContent="长按收卦 · 松手不算";
+}
+
+holdBtn.addEventListener("pointerdown",beginHold);
+holdBtn.addEventListener("pointerup",cancelHold);
+holdBtn.addEventListener("pointerleave",cancelHold);
+holdBtn.addEventListener("pointercancel",cancelHold);
+
+$("#changeMethod").addEventListener("click",()=>{
+  window.scrollTo({top:0,behavior:"smooth"});
+  startRound();
+  toast("只换路数，你问的事还留着");
+});
+
+$("#resetBtn").addEventListener("click",()=>{
+  askState={text:"",mode:null};
+  questionInput.value="";
+  $("#questionCount").textContent="0";
+  document.querySelectorAll(".ask-type").forEach(x=>x.classList.remove("selected"));
+  window.scrollTo({top:0,behavior:"smooth"});
+  startRound();
+  setTimeout(()=>$("#askSheet").scrollIntoView({behavior:"smooth",block:"start"}),220);
+  toast("上一问收掉了，换件小事再问");
+});
+
+$("#copyBtn").addEventListener("click",async()=>{
+  const text=
+`《今日野卦 · 问事一断》
+我问：${askState.text}
+野卦回：${$("#oneAnswer").textContent}
+${$("#oneTime").textContent}
+卦名：${$("#guaName").textContent}
+${$("#shareLine").textContent}`;
+
+  try{
+    await navigator.clipboard.writeText(text);
+    toast("这句判词已经抄走");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text;
+    ta.style.position="fixed";
+    ta.style.opacity="0";
+    document.body.appendChild(ta);
+    ta.select();
+    try{
+      document.execCommand("copy");
+      toast("这句判词已经抄走");
+    }catch(err){
+      toast("复制失败，长按结果自己抄");
+    }
+    ta.remove();
+  }
+});
+
+function toast(msg){
+  const t=$("#toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),1500);
+}
+
+startRound();
+})();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e"}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1c1c7799c54e46349cc23295b5e08299"}' crossorigin="anonymous"></script>
+</body>
+</html>
