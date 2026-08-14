@@ -6,22 +6,33 @@ let busy=false;
 
 function apiBase(){return String(localStorage.getItem(API_URL_KEY)||'').trim().replace(/\/+$/,'')}
 function token(){return sessionStorage.getItem(SESSION_KEY)||''}
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function projectByCard(card){
+
+function parseCard(card){
   const meta=card.querySelector('.project-meta')?.textContent||'';
   const m=meta.match(/projects\/([^/\s]+)\//);
   const path=m?.[1]||'';
-  const title=card.querySelector('h3')?.textContent?.replace(/^📌\s*/,'').trim()||'';
-  return (window.AIProjects||[]).find(p=>String(p.path)===path) || (window.AIProjects||[]).find(p=>String(p.title)===title);
+  const rawTitle=card.querySelector('h3')?.textContent||'';
+  const title=rawTitle.replace(/^📌\s*/,'').trim();
+  const source=window.AIProjects||[];
+  const found=source.find(p=>String(p.path)===path)||source.find(p=>String(p.title)===title);
+  return found||{id:path,path,title,pinned:false};
 }
+
 function paintCard(card,p){
   if(!p)return;
-  card.dataset.pinEnhanced='1';
-  card.classList.toggle('is-pinned',Boolean(p.pinned));
+  const pinState=p.pinned?'1':'0';
   const h=card.querySelector('h3');
-  if(h){const raw=h.textContent.replace(/^📌\s*/,'');h.textContent=(p.pinned?'📌 ':'')+raw}
   const actions=card.querySelector('.project-actions');
   if(!actions)return;
+
+  card.classList.toggle('is-pinned',Boolean(p.pinned));
+
+  if(h){
+    const raw=h.textContent.replace(/^📌\s*/,'').trim();
+    const next=(p.pinned?'📌 ':'')+raw;
+    if(h.textContent!==next) h.textContent=next;
+  }
+
   let btn=actions.querySelector('[data-pin-btn]');
   if(!btn){
     btn=document.createElement('button');
@@ -30,22 +41,28 @@ function paintCard(card,p){
     btn.dataset.pinBtn='1';
     actions.prepend(btn);
   }
-  btn.textContent=p.pinned?'取消置顶':'📌 置顶';
+  const nextText=p.pinned?'取消置顶':'📌 置顶';
+  if(btn.textContent!==nextText) btn.textContent=nextText;
   btn.title=p.pinned?'取消首页置顶':'将该项目置顶到所有作品最前面';
   btn.onclick=()=>togglePin(p,card,btn);
+  card.dataset.pinEnhanced=pinState;
 }
+
 function enhance(){
-  document.querySelectorAll('#projectList .project-card').forEach(card=>paintCard(card,projectByCard(card)));
+  document.querySelectorAll('#projectList .project-card').forEach(card=>paintCard(card,parseCard(card)));
 }
+
 function reorderCards(){
   const list=document.getElementById('projectList');
   if(!list)return;
   const cards=[...list.querySelectorAll('.project-card')];
-  const byPath=new Map(cards.map(card=>{
-    const p=projectByCard(card);return[p?.path,card];
-  }));
+  const byPath=new Map(cards.map(card=>[parseCard(card)?.path,card]));
+  // 暂停 observer，避免 appendChild 重排触发重复增强。
+  observer.disconnect();
   (window.AIProjects||[]).forEach(p=>{const card=byPath.get(p.path);if(card)list.appendChild(card)});
+  observer.observe(list,{childList:true});
 }
+
 async function togglePin(p,card,btn){
   if(busy)return;
   const base=apiBase(),t=token();
@@ -60,7 +77,7 @@ async function togglePin(p,card,btn){
     });
     const data=await res.json().catch(()=>({}));
     if(!res.ok||!data.ok)throw new Error(data.error||`操作失败（HTTP ${res.status}）`);
-    window.AIProjects=Array.isArray(data.projects)?data.projects:window.AIProjects;
+    if(Array.isArray(data.projects)) window.AIProjects=data.projects;
     const updated=(window.AIProjects||[]).find(x=>String(x.id)===String(p.id)||String(x.path)===String(p.path))||{...p,pinned:next};
     paintCard(card,updated);
     reorderCards();
@@ -79,7 +96,14 @@ style.textContent=`
 `;
 document.head.appendChild(style);
 
-const observer=new MutationObserver(enhance);
-const start=()=>{const list=document.getElementById('projectList');if(list){observer.observe(list,{childList:true,subtree:true});enhance()}};
+// 只监听 projectList 的直接子节点。不要监听 subtree，
+// 否则本脚本修改按钮/标题也会触发自身，造成 MutationObserver 无限循环。
+const observer=new MutationObserver(()=>enhance());
+const start=()=>{
+  const list=document.getElementById('projectList');
+  if(!list)return;
+  observer.observe(list,{childList:true});
+  enhance();
+};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
