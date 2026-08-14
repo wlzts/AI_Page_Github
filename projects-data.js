@@ -12,7 +12,7 @@ window.AIProjects = [
     "visible": true,
     "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/",
     "featured": false,
-    "pinned": true
+    "pinned": false
   },
   {
     "id": "basketball-position-matching",
