@@ -1,19 +1,5 @@
-/* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
+/* 由 V8 在线管理员后台发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
-  {
-    "id": "Lyrictype Project",
-    "title": "歌词拼写",
-    "description": "一个基于Web的歌词学习应用，支持GitHub模板自动加载、字符级实时验证、全端适配等特性。",
-    "category": "游戏",
-    "date": "2026.8.14",
-    "path": "lyrictype",
-    "accent": "#155b4a",
-    "keywords": "音乐，工具",
-    "externalUrl": "",
-    "visible": true,
-    "featured": false,
-    "pinned": true
-  },
   {
     "id": "wash-hair",
     "title": "今晚洗头要不要",
@@ -25,8 +11,7 @@ window.AIProjects = [
     "keywords": "洗头 睡觉 拖延 清洁 审批",
     "visible": true,
     "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/",
-    "featured": false,
-    "pinned": false
+    "featured": false
   },
   {
     "id": "basketball-position-matching",
@@ -37,8 +22,7 @@ window.AIProjects = [
     "path": "Basketball-Position-Matching",
     "accent": "#73539a",
     "keywords": "运动 篮球 球探 位置 匹配",
-    "visible": true,
-    "pinned": false
+    "visible": true
   },
   {
     "id": "fit-meal",
@@ -128,5 +112,18 @@ window.AIProjects = [
     "keywords": "个人简历 RPG 像素游戏 后端工程师 Java Portfolio 曹继贤",
     "visible": true,
     "featured": false
+  },
+  {
+    "id": "Lyrictype Project",
+    "title": "歌词拼写",
+    "description": "一个基于Web的歌词学习应用，支持GitHub模板自动加载、字符级实时验证、全端适配等特性。",
+    "category": "游戏",
+    "date": "2026.8.14",
+    "path": "lyrictype",
+    "accent": "#155b4a",
+    "keywords": "音乐，工具",
+    "externalUrl": "",
+    "visible": true,
+    "featured": true
   }
 ];
