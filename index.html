@@ -41,5 +41,6 @@
     function render(list){countText.textContent=`${list.length} 个项目`;emptyState.style.display=list.length?'none':'block';grid.innerHTML=list.map(p=>`<a class="card${p.featured?' featured':''}" href="${esc(hrefOf(p))}" style="--card-accent:${esc(p.accent||'#155b4a')}" aria-label="打开${esc(p.title)}"><div class="card-main"><div class="card-top"><span class="tag">${esc(p.category||'实验')}</span><span class="date">${esc(p.date||'')}</span></div><h3>${esc(p.title)}</h3><p>${esc(p.description||'')}</p><div class="card-bottom"><span class="open-text">${p.featured?'进入履历世界':'进入网页处理问题'}</span><span class="arrow" aria-hidden="true">↗</span></div></div><span class="card-decoration" aria-hidden="true"></span></a>`).join('')}
     searchInput.addEventListener('input',()=>{const q=searchInput.value.trim().toLowerCase();if(!q)return render(projects);render(projects.filter(p=>[p.title,p.description,p.category,p.keywords].join(' ').toLowerCase().includes(q)))});render(projects);
   </script>
+  <script src="./v10-bootstrap.js"></script>
 </body>
 </html>
