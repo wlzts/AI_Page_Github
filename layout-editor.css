@@ -1,0 +1,23 @@
+.v10-design-mode{--v10-panel:320px;padding-top:64px}
+.v10-design-mode .shell{transition:max-width .22s ease,width .22s ease}
+.v10-design-mode .card{outline:2px dashed transparent;cursor:default;user-select:none}
+.v10-design-mode .card.v10-selected{outline-color:#155b4a;outline-offset:3px}
+.v10-design-mode .card.v10-dragging{opacity:.6;z-index:10;transform:scale(.98)}
+.v10-card-tools{position:absolute;z-index:20;inset:8px 8px auto auto;display:flex;gap:6px;pointer-events:auto}
+.v10-card-tools button,.v10-resize-handle{border:1px solid rgba(255,255,255,.25);background:#152d26;color:#fff;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.22);font:800 11px/1 system-ui;padding:8px;cursor:grab}
+.v10-resize-handle{position:absolute;z-index:21;right:8px;bottom:8px;width:34px;height:34px;display:grid;place-items:center;cursor:nwse-resize;font-size:15px}
+.v10-size-badge{position:absolute;z-index:21;left:10px;bottom:10px;padding:5px 8px;border-radius:8px;background:rgba(21,45,38,.92);color:#fff;font:800 10px/1 system-ui;pointer-events:none}
+.v10-toolbar{position:fixed;z-index:200000;left:0;right:0;top:0;min-height:58px;display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(19,35,30,.96);color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.2);backdrop-filter:blur(12px)}
+.v10-toolbar strong{font-size:13px;white-space:nowrap}.v10-toolbar .v10-spacer{flex:1}.v10-toolbar button{border:1px solid rgba(255,255,255,.24);background:#284a3e;color:#fff;border-radius:9px;padding:8px 10px;font:750 11px system-ui;cursor:pointer}.v10-toolbar button.active{background:#f2d66f;color:#1d332b;border-color:#f2d66f}.v10-toolbar button.primary{background:#d5b54d;color:#193128;border-color:#f1d467}.v10-toolbar button.danger{background:#5a2c29}
+.v10-status{max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 11px system-ui;color:#c8d9d2}.v10-status.ok{color:#8df0bd}.v10-status.error{color:#ffaaa2}
+.v10-panel{position:fixed;z-index:199999;right:14px;top:72px;width:min(320px,calc(100vw - 28px));max-height:calc(100vh - 86px);overflow:auto;padding:16px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(18,32,28,.96);color:#f5f3e8;box-shadow:0 18px 60px rgba(0,0,0,.3);backdrop-filter:blur(14px)}
+.v10-panel h3{margin:0 0 4px;font-size:16px}.v10-panel p{margin:0 0 14px;color:#aebdb6;font-size:11px;line-height:1.5}
+.v10-field{display:grid;gap:6px;margin:12px 0}.v10-field label{font:800 11px system-ui;color:#d7dfda}.v10-field input[type=range]{width:100%}.v10-field-row{display:flex;justify-content:space-between;gap:8px;align-items:center}.v10-value{font:800 11px ui-monospace,monospace;color:#f1d66f}
+.v10-presets{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.v10-presets button{border:1px solid #466157;background:#263f37;color:#fff;border-radius:9px;padding:8px;font:750 11px system-ui;cursor:pointer}
+.v10-divider{height:1px;margin:15px 0;background:rgba(255,255,255,.12)}
+.v10-hint{padding:10px;border-radius:10px;background:#223b33;color:#b8c9c1;font-size:10px;line-height:1.6}
+.v10-login{position:fixed;z-index:220000;inset:0;display:grid;place-items:center;padding:20px;background:rgba(7,15,12,.9);backdrop-filter:blur(10px)}
+.v10-login-card{width:min(470px,100%);padding:24px;border:1px solid #4b665c;border-radius:18px;background:#152b24;color:#fff;box-shadow:0 20px 80px rgba(0,0,0,.45)}
+.v10-login-card h2{margin:0 0 8px}.v10-login-card p{color:#b7c6c0;font-size:12px;line-height:1.6}.v10-login-card label{display:grid;gap:6px;margin:12px 0;font-size:11px;font-weight:800}.v10-login-card input{width:100%;padding:11px 12px;border:1px solid #587167;border-radius:9px;background:#0e211b;color:#fff;outline:none}.v10-login-actions{display:flex;gap:8px;margin-top:15px}.v10-login-actions button{flex:1;padding:11px;border:0;border-radius:9px;font-weight:800;cursor:pointer}.v10-login-actions .primary{background:#d8ba55;color:#193027}
+.v10-preview-tablet .shell{max-width:760px!important}.v10-preview-mobile .shell{max-width:390px!important}.v10-preview-mobile .hero{grid-template-columns:1fr!important}.v10-preview-mobile .resume-teaser{display:none}
+@media(max-width:760px){.v10-panel{top:auto;bottom:10px;max-height:46vh}.v10-toolbar{overflow-x:auto}.v10-toolbar strong,.v10-status{display:none}.v10-design-mode{padding-top:58px}}
