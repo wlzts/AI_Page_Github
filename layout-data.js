@@ -2,22 +2,22 @@
 window.AIPageLayout = {
   "version": 10,
   "order": [
+    "Lyrictype Project",
     "wash-hair",
     "basketball-position-matching",
-    "fit-meal",
     "gomoku",
+    "fit-meal",
     "basketball-shot",
     "eat-what",
     "wordvideo",
     "do-divination",
-    "Lyrictype Project",
-    "playable-resume",
-    "white-house-master"
+    "white-house-master",
+    "playable-resume"
   ],
   "settings": {
     "desktop": {
       "columns": 12,
-      "gap": 14,
+      "gap": 9,
       "rowHeight": 120
     },
     "tablet": {
@@ -62,7 +62,7 @@ window.AIPageLayout = {
     },
     "basketball-shot": {
       "desktop": {
-        "colSpan": 3,
+        "colSpan": 6,
         "rowSpan": 2
       }
     },
@@ -99,7 +99,7 @@ window.AIPageLayout = {
     "Lyrictype Project": {
       "desktop": {
         "colSpan": 12,
-        "rowSpan": 3
+        "rowSpan": 2
       }
     }
   }
