@@ -4,22 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>V9.2 AI 项目发布管理器</title>
+  <title>V10 AI 项目发布器</title>
   <link rel="stylesheet" href="project-manager.css">
 </head>
 <body>
   <main class="shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">AI_PAGE / ADMIN</p>
-        <h1>V9.2 项目发布管理器</h1>
-        <p class="sub">选择本地网页项目文件夹，一次发布到 GitHub 的 <code>projects/&lt;目录&gt;/</code>，并同步更新作品库。右侧作品列表可直接置顶。</p>
+        <p class="eyebrow">AI_PAGE / CONTENT ADMIN</p>
+        <h1>V10 项目发布器</h1>
+        <p class="sub">这里只负责上传、替换、删除 AI 作品内容。项目顺序和卡片大小统一去首页的「页面设计」中调整。</p>
       </div>
       <div class="top-actions">
+        <a class="button ghost" href="../../?layout=1">页面设计</a>
         <a class="button ghost" href="./?admin=1">返回简历管理后台</a>
         <button class="button ghost" id="logoutBtn" type="button">退出登录</button>
       </div>
     </header>
+
     <section class="login-card" id="loginCard">
       <div>
         <p class="eyebrow">SECURE LOGIN</p>
@@ -31,6 +33,7 @@
       <button class="button primary" id="loginBtn" type="button">登录项目发布器</button>
       <p class="status" id="loginStatus"></p>
     </section>
+
     <section id="manager" hidden>
       <div class="dashboard-grid">
         <section class="panel publish-panel">
@@ -38,6 +41,7 @@
             <div><p class="eyebrow">PUBLISH</p><h2>新建 / 替换 AI 作品</h2></div>
             <span class="pill" id="repoBadge">ONLINE</span>
           </div>
+
           <div class="form-grid">
             <label>作品名称<input id="title" type="text" placeholder="例如：天气卡片"></label>
             <label>项目目录名<input id="slug" type="text" placeholder="weather-card"><small>建议英文小写 + 连字符；最终目录：projects/目录名/</small></label>
@@ -48,11 +52,12 @@
             <label class="wide">作品简介<textarea id="description" rows="4" placeholder="这个作品解决什么问题、有什么特点？"></textarea></label>
             <label class="wide">搜索关键词<input id="keywords" type="text" placeholder="天气 工具 AI 可视化"></label>
           </div>
+
           <div class="check-row">
             <label><input id="visible" type="checkbox" checked> 网站中显示</label>
-            <label><input id="featured" type="checkbox"> 首页重点展示（大卡片）</label>
             <label><input id="replace" type="checkbox"> 覆盖已有同名目录</label>
           </div>
+
           <div class="folder-box">
             <div>
               <strong>项目文件夹</strong>
@@ -60,21 +65,25 @@
             </div>
             <label class="button secondary file-button">选择整个项目文件夹<input id="folderInput" type="file" webkitdirectory multiple></label>
           </div>
+
           <div class="file-summary" id="fileSummary">尚未选择项目文件夹。</div>
           <div class="file-list" id="fileList"></div>
+
           <div class="progress-wrap" id="progressWrap" hidden>
             <div class="progress"><span id="progressBar"></span></div>
             <p id="progressText">准备上传…</p>
           </div>
+
           <div class="publish-actions">
             <button class="button primary" id="publishBtn" type="button">发布到 GitHub</button>
             <button class="button ghost" id="resetBtn" type="button">清空表单</button>
           </div>
           <p class="status" id="publishStatus"></p>
         </section>
+
         <aside class="panel library-panel">
           <div class="section-head"><div><p class="eyebrow">LIBRARY</p><h2>现有 AI 作品</h2></div><span class="count" id="projectCount">0</span></div>
-          <p style="margin:-8px 0 14px;opacity:.7;font-size:12px">📌 置顶会真正改变作品顺序；「重点展示」只控制首页卡片尺寸。</p>
+          <p style="margin:-8px 0 14px;opacity:.7;font-size:12px">这里只管理作品内容。要调整顺序、大小和响应式布局，请点击上方「页面设计」。</p>
           <div id="projectList" class="project-list"></div>
         </aside>
       </div>
@@ -83,6 +92,5 @@
 
   <script src="../../projects-data.js"></script>
   <script src="project-manager.js"></script>
-  <script src="pin-manager.js"></script>
 </body>
 </html>

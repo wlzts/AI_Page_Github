@@ -5,7 +5,6 @@
   if (!grid) return;
 
   const projects = Array.isArray(window.AIProjects) ? window.AIProjects : [];
-  const layout = window.AIPageLayout || {};
   let paused = false;
   let overrideDevice = '';
   let scheduled = 0;
@@ -16,6 +15,10 @@
     mobile: { columns: 1, gap: 12, rowHeight: 110 }
   };
 
+  function layout() {
+    return window.AIPageLayout || {};
+  }
+
   function deviceForWidth() {
     if (overrideDevice) return overrideDevice;
     if (window.innerWidth <= 620) return 'mobile';
@@ -24,7 +27,7 @@
   }
 
   function settingsFor(device) {
-    const raw = layout.settings?.[device] || {};
+    const raw = layout().settings?.[device] || {};
     const base = defaults[device];
     return {
       columns: base.columns,
@@ -50,17 +53,17 @@
     return id;
   }
 
-  function defaultSpec(id, device) {
-    const p = projects.find((item) => String(item.id) === String(id));
-    if (device === 'mobile') return { colSpan: 1, rowSpan: p?.featured ? 3 : 2 };
-    if (device === 'tablet') return { colSpan: p?.featured ? 6 : 3, rowSpan: p?.featured ? 3 : 2 };
-    return { colSpan: p?.featured ? 12 : 6, rowSpan: p?.featured ? 3 : 2 };
+  // V10.1: 默认卡片大小固定为“标准”，完全不再读取 featured / pinned。
+  function defaultSpec(device) {
+    if (device === 'mobile') return { colSpan: 1, rowSpan: 2 };
+    if (device === 'tablet') return { colSpan: 3, rowSpan: 2 };
+    return { colSpan: 6, rowSpan: 2 };
   }
 
   function specFor(id, device) {
     const s = settingsFor(device);
-    const raw = layout.cards?.[id]?.[device];
-    const base = defaultSpec(id, device);
+    const raw = layout().cards?.[id]?.[device];
+    const base = defaultSpec(device);
     return {
       colSpan: Math.max(1, Math.min(s.columns, Math.round(Number(raw?.colSpan ?? base.colSpan) || base.colSpan))),
       rowSpan: Math.max(1, Math.min(6, Math.round(Number(raw?.rowSpan ?? base.rowSpan) || base.rowSpan)))
@@ -68,7 +71,7 @@
   }
 
   function orderIndex(id) {
-    const order = Array.isArray(layout.order) ? layout.order : [];
+    const order = Array.isArray(layout().order) ? layout().order : [];
     const i = order.indexOf(id);
     return i < 0 ? Number.MAX_SAFE_INTEGER : i;
   }
@@ -93,12 +96,13 @@
       .sort((a, b) => orderIndex(a.dataset.projectId) - orderIndex(b.dataset.projectId))
       .forEach((card) => grid.appendChild(card));
 
-    const radius = Math.max(0, Math.min(48, Number(layout.style?.cardRadius ?? 24) || 24));
-    const padding = Math.max(8, Math.min(48, Number(layout.style?.cardPadding ?? 22) || 22));
+    const radius = Math.max(0, Math.min(48, Number(layout().style?.cardRadius ?? 24) || 24));
+    const padding = Math.max(8, Math.min(48, Number(layout().style?.cardPadding ?? 22) || 22));
 
     for (const card of cards) {
       const id = card.dataset.projectId || identifyCard(card);
       const spec = specFor(id, device);
+      card.classList.remove('featured');
       card.style.gridColumn = `span ${spec.colSpan}`;
       card.style.gridRow = `span ${spec.rowSpan}`;
       card.style.minHeight = '0';
