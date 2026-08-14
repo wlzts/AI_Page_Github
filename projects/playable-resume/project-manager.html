@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>V9 AI 项目发布管理器</title>
+  <title>V9.2 AI 项目发布管理器</title>
   <link rel="stylesheet" href="project-manager.css">
 </head>
 <body>
@@ -12,15 +12,14 @@
     <header class="topbar">
       <div>
         <p class="eyebrow">AI_PAGE / ADMIN</p>
-        <h1>V9 项目发布管理器</h1>
-        <p class="sub">选择本地网页项目文件夹，一次发布到 GitHub 的 <code>projects/&lt;目录&gt;/</code>，并同步更新作品库。</p>
+        <h1>V9.2 项目发布管理器</h1>
+        <p class="sub">选择本地网页项目文件夹，一次发布到 GitHub 的 <code>projects/&lt;目录&gt;/</code>，并同步更新作品库。右侧作品列表可直接置顶。</p>
       </div>
       <div class="top-actions">
         <a class="button ghost" href="./?admin=1">返回简历管理后台</a>
         <button class="button ghost" id="logoutBtn" type="button">退出登录</button>
       </div>
     </header>
-
     <section class="login-card" id="loginCard">
       <div>
         <p class="eyebrow">SECURE LOGIN</p>
@@ -32,7 +31,6 @@
       <button class="button primary" id="loginBtn" type="button">登录项目发布器</button>
       <p class="status" id="loginStatus"></p>
     </section>
-
     <section id="manager" hidden>
       <div class="dashboard-grid">
         <section class="panel publish-panel">
@@ -52,10 +50,9 @@
           </div>
           <div class="check-row">
             <label><input id="visible" type="checkbox" checked> 网站中显示</label>
-            <label><input id="featured" type="checkbox"> 首页重点展示</label>
+            <label><input id="featured" type="checkbox"> 首页重点展示（大卡片）</label>
             <label><input id="replace" type="checkbox"> 覆盖已有同名目录</label>
           </div>
-
           <div class="folder-box">
             <div>
               <strong>项目文件夹</strong>
@@ -63,7 +60,6 @@
             </div>
             <label class="button secondary file-button">选择整个项目文件夹<input id="folderInput" type="file" webkitdirectory multiple></label>
           </div>
-
           <div class="file-summary" id="fileSummary">尚未选择项目文件夹。</div>
           <div class="file-list" id="fileList"></div>
           <div class="progress-wrap" id="progressWrap" hidden>
@@ -76,9 +72,9 @@
           </div>
           <p class="status" id="publishStatus"></p>
         </section>
-
         <aside class="panel library-panel">
           <div class="section-head"><div><p class="eyebrow">LIBRARY</p><h2>现有 AI 作品</h2></div><span class="count" id="projectCount">0</span></div>
+          <p style="margin:-8px 0 14px;opacity:.7;font-size:12px">📌 置顶会真正改变作品顺序；「重点展示」只控制首页卡片尺寸。</p>
           <div id="projectList" class="project-list"></div>
         </aside>
       </div>
@@ -87,5 +83,6 @@
 
   <script src="../../projects-data.js"></script>
   <script src="project-manager.js"></script>
+  <script src="pin-manager.js"></script>
 </body>
 </html>
