@@ -1,6 +1,20 @@
 /* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
+    "id": "Lyrictype Project",
+    "title": "歌词拼写",
+    "description": "一个基于Web的歌词学习应用，支持GitHub模板自动加载、字符级实时验证、全端适配等特性。",
+    "category": "游戏",
+    "date": "2026.8.14",
+    "path": "lyrictype",
+    "accent": "#155b4a",
+    "keywords": "音乐，工具",
+    "externalUrl": "",
+    "visible": true,
+    "featured": false,
+    "pinned": true
+  },
+  {
     "id": "wash-hair",
     "title": "今晚洗头要不要",
     "description": "根据明日见人风险、当前头顶状态和剩余体力，审批今晚是否值得正式开工。",
@@ -112,19 +126,6 @@ window.AIProjects = [
     "path": "playable-resume",
     "accent": "#2f6b53",
     "keywords": "个人简历 RPG 像素游戏 后端工程师 Java Portfolio 曹继贤",
-    "visible": true,
-    "featured": false
-  },
-  {
-    "id": "Lyrictype Project",
-    "title": "歌词拼写",
-    "description": "一个基于Web的歌词学习应用，支持GitHub模板自动加载、字符级实时验证、全端适配等特性。",
-    "category": "游戏",
-    "date": "2026.8.14",
-    "path": "lyrictype",
-    "accent": "#155b4a",
-    "keywords": "音乐，工具",
-    "externalUrl": "",
     "visible": true,
     "featured": false
   }
