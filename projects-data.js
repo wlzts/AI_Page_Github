@@ -112,5 +112,18 @@ window.AIProjects = [
     "keywords": "个人简历 RPG 像素游戏 后端工程师 Java Portfolio 曹继贤",
     "visible": true,
     "featured": true
+  },
+  {
+    "id": "Lyrictype Project",
+    "title": "歌词拼写",
+    "description": "一个基于Web的歌词学习应用，支持GitHub模板自动加载、字符级实时验证、全端适配等特性。",
+    "category": "游戏",
+    "date": "",
+    "path": "Lyrictype",
+    "accent": "#155b4a",
+    "keywords": "音乐，工具",
+    "externalUrl": "",
+    "visible": true,
+    "featured": false
   }
 ];
