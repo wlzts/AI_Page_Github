@@ -38,7 +38,7 @@ window.AIPageLayout = {
   "cards": {
     "wash-hair": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
@@ -50,56 +50,56 @@ window.AIPageLayout = {
     },
     "fit-meal": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "gomoku": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "basketball-shot": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "eat-what": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "wordvideo": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "do-divination": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "white-house-master": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
     "playable-resume": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 12,
         "rowSpan": 2
       }
     },
     "Lyrictype Project": {
       "desktop": {
-        "colSpan": 1,
-        "rowSpan": 1
+        "colSpan": 12,
+        "rowSpan": 3
       }
     }
   }
