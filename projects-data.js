@@ -111,7 +111,7 @@ window.AIProjects = [
     "accent": "#2f6b53",
     "keywords": "个人简历 RPG 像素游戏 后端工程师 Java Portfolio 曹继贤",
     "visible": true,
-    "featured": true
+    "featured": false
   },
   {
     "id": "Lyrictype Project",
