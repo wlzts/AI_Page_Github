@@ -1,4 +1,4 @@
-/* 由 V8 在线管理员后台发布。AI_Page 首页与可玩简历共享此数据。 */
+/* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
     "id": "wash-hair",
@@ -10,7 +10,8 @@ window.AIProjects = [
     "accent": "#235b4e",
     "keywords": "洗头 睡觉 拖延 清洁 审批",
     "visible": true,
-    "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/"
+    "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/",
+    "featured": false
   },
   {
     "id": "basketball-position-matching",

@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2f1ed" />
+  <title>今晚洗头审批局</title>
+  <style>
+    :root {
+      --bg: #f2f1ed;
+      --paper: #fffef9;
+      --ink: #171816;
+      --muted: #6f716b;
+      --line: #d8d8d1;
+      --accent: #235b4e;
+      --accent-soft: #e4eee9;
+      --danger: #a64136;
+      --shadow: 0 18px 50px rgba(31, 37, 33, 0.10);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(35, 91, 78, 0.08), transparent 34%),
+        linear-gradient(180deg, #f7f6f2 0%, var(--bg) 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .page {
+      width: min(100%, 560px);
+      margin: 0 auto;
+      padding: 18px 14px 28px;
+    }
+
+    .app-shell {
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 46px);
+      background: rgba(255, 254, 249, 0.92);
+      border: 1px solid rgba(23, 24, 22, 0.09);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.55);
+    }
+
+    .bureau {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    .seal-mini {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      color: var(--accent);
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+      font-size: 11px;
+      letter-spacing: 0;
+    }
+
+    .status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .status-dot::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 0 5px rgba(35, 91, 78, 0.09);
+    }
+
+    .screen {
+      display: none;
+      padding: 26px 18px 24px;
+      animation: screenIn .38s ease both;
+    }
+
+    .screen.active { display: block; }
+
+    @keyframes screenIn {
+      from { opacity: 0; transform: translateY(10px) scale(.99); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 390px;
+      font-size: clamp(34px, 10vw, 52px);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
+    }
+
+    .subtitle {
+      margin: 15px 0 24px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .notice {
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #f7f6f1;
+      color: #535650;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .notice strong { color: var(--ink); }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
+    }
+
+    .primary-btn {
+      margin-top: 18px;
+      color: #fff;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      box-shadow: 0 10px 24px rgba(35, 91, 78, .20);
+    }
+
+    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(35, 91, 78, .24); }
+    .primary-btn:active { transform: translateY(1px) scale(.99); }
+    .primary-btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    .secondary-btn {
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .secondary-btn:hover { background: #f7f7f3; }
+    .secondary-btn:active { transform: scale(.99); }
+
+    .intro-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 22px 0 0;
+    }
+
+    .meta-cell {
+      padding: 12px 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .meta-cell span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+
+    .meta-cell b {
+      display: block;
+      margin-top: 5px;
+      font-size: 13px;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 6px;
+      overflow: hidden;
+      background: #e8e8e2;
+      border-radius: 99px;
+    }
+
+    .progress-bar {
+      width: 20%;
+      height: 100%;
+      background: var(--accent);
+      border-radius: inherit;
+      transition: width .35s ease;
+    }
+
+    .progress-label {
+      min-width: 42px;
+      color: var(--muted);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; animation: stepIn .34s ease both; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .step-index {
+      margin-bottom: 9px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+
+    .question {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.24;
+      letter-spacing: -.035em;
+    }
+
+    .question-help {
+      margin: 10px 0 20px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .option-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-card {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 15px 46px 15px 15px;
+      color: var(--ink);
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      cursor: pointer;
+      transition: border .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+
+    .option-card:hover { transform: translateY(-1px); border-color: #acb6b0; }
+
+    .option-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 3px rgba(35, 91, 78, .08);
+    }
+
+    .option-card::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #b9bbb5;
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .option-card.selected::after {
+      border: 5px solid var(--accent);
+      background: #fff;
+    }
+
+    .option-title {
+      display: block;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .option-desc {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .range-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .range-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .range-value {
+      color: var(--accent);
+      font-size: 34px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.04em;
+    }
+
+    .range-caption {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      appearance: none;
+      border-radius: 99px;
+      outline: none;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent) var(--range-progress, 50%), #e5e6e1 var(--range-progress, 50%), #e5e6e1 100%);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 24px;
+      height: 24px;
+      appearance: none;
+      border: 5px solid #fff;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 2px 9px rgba(0,0,0,.20);
+      cursor: grab;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: 5px solid #fff;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 2px 9px rgba(0,0,0,.20);
+      cursor: grab;
+    }
+
+    .range-scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      color: #8a8d86;
+      font-size: 10px;
+    }
+
+    .switch-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 15px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      cursor: pointer;
+      transition: border .18s ease, background .18s ease;
+    }
+
+    .switch-row.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .switch-copy b {
+      display: block;
+      font-size: 14px;
+    }
+
+    .switch-copy span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .toggle {
+      position: relative;
+      flex: 0 0 auto;
+      width: 42px;
+      height: 24px;
+      border-radius: 99px;
+      background: #d6d7d2;
+      transition: background .2s ease;
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.18);
+      transition: transform .2s ease;
+    }
+
+    .switch-row.active .toggle { background: var(--accent); }
+    .switch-row.active .toggle::after { transform: translateX(18px); }
+
+    .step-actions {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .step-actions.single { grid-template-columns: 1fr; }
+
+    .inline-error {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      color: var(--danger);
+      border: 1px solid rgba(166, 65, 54, .25);
+      border-radius: 12px;
+      background: rgba(166, 65, 54, .07);
+      font-size: 12px;
+    }
+
+    .inline-error.show { display: block; animation: shake .3s ease; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      33% { transform: translateX(-4px); }
+      66% { transform: translateX(4px); }
+    }
+
+    .loading-screen {
+      min-height: 570px;
+      display: grid;
+      align-content: center;
+      text-align: center;
+    }
+
+    .scanner {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 28px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background:
+        linear-gradient(90deg, transparent 49.5%, rgba(35,91,78,.18) 50%, transparent 50.5%),
+        linear-gradient(transparent 49.5%, rgba(35,91,78,.18) 50%, transparent 50.5%),
+        radial-gradient(circle, rgba(35,91,78,.08) 0 31%, transparent 32% 49%, rgba(35,91,78,.10) 50% 51%, transparent 52%);
+      overflow: hidden;
+    }
+
+    .scanner::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(35,91,78,.55), transparent 26%, transparent 100%);
+      animation: rotate 1.2s linear infinite;
+      mask: radial-gradient(circle, transparent 0 64%, #000 65%);
+      -webkit-mask: radial-gradient(circle, transparent 0 64%, #000 65%);
+    }
+
+    .scanner::after {
+      content: "审";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-family: "Songti SC", "SimSun", serif;
+      font-size: 38px;
+      font-weight: 900;
+      animation: pulse 1.1s ease-in-out infinite alternate;
+    }
+
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @keyframes pulse { to { transform: scale(1.08); opacity: .72; } }
+
+    .loading-title {
+      margin: 0 0 9px;
+      font-size: 24px;
+      letter-spacing: -.03em;
+    }
+
+    .loading-tip {
+      min-height: 24px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 13px;
+      transition: opacity .2s ease;
+    }
+
+    .loading-dots span { animation: blink 1.2s infinite; }
+    .loading-dots span:nth-child(2) { animation-delay: .2s; }
+    .loading-dots span:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink { 0%, 20% { opacity: .15; } 50%, 100% { opacity: 1; } }
+
+    .result-screen { padding: 18px 12px 22px; }
+
+    .report-card {
+      position: relative;
+      overflow: hidden;
+      padding: 22px 18px 18px;
+      border: 1px solid #cfd1cb;
+      border-radius: 22px;
+      background:
+        linear-gradient(rgba(35,91,78,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(35,91,78,.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 22px 22px;
+      box-shadow: 0 18px 42px rgba(28, 33, 30, .12);
+    }
+
+    .report-card::before,
+    .report-card::after {
+      content: "";
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      border: 1px solid rgba(35,91,78,.12);
+      border-radius: 50%;
+    }
+
+    .report-card::before { right: -72px; top: -66px; }
+    .report-card::after { left: -88px; bottom: -86px; }
+
+    .report-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .report-kicker {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .15em;
+    }
+
+    .report-name {
+      margin: 5px 0 0;
+      font-size: 20px;
+      letter-spacing: -.03em;
+    }
+
+    .report-no {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 9px;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .score-zone {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 124px 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0 16px;
+    }
+
+    .score-ring {
+      --score-angle: 0deg;
+      display: grid;
+      place-items: center;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) var(--score-angle), #e3e5df 0);
+      box-shadow: inset 0 0 0 1px rgba(35,91,78,.08);
+    }
+
+    .score-ring-inner {
+      display: grid;
+      place-items: center;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: var(--paper);
+      box-shadow: 0 0 0 1px rgba(35,91,78,.08);
+    }
+
+    .score-num {
+      display: block;
+      font-size: 42px;
+      font-weight: 950;
+      line-height: .9;
+      letter-spacing: -.06em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-unit {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: .08em;
+    }
+
+    .result-title {
+      margin: 0 0 8px;
+      font-size: 25px;
+      line-height: 1.15;
+      letter-spacing: -.04em;
+    }
+
+    .result-badge {
+      display: inline-flex;
+      padding: 6px 9px;
+      color: var(--accent);
+      border: 1px solid rgba(35,91,78,.25);
+      border-radius: 999px;
+      background: var(--accent-soft);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .metric-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 2px 0 16px;
+    }
+
+    .metric {
+      padding: 11px 9px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255,255,255,.68);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .metric b {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .report-section {
+      position: relative;
+      z-index: 1;
+      padding: 14px 0;
+      border-top: 1px dashed #cfd1cb;
+    }
+
+    .report-section h3 {
+      margin: 0 0 7px;
+      color: var(--accent);
+      font-size: 11px;
+      letter-spacing: .12em;
+    }
+
+    .report-section p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .share-quote {
+      position: relative;
+      z-index: 1;
+      margin-top: 2px;
+      padding: 15px;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 14px 14px 0;
+      background: var(--accent-soft);
+      font-size: 15px;
+      font-weight: 850;
+      line-height: 1.55;
+    }
+
+    .report-footer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-end;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .date-block {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .stamp {
+      display: grid;
+      place-items: center;
+      width: 72px;
+      height: 72px;
+      color: var(--accent);
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      font-family: "Songti SC", "SimSun", serif;
+      font-size: 12px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.2;
+      transform: rotate(-9deg);
+      opacity: .88;
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(28px + env(safe-area-inset-bottom));
+      z-index: 10;
+      padding: 10px 14px;
+      color: #fff;
+      border-radius: 999px;
+      background: rgba(23,24,22,.92);
+      font-size: 12px;
+      transform: translate(-50%, 16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .column-note {
+      padding: 16px 18px 19px;
+      color: #858780;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    @media (min-width: 760px) {
+      .page { padding-top: 34px; padding-bottom: 34px; }
+      .app-shell { min-height: 760px; }
+      .screen { padding-left: 28px; padding-right: 28px; }
+    }
+
+    @media (max-width: 380px) {
+      .screen { padding-left: 15px; padding-right: 15px; }
+      .score-zone { grid-template-columns: 108px 1fr; gap: 12px; }
+      .score-ring { width: 104px; height: 104px; }
+      .score-ring-inner { width: 80px; height: 80px; }
+      .score-num { font-size: 36px; }
+      .result-title { font-size: 22px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="app-shell" aria-live="polite">
+      <header class="topbar">
+        <div class="bureau"><span class="seal-mini">洗</span>个人清洁决策署</div>
+        <div class="status-dot">系统正常</div>
+      </header>
+
+      <!-- 首屏 -->
+      <section class="screen active" id="introScreen">
+        <p class="eyebrow">夜间头部事务专线</p>
+        <h1>今晚洗头<br>审批局</h1>
+        <p class="subtitle">根据明日见人风险、当前头顶状态和剩余体力，判断今晚是否值得正式开工。</p>
+
+        <div class="notice">
+          <strong>审批范围：</strong>仅处理“其实不脏，但又有点不放心”的普通犹豫。全程约 30 秒，不承担吹头发期间刷手机超时责任。
+        </div>
+
+        <button class="primary-btn" id="startBtn" type="button">领取洗头评估表</button>
+
+        <div class="intro-meta" aria-hidden="true">
+          <div class="meta-cell"><span>办理时长</span><b>约 30 秒</b></div>
+          <div class="meta-cell"><span>评估维度</span><b>5 项</b></div>
+          <div class="meta-cell"><span>报告效力</span><b>仅限今晚</b></div>
+        </div>
+      </section>
+
+      <!-- 问卷 -->
+      <section class="screen" id="formScreen">
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="progress-label" id="progressLabel">01 / 05</div>
+        </div>
+
+        <form id="approvalForm" novalidate>
+          <section class="step active" data-step="1">
+            <div class="step-index">01 · 清洁间隔核验</div>
+            <h2 class="question">你上一次洗头是什么时候？</h2>
+            <p class="question-help">请按真实体感作答，不必把“只冲了刘海”算作完整洗头。</p>
+            <div class="option-grid" data-field="days">
+              <button class="option-card" type="button" data-value="0"><span class="option-title">今天刚洗</span><span class="option-desc">理论上不该出现在这里，但我们尊重谨慎。</span></button>
+              <button class="option-card" type="button" data-value="1"><span class="option-title">昨天</span><span class="option-desc">处于“其实还能撑”的黄金争议期。</span></button>
+              <button class="option-card" type="button" data-value="2"><span class="option-title">前天</span><span class="option-desc">发根已经开始发表自己的意见。</span></button>
+              <button class="option-card" type="button" data-value="3"><span class="option-title">三天及以上</span><span class="option-desc">建议不要继续用灯光问题解释一切。</span></button>
+            </div>
+            <div class="inline-error">请选择一个清洁间隔。</div>
+            <div class="step-actions single"><button class="primary-btn next-btn" type="button">继续核验</button></div>
+          </section>
+
+          <section class="step" data-step="2">
+            <div class="step-index">02 · 明日暴露风险</div>
+            <h2 class="question">明天有多少人会近距离看见你？</h2>
+            <p class="question-help">隔着会议软件看见，也算半个见面。</p>
+            <div class="option-grid" data-field="exposure">
+              <button class="option-card" type="button" data-value="0"><span class="option-title">几乎不见人</span><span class="option-desc">宅家、戴帽子、摄像头长期维护中。</span></button>
+              <button class="option-card" type="button" data-value="1"><span class="option-title">普通通勤</span><span class="option-desc">会见到同事，但大家也没有那么认真。</span></button>
+              <button class="option-card" type="button" data-value="2"><span class="option-title">有会或有饭局</span><span class="option-desc">存在被正面观察超过三秒的可能。</span></button>
+              <button class="option-card" type="button" data-value="3"><span class="option-title">重要见面或拍照</span><span class="option-desc">明天的你会回头审判今晚的决定。</span></button>
+            </div>
+            <div class="inline-error">请选择一个明日见人强度。</div>
+            <div class="step-actions"><button class="secondary-btn back-btn" type="button">返回</button><button class="primary-btn next-btn" type="button">评估头顶</button></div>
+          </section>
+
+          <section class="step" data-step="3">
+            <div class="step-index">03 · 头顶实时采样</div>
+            <h2 class="question">当前头发“有点不对劲”的程度？</h2>
+            <p class="question-help">拖动滑块，以刚照完镜子的第一直觉为准。</p>
+            <div class="range-card">
+              <div class="range-head">
+                <div class="range-value"><span id="hairValue">45</span><small style="font-size:14px">%</small></div>
+                <div class="range-caption" id="hairCaption">还能解释为造型</div>
+              </div>
+              <input id="hairRange" type="range" min="0" max="100" value="45" aria-label="当前头发异常程度" />
+              <div class="range-scale"><span>蓬松无辜</span><span>需要避开顶光</span></div>
+            </div>
+            <div class="step-actions"><button class="secondary-btn back-btn" type="button">返回</button><button class="primary-btn next-btn" type="button">核算体力</button></div>
+          </section>
+
+          <section class="step" data-step="4">
+            <div class="step-index">04 · 执行能力评估</div>
+            <h2 class="question">你还剩多少洗头体力？</h2>
+            <p class="question-help">请同时计算洗、护、吹、捡地上头发等隐形成本。</p>
+            <div class="range-card">
+              <div class="range-head">
+                <div class="range-value"><span id="energyValue">38</span><small style="font-size:14px">%</small></div>
+                <div class="range-caption" id="energyCaption">能洗，但会拖延</div>
+              </div>
+              <input id="energyRange" type="range" min="0" max="100" value="38" aria-label="剩余洗头体力" />
+              <div class="range-scale"><span>只想躺着</span><span>甚至能吹造型</span></div>
+            </div>
+            <div class="step-actions"><button class="secondary-btn back-btn" type="button">返回</button><button class="primary-btn next-btn" type="button">登记特殊情况</button></div>
+          </section>
+
+          <section class="step" data-step="5">
+            <div class="step-index">05 · 特殊情形备案</div>
+            <h2 class="question">今晚还有哪些附加情况？</h2>
+            <p class="question-help">可多选，也可以一项都不选。系统会自行承担判断压力。</p>
+            <div class="switch-list" id="factorList">
+              <button class="switch-row" type="button" data-factor="sweat">
+                <span class="switch-copy"><b>今天运动或出汗了</b><span>头皮已产生可被感知的劳动痕迹</span></span><span class="toggle"></span>
+              </button>
+              <button class="switch-row" type="button" data-factor="photo">
+                <span class="switch-copy"><b>明天大概率要拍照</b><span>包括合照、工位抓拍与临时开摄像头</span></span><span class="toggle"></span>
+              </button>
+              <button class="switch-row" type="button" data-factor="hat">
+                <span class="switch-copy"><b>明天可以戴帽子</b><span>具备低成本头顶遮蔽方案</span></span><span class="toggle"></span>
+              </button>
+              <button class="switch-row" type="button" data-factor="late">
+                <span class="switch-copy"><b>洗完大概率拖到很晚</b><span>吹风机将侵占本就稀少的睡眠额度</span></span><span class="toggle"></span>
+              </button>
+            </div>
+            <div class="step-actions"><button class="secondary-btn back-btn" type="button">返回</button><button class="primary-btn" id="submitBtn" type="button">提交洗头申请</button></div>
+          </section>
+        </form>
+      </section>
+
+      <!-- 加载 -->
+      <section class="screen loading-screen" id="loadingScreen">
+        <div class="scanner" aria-hidden="true"></div>
+        <h2 class="loading-title">正在审批今晚洗头必要性<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></h2>
+        <p class="loading-tip" id="loadingTip">正在核对头顶实际情况与自我安慰偏差</p>
+      </section>
+
+      <!-- 结果 -->
+      <section class="screen result-screen" id="resultScreen">
+        <article class="report-card" id="reportCard">
+          <header class="report-head">
+            <div>
+              <div class="report-kicker">个人夜间清洁决策报告</div>
+              <h2 class="report-name">今晚洗头审批结论</h2>
+            </div>
+            <div class="report-no">REPORT NO.<br><span id="reportNo">HT-000000</span></div>
+          </header>
+
+          <div class="score-zone">
+            <div class="score-ring" id="scoreRing">
+              <div class="score-ring-inner">
+                <div>
+                  <span class="score-num" id="scoreNum">0</span>
+                  <span class="score-unit">开工必要指数</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="result-title" id="resultTitle">等待结论</h3>
+              <span class="result-badge" id="resultBadge">待审批</span>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric"><span>头顶风险</span><b id="riskMetric">--</b></div>
+            <div class="metric"><span>执行体力</span><b id="energyMetric">--</b></div>
+            <div class="metric"><span>可拖时限</span><b id="delayMetric">--</b></div>
+          </div>
+
+          <section class="report-section">
+            <h3>审批分析</h3>
+            <p id="analysisText"></p>
+          </section>
+
+          <section class="report-section">
+            <h3>具体建议</h3>
+            <p id="adviceText"></p>
+          </section>
+
+          <section class="report-section">
+            <h3>附加数据</h3>
+            <p id="funData"></p>
+          </section>
+
+          <div class="share-quote" id="shareQuote"></div>
+
+          <footer class="report-footer">
+            <div class="date-block">签发日期<br><strong id="reportDate" style="color:var(--ink)">--</strong><br>有效期：至明早照镜子前</div>
+            <div class="stamp" id="stampText">准予<br>延期</div>
+          </footer>
+        </article>
+
+        <div class="result-actions">
+          <button class="secondary-btn" id="resetBtn" type="button">重新测试</button>
+          <button class="primary-btn" id="copyBtn" type="button" style="margin-top:0">复制结论</button>
+        </div>
+      </section>
+
+      <footer class="column-note">每天用 AI 做一个好像有用，又好像没什么用的网页。</footer>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">已复制到剪贴板</div>
+
+  <script>
+    // ------------------------------
+    // 状态与基础配置
+    // ------------------------------
+    const state = {
+      days: null,
+      exposure: null,
+      hair: 45,
+      energy: 38,
+      factors: new Set()
+    };
+
+    let currentStep = 1;
+    let latestShareText = "";
+
+    const screens = {
+      intro: document.getElementById('introScreen'),
+      form: document.getElementById('formScreen'),
+      loading: document.getElementById('loadingScreen'),
+      result: document.getElementById('resultScreen')
+    };
+
+    const progressBar = document.getElementById('progressBar');
+    const progressLabel = document.getElementById('progressLabel');
+    const form = document.getElementById('approvalForm');
+
+    function showScreen(name) {
+      Object.values(screens).forEach(screen => screen.classList.remove('active'));
+      screens[name].classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showStep(stepNumber) {
+      currentStep = stepNumber;
+      document.querySelectorAll('.step').forEach(step => {
+        step.classList.toggle('active', Number(step.dataset.step) === currentStep);
+      });
+      progressBar.style.width = `${currentStep * 20}%`;
+      progressLabel.textContent = `${String(currentStep).padStart(2, '0')} / 05`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ------------------------------
+    // 选项、滑块与开关交互
+    // ------------------------------
+    document.querySelectorAll('[data-field]').forEach(group => {
+      group.addEventListener('click', event => {
+        const card = event.target.closest('.option-card');
+        if (!card) return;
+
+        const field = group.dataset.field;
+        state[field] = Number(card.dataset.value);
+        group.querySelectorAll('.option-card').forEach(item => item.classList.remove('selected'));
+        card.classList.add('selected');
+        group.parentElement.querySelector('.inline-error')?.classList.remove('show');
+      });
+    });
+
+    const hairRange = document.getElementById('hairRange');
+    const energyRange = document.getElementById('energyRange');
+
+    function updateRange(input, valueEl, captionEl, type) {
+      const value = Number(input.value);
+      state[type] = value;
+      valueEl.textContent = value;
+      input.style.setProperty('--range-progress', `${value}%`);
+
+      if (type === 'hair') {
+        captionEl.textContent = value < 20 ? '蓬松得很有底气' :
+          value < 40 ? '仅本人能察觉' :
+          value < 60 ? '还能解释为造型' :
+          value < 80 ? '正在失去空气感' : '建议避开一切顶光';
+      } else {
+        captionEl.textContent = value < 20 ? '连找毛巾都嫌远' :
+          value < 40 ? '能洗，但会拖延' :
+          value < 60 ? '完成基础流程没问题' :
+          value < 80 ? '可以认真吹干' : '甚至愿意护发';
+      }
+    }
+
+    hairRange.addEventListener('input', () => updateRange(hairRange, document.getElementById('hairValue'), document.getElementById('hairCaption'), 'hair'));
+    energyRange.addEventListener('input', () => updateRange(energyRange, document.getElementById('energyValue'), document.getElementById('energyCaption'), 'energy'));
+    updateRange(hairRange, document.getElementById('hairValue'), document.getElementById('hairCaption'), 'hair');
+    updateRange(energyRange, document.getElementById('energyValue'), document.getElementById('energyCaption'), 'energy');
+
+    document.getElementById('factorList').addEventListener('click', event => {
+      const row = event.target.closest('.switch-row');
+      if (!row) return;
+      const factor = row.dataset.factor;
+      if (state.factors.has(factor)) {
+        state.factors.delete(factor);
+        row.classList.remove('active');
+      } else {
+        state.factors.add(factor);
+        row.classList.add('active');
+      }
+    });
+
+    // ------------------------------
+    // 步骤控制与校验
+    // ------------------------------
+    document.getElementById('startBtn').addEventListener('click', () => {
+      showScreen('form');
+      showStep(1);
+    });
+
+    document.querySelectorAll('.next-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const step = button.closest('.step');
+        const fieldGroup = step.querySelector('[data-field]');
+
+        if (fieldGroup) {
+          const field = fieldGroup.dataset.field;
+          if (state[field] === null) {
+            step.querySelector('.inline-error').classList.add('show');
+            return;
+          }
+        }
+        showStep(Math.min(5, currentStep + 1));
+      });
+    });
+
+    document.querySelectorAll('.back-btn').forEach(button => {
+      button.addEventListener('click', () => showStep(Math.max(1, currentStep - 1)));
+    });
+
+    // ------------------------------
+    // 评分逻辑：输入决定主体，随机只做轻微波动
+    // ------------------------------
+    function calculateResult() {
+      const dayScore = [4, 20, 43, 64][state.days];
+      const exposureScore = [0, 10, 22, 36][state.exposure];
+      const hairScore = state.hair * 0.34;
+      const energyAdjustment = (state.energy - 50) * 0.16;
+
+      const factorWeights = { sweat: 13, photo: 12, hat: -10, late: -9 };
+      const factorScore = [...state.factors].reduce((sum, key) => sum + factorWeights[key], 0);
+
+      // 只允许 -3 到 +3 的轻微波动，避免随机主导结果
+      const smallNoise = Math.floor(Math.random() * 7) - 3;
+      const raw = dayScore * 0.58 + exposureScore * 0.72 + hairScore + energyAdjustment + factorScore + smallNoise;
+      const score = Math.max(0, Math.min(100, Math.round(raw)));
+
+      return buildResult(score);
+    }
+
+    function buildResult(score) {
+      const data = {
+        score,
+        title: '',
+        badge: '',
+        stamp: '',
+        delay: '',
+        analysis: '',
+        advice: '',
+        share: ''
+      };
+
+      if (score < 20) {
+        Object.assign(data, {
+          title: '本次申请不予立项',
+          badge: '一级 · 头顶状态良好',
+          stamp: '驳回\n洗头',
+          delay: '48 小时',
+          analysis: '现有证据不足以证明今晚必须启动完整洗头流程。你的头顶状态、明日暴露风险与实际清洁间隔均处于可控范围，此时开工更像一种对不确定性的过度治理。',
+          advice: '停止反复照镜子。明早简单梳理即可，把洗头体力留给真正需要的那一天。',
+          share: '系统判定：我今晚洗头属于重复建设。'
+        });
+      } else if (score < 40) {
+        Object.assign(data, {
+          title: '准予合理延期',
+          badge: '二级 · 可继续观察',
+          stamp: '准予\n延期',
+          delay: '24 小时',
+          analysis: '你的头发已经出现轻微行政预警，但尚未达到必须连夜处理的程度。考虑到剩余体力和明日见人强度，延期一晚仍在公众可接受范围内。',
+          advice: '今晚可使用干发喷雾、调整分缝或明天戴帽子。请勿在顶光下进行不必要的自我检查。',
+          share: '经审批，我的头发还能依法再撑一天。'
+        });
+      } else if (score < 60) {
+        Object.assign(data, {
+          title: '进入边缘开工状态',
+          badge: '三级 · 洗与不洗均有代价',
+          stamp: '限时\n观察',
+          delay: '12 小时',
+          analysis: '当前数据处于典型争议区：不洗，明早可能后悔；洗了，今晚可能熬夜。系统无法替你承担吹头发的痛苦，但已确认继续拖延会显著增加明日临时补救成本。',
+          advice: '若能在十分钟内开始，就洗；若十分钟后仍在刷手机，直接执行明早补救方案，不再二次讨论。',
+          share: '我的洗头问题已进入需要开会讨论的阶段。'
+        });
+      } else if (score < 80) {
+        Object.assign(data, {
+          title: '建议今晚正式开工',
+          badge: '四级 · 清洁行动必要',
+          stamp: '建议\n执行',
+          delay: '6 小时',
+          analysis: '多项指标已同时越过舒适阈值：清洁间隔、头顶实况或明日暴露风险至少有两项偏高。继续拖延虽然技术上可行，但会把今晚的十几分钟成本转化为明早更高强度的精神内耗。',
+          advice: '现在去洗，采用基础流程即可。无需临时增加护发、造型等附加项目，以免把普通洗头升级成夜间工程。',
+          share: '系统判定：今晚不洗，明早要为此付出情绪利息。'
+        });
+      } else {
+        Object.assign(data, {
+          title: '已签发紧急清洁指令',
+          badge: '五级 · 不建议继续解释',
+          stamp: '立即\n执行',
+          delay: '0 小时',
+          analysis: '当前头顶风险已超出“换个角度就看不出来”的治理范围。明日见人压力与实际状态叠加后，任何延期方案都只能短暂转移问题，无法从根本上降低照镜子时的心理负担。',
+          advice: '请放下手机，立即完成洗、吹、收尾三项基本程序。今晚唯一需要简化的，不是洗头，而是你对洗头的讨论。',
+          share: '本人已收到今晚必须洗头的正式通知。'
+        });
+      }
+
+      return data;
+    }
+
+    // ------------------------------
+    // 加载动画与报告渲染
+    // ------------------------------
+    const loadingTips = [
+      '正在核对头顶实际情况与自我安慰偏差',
+      '正在评估明日突然开摄像头的概率',
+      '正在计算吹风机对睡眠额度的侵占',
+      '正在排除“换个分缝就行”的侥幸方案',
+      '正在连接夜间个人清洁审批数据库'
+    ];
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      showScreen('loading');
+      const tipEl = document.getElementById('loadingTip');
+      let tipIndex = 0;
+      tipEl.textContent = loadingTips[0];
+
+      const timer = setInterval(() => {
+        tipIndex = (tipIndex + 1) % loadingTips.length;
+        tipEl.style.opacity = '0';
+        setTimeout(() => {
+          tipEl.textContent = loadingTips[tipIndex];
+          tipEl.style.opacity = '1';
+        }, 130);
+      }, 480);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        renderResult(calculateResult());
+        showScreen('result');
+      }, 2550);
+    });
+
+    function formatDate(date) {
+      return new Intl.DateTimeFormat('zh-CN', {
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      }).format(date).replaceAll('/', '.');
+    }
+
+    function makeReportNo() {
+      const now = new Date();
+      const y = String(now.getFullYear()).slice(-2);
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      const suffix = Math.floor(1000 + Math.random() * 9000);
+      return `HT-${y}${m}${d}-${suffix}`;
+    }
+
+    function riskLabel(score) {
+      if (score < 20) return '低位运行';
+      if (score < 40) return '轻微预警';
+      if (score < 60) return '争议区间';
+      if (score < 80) return '明显偏高';
+      return '已超阈值';
+    }
+
+    function energyLabel(value) {
+      if (value < 20) return '几乎停机';
+      if (value < 40) return '勉强可用';
+      if (value < 60) return '基础可用';
+      if (value < 80) return '状态稳定';
+      return '储备充足';
+    }
+
+    function renderResult(result) {
+      const reportNo = makeReportNo();
+      const savedMinutes = Math.max(2.4, (result.score * 0.075 + 2.1)).toFixed(1);
+      const hesitationCuts = Math.max(1, Math.round(result.score / 18));
+
+      document.getElementById('scoreNum').textContent = result.score;
+      document.getElementById('scoreRing').style.setProperty('--score-angle', `${result.score * 3.6}deg`);
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultBadge').textContent = result.badge;
+      document.getElementById('riskMetric').textContent = riskLabel(result.score);
+      document.getElementById('energyMetric').textContent = energyLabel(state.energy);
+      document.getElementById('delayMetric').textContent = result.delay;
+      document.getElementById('analysisText').textContent = result.analysis;
+      document.getElementById('adviceText').textContent = result.advice;
+      document.getElementById('funData').textContent = `预计本结论可减少明早照镜子犹豫 ${savedMinutes} 分钟，并避免约 ${hesitationCuts} 次无效拨刘海。`;
+      document.getElementById('shareQuote').textContent = `“${result.share}”`;
+      document.getElementById('reportDate').textContent = formatDate(new Date());
+      document.getElementById('reportNo').textContent = reportNo;
+      document.getElementById('stampText').innerHTML = result.stamp.replace('\n', '<br>');
+
+      latestShareText = `${result.share} 洗头必要指数 ${result.score}/100｜${result.badge}｜报告编号 ${reportNo}`;
+    }
+
+    // ------------------------------
+    // 复制与重置
+    // ------------------------------
+    const toast = document.getElementById('toast');
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(latestShareText);
+        showToast('已复制结论');
+      } catch (error) {
+        const temp = document.createElement('textarea');
+        temp.value = latestShareText;
+        temp.style.position = 'fixed';
+        temp.style.opacity = '0';
+        document.body.appendChild(temp);
+        temp.select();
+        const success = document.execCommand('copy');
+        temp.remove();
+        showToast(success ? '已复制结论' : '复制失败，请截图保存');
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      state.days = null;
+      state.exposure = null;
+      state.hair = 45;
+      state.energy = 38;
+      state.factors.clear();
+      latestShareText = '';
+
+      document.querySelectorAll('.option-card.selected').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('.switch-row.active').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.inline-error.show').forEach(el => el.classList.remove('show'));
+
+      hairRange.value = 45;
+      energyRange.value = 38;
+      updateRange(hairRange, document.getElementById('hairValue'), document.getElementById('hairCaption'), 'hair');
+      updateRange(energyRange, document.getElementById('energyValue'), document.getElementById('energyCaption'), 'energy');
+
+      showScreen('form');
+      showStep(1);
+    });
+  </script>
+</body>
+</html>
