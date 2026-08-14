@@ -111,18 +111,5 @@ window.AIProjects = [
     "keywords": "个人简历 RPG 像素游戏 后端工程师 Java Portfolio 曹继贤",
     "visible": true,
     "featured": true
-  },
-  {
-    "id": "new-project-11",
-    "title": "新 AI 作品",
-    "description": "",
-    "category": "实验",
-    "date": "",
-    "path": "new-project-11",
-    "accent": "#155b4a",
-    "keywords": "",
-    "externalUrl": "",
-    "visible": true,
-    "featured": false
   }
 ];
