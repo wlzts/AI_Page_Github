@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>V9 AI 项目发布管理器</title>
+  <link rel="stylesheet" href="project-manager.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">AI_PAGE / ADMIN</p>
+        <h1>V9 项目发布管理器</h1>
+        <p class="sub">选择本地网页项目文件夹，一次发布到 GitHub 的 <code>projects/&lt;目录&gt;/</code>，并同步更新作品库。</p>
+      </div>
+      <div class="top-actions">
+        <a class="button ghost" href="./?admin=1">返回简历管理后台</a>
+        <button class="button ghost" id="logoutBtn" type="button">退出登录</button>
+      </div>
+    </header>
+
+    <section class="login-card" id="loginCard">
+      <div>
+        <p class="eyebrow">SECURE LOGIN</p>
+        <h2>管理员验证</h2>
+        <p>GitHub Token 只保存在服务端环境变量中，本页面只获取短时管理员会话。</p>
+      </div>
+      <label>后台 API 地址<input id="apiUrl" type="url" placeholder="https://cjx-page.vercel.app"></label>
+      <label>管理员密码<input id="password" type="password" autocomplete="current-password"></label>
+      <button class="button primary" id="loginBtn" type="button">登录项目发布器</button>
+      <p class="status" id="loginStatus"></p>
+    </section>
+
+    <section id="manager" hidden>
+      <div class="dashboard-grid">
+        <section class="panel publish-panel">
+          <div class="section-head">
+            <div><p class="eyebrow">PUBLISH</p><h2>新建 / 替换 AI 作品</h2></div>
+            <span class="pill" id="repoBadge">ONLINE</span>
+          </div>
+          <div class="form-grid">
+            <label>作品名称<input id="title" type="text" placeholder="例如：天气卡片"></label>
+            <label>项目目录名<input id="slug" type="text" placeholder="weather-card"><small>建议英文小写 + 连字符；最终目录：projects/目录名/</small></label>
+            <label>项目 ID<input id="projectId" type="text" placeholder="weather-card"></label>
+            <label>分类<input id="category" type="text" value="工具"></label>
+            <label>日期<input id="date" type="text" placeholder="2026.08.14"></label>
+            <label>主题色<input id="accent" type="color" value="#2f6b53"></label>
+            <label class="wide">作品简介<textarea id="description" rows="4" placeholder="这个作品解决什么问题、有什么特点？"></textarea></label>
+            <label class="wide">搜索关键词<input id="keywords" type="text" placeholder="天气 工具 AI 可视化"></label>
+          </div>
+          <div class="check-row">
+            <label><input id="visible" type="checkbox" checked> 网站中显示</label>
+            <label><input id="featured" type="checkbox"> 首页重点展示</label>
+            <label><input id="replace" type="checkbox"> 覆盖已有同名目录</label>
+          </div>
+
+          <div class="folder-box">
+            <div>
+              <strong>项目文件夹</strong>
+              <p>根目录必须包含 <code>index.html</code>。自动忽略 <code>.git</code>、<code>node_modules</code> 等开发目录。</p>
+            </div>
+            <label class="button secondary file-button">选择整个项目文件夹<input id="folderInput" type="file" webkitdirectory multiple></label>
+          </div>
+
+          <div class="file-summary" id="fileSummary">尚未选择项目文件夹。</div>
+          <div class="file-list" id="fileList"></div>
+          <div class="progress-wrap" id="progressWrap" hidden>
+            <div class="progress"><span id="progressBar"></span></div>
+            <p id="progressText">准备上传…</p>
+          </div>
+          <div class="publish-actions">
+            <button class="button primary" id="publishBtn" type="button">发布到 GitHub</button>
+            <button class="button ghost" id="resetBtn" type="button">清空表单</button>
+          </div>
+          <p class="status" id="publishStatus"></p>
+        </section>
+
+        <aside class="panel library-panel">
+          <div class="section-head"><div><p class="eyebrow">LIBRARY</p><h2>现有 AI 作品</h2></div><span class="count" id="projectCount">0</span></div>
+          <div id="projectList" class="project-list"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../projects-data.js"></script>
+  <script src="project-manager.js"></script>
+</body>
+</html>
