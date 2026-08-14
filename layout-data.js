@@ -10,9 +10,9 @@ window.AIPageLayout = {
     "eat-what",
     "wordvideo",
     "do-divination",
+    "Lyrictype Project",
     "playable-resume",
-    "white-house-master",
-    "Lyrictype Project"
+    "white-house-master"
   ],
   "settings": {
     "desktop": {
@@ -44,7 +44,7 @@ window.AIPageLayout = {
     },
     "basketball-position-matching": {
       "desktop": {
-        "colSpan": 6,
+        "colSpan": 3,
         "rowSpan": 2
       }
     },
@@ -92,14 +92,14 @@ window.AIPageLayout = {
     },
     "playable-resume": {
       "desktop": {
-        "colSpan": 12,
+        "colSpan": 6,
         "rowSpan": 2
       }
     },
     "Lyrictype Project": {
       "desktop": {
-        "colSpan": 12,
-        "rowSpan": 3
+        "colSpan": 1,
+        "rowSpan": 1
       }
     }
   }
