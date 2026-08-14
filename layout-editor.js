@@ -194,7 +194,7 @@
           <button data-preset="standard">标准</button>
           <button data-preset="wide">横向大卡</button>
           <button data-preset="large">大卡</button>
-          <button data-preset="hero">Hero</button>
+          <button data-preset="hero">Hero + 置顶</button>
         </div>
       </div>
       <div class="v10-divider"></div>
@@ -332,6 +332,35 @@
     syncPanel();
   }
 
+  function syncDraftOrderFromGrid() {
+    const ids = Array.from(grid.querySelectorAll(':scope > .card'))
+      .map(idForCard)
+      .filter(Boolean);
+    const unseen = projects
+      .map((p) => String(p.id))
+      .filter((id) => !ids.includes(id));
+    draft.order = [...ids, ...unseen];
+    window.AIPageLayout = draft;
+  }
+
+  function moveSelectedToFront() {
+    if (!selectedId) return;
+    const card = Array.from(grid.querySelectorAll(':scope > .card'))
+      .find((item) => idForCard(item) === selectedId);
+    if (!card) return;
+
+    runtime.pause();
+    if (grid.firstElementChild !== card) {
+      grid.insertBefore(card, grid.firstElementChild);
+    }
+    syncDraftOrderFromGrid();
+    runtime.resume();
+
+    setDirty();
+    decorateCards();
+    syncPanel();
+  }
+
   function applyPreset(name) {
     if (!selectedId) return;
     const cols = draft.settings[device].columns;
@@ -341,7 +370,14 @@
       ? { small:[2,2], standard:[3,2], wide:[6,2], large:[3,3], hero:[6,3] }
       : { small:[1,1], standard:[1,2], wide:[1,2], large:[1,3], hero:[1,4] };
     const [c, r] = presets[name] || [cols, 2];
+
+    // 尺寸只影响当前设备；Hero 额外修改全局项目顺序，把当前卡片移到第一位。
     setSelectedSize(c, r);
+
+    if (name === 'hero') {
+      moveSelectedToFront();
+      updateStatus('Hero 已放大并置顶（尚未发布）');
+    }
   }
 
   function interceptClicks(e) {
@@ -418,11 +454,8 @@
   function onPointerUp() {
     if (dragging) {
       dragging.card.classList.remove('v10-dragging');
-      const ids = Array.from(grid.querySelectorAll(':scope > .card')).map(idForCard).filter(Boolean);
-      const unseen = projects.map((p) => String(p.id)).filter((id) => !ids.includes(id));
-      draft.order = [...ids, ...unseen];
+      syncDraftOrderFromGrid();
       dragging = null;
-      window.AIPageLayout = draft;
       runtime.resume();
       setDirty();
       decorateCards();
