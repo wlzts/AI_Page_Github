@@ -124,6 +124,6 @@ window.AIProjects = [
     "keywords": "音乐，工具",
     "externalUrl": "",
     "visible": true,
-    "featured": false
+    "featured": true
   }
 ];
