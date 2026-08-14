@@ -1,6 +1,18 @@
 /* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
+    "id": "basketball-position-matching",
+    "title": "野球岗位匹配",
+    "description": "用一套态度严谨的民间球探系统，判断你适合打哪个篮球位置，以及最该补哪项短板。",
+    "category": "运动",
+    "date": "2026.08.05",
+    "path": "Basketball-Position-Matching",
+    "accent": "#73539a",
+    "keywords": "运动 篮球 球探 位置 匹配",
+    "visible": true,
+    "pinned": true
+  },
+  {
     "id": "wash-hair",
     "title": "今晚洗头要不要",
     "description": "根据明日见人风险、当前头顶状态和剩余体力，审批今晚是否值得正式开工。",
@@ -13,18 +25,6 @@ window.AIProjects = [
     "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/",
     "featured": false,
     "pinned": true
-  },
-  {
-    "id": "basketball-position-matching",
-    "title": "野球岗位匹配",
-    "description": "用一套态度严谨的民间球探系统，判断你适合打哪个篮球位置，以及最该补哪项短板。",
-    "category": "运动",
-    "date": "2026.08.05",
-    "path": "Basketball-Position-Matching",
-    "accent": "#73539a",
-    "keywords": "运动 篮球 球探 位置 匹配",
-    "visible": true,
-    "pinned": false
   },
   {
     "id": "fit-meal",
