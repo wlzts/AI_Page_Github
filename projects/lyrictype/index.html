@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LyricType - 简奢音乐学习体验</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🎵</text></svg>" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --primary-gold: #d4af37;
+      --dark-bg: #0a0a0a;
+      --dark-surface: #111111;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --gradient-primary: linear-gradient(135deg, var(--primary-gold) 0%, var(--accent-purple) 100%);
+      --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      --surface-bg: rgba(255, 255, 255, 0.05);
+      --border-color: rgba(212, 175, 55, 0.2);
+    }
+
+    /* 主题样式 */
+    :root[data-theme="lemon"] {
+      --primary-gold: #e6b422;
+      --dark-bg: #fff8e1;
+      --dark-surface: #fffde7;
+      --text-primary: #5d4037;
+      --text-secondary: #8d6e63;
+      --accent-purple: #ba68c8;
+      --accent-blue: #4fc3f7;
+      --gradient-primary: linear-gradient(135deg, #e6b422 0%, #ff8a65 100%);
+      --gradient-bg: linear-gradient(135deg, #fff8e1 0%, #fff3e0 50%, #ffe0b2 100%);
+      --surface-bg: rgba(93, 64, 55, 0.03);
+      --border-color: rgba(230, 180, 34, 0.3);
+    }
+
+    :root[data-theme="stars"] {
+      --primary-gold: #ffd700;
+      --dark-bg: #0a0a23;
+      --dark-surface: #1a1a4e;
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3ff;
+      --accent-purple: #9c27b0;
+      --accent-blue: #03a9f4;
+      --gradient-primary: linear-gradient(135deg, #ffd700 0%, #9c27b0 100%);
+      --gradient-bg: linear-gradient(135deg, #0a0a23 0%, #1a1a4e 50%, #283593 100%);
+      --surface-bg: rgba(255, 255, 255, 0.05);
+      --border-color: rgba(255, 215, 0, 0.3);
+    }
+
+    :root[data-theme="journey"] {
+      --primary-gold: #d4a76a;
+      --dark-bg: #f5f5dc;
+      --dark-surface: #fafafa;
+      --text-primary: #5d4037;
+      --text-secondary: #8d6e63;
+      --accent-purple: #8d6e63;
+      --accent-blue: #607d8b;
+      --gradient-primary: linear-gradient(135deg, #d4a76a 0%, #8d6e63 100%);
+      --gradient-bg: linear-gradient(135deg, #f5f5dc 0%, #fff3e0 50%, #ffe0b2 100%);
+      --surface-bg: rgba(93, 64, 55, 0.03);
+      --border-color: rgba(212, 167, 106, 0.3);
+    }
+
+    :root[data-theme="love"] {
+      --primary-gold: #ff4081;
+      --dark-bg: #fce4ec;
+      --dark-surface: #f8bbd0;
+      --text-primary: #880e4f;
+      --text-secondary: #c2185b;
+      --accent-purple: #9c27b0;
+      --accent-blue: #2196f3;
+      --gradient-primary: linear-gradient(135deg, #ff4081 0%, #9c27b0 100%);
+      --gradient-bg: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #f48fb1 100%);
+      --surface-bg: rgba(136, 14, 79, 0.03);
+      --border-color: rgba(255, 64, 129, 0.3);
+    }
+
+    :root[data-theme="chinese"] {
+      --primary-gold: #d4af37;
+      --dark-bg: #f9f3e9;
+      --dark-surface: #f5efe6;
+      --text-primary: #8b4513;
+      --text-secondary: #a0522d;
+      --accent-purple: #9c27b0;
+      --accent-blue: #03a9f4;
+      --gradient-primary: linear-gradient(135deg, #d4af37 0%, #8b4513 100%);
+      --gradient-bg: linear-gradient(135deg, #f9f3e9 0%, #f5efe6 50%, #e8d8c3 100%);
+      --surface-bg: rgba(139, 69, 19, 0.03);
+      --border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    :root.light-theme {
+      --primary-gold: #c9a431;
+      --dark-bg: #f8fafc;
+      --dark-surface: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent-purple: #7c3aed;
+      --accent-blue: #2563eb;
+      --gradient-primary: linear-gradient(135deg, var(--primary-gold) 0%, var(--accent-purple) 100%);
+      --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+      --surface-bg: rgba(0, 0, 0, 0.03);
+      --border-color: rgba(201, 164, 49, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gradient-bg);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
+    .luxury-font {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .premium-text {
+      position: relative;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% auto;
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* 导航栏 */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .light-theme .navbar {
+      background: rgba(248, 250, 252, 0.9);
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-gold);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .theme-btn {
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      background: var(--surface-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-btn:hover {
+      background: var(--primary-gold);
+      color: var(--dark-bg);
+    }
+
+    /* 导航栏扩展样式 */
+    .navbar-content.editing-breathing-bg {
+      animation: breathing 3s ease-in-out infinite;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .template-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
+    .template-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .template-artist {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-btn {
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      background: var(--surface-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--primary-gold);
+      color: var(--dark-bg);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 主题导航栏样式 */
+    .navbar.theme-lemon {
+      background: linear-gradient(135deg, rgba(255, 248, 225, 0.9), rgba(255, 222, 173, 0.9));
+      border-bottom-color: #ffd700;
+    }
+
+    .navbar.theme-stars {
+      background: linear-gradient(135deg, rgba(20, 20, 40, 0.95), rgba(30, 30, 60, 0.95));
+      border-bottom-color: #8a2be2;
+    }
+
+    .navbar.theme-miles {
+      background: linear-gradient(135deg, rgba(245, 245, 245, 0.9), rgba(220, 220, 220, 0.9));
+      border-bottom-color: #654321;
+    }
+
+    .navbar.theme-love {
+      background: linear-gradient(135deg, rgba(255, 220, 220, 0.9), rgba(255, 182, 193, 0.9));
+      border-bottom-color: #ff69b4;
+    }
+
+    .navbar.theme-anhe {
+      background: linear-gradient(135deg, rgba(240, 248, 255, 0.9), rgba(224, 255, 255, 0.9));
+      border-bottom-color: #1e90ff;
+    }
+
+    .navbar.theme-lemon .logo,
+    .navbar.theme-lemon .nav-btn,
+    .navbar.theme-lemon .theme-btn {
+      color: #ffd700;
+      border-color: rgba(255, 215, 0, 0.3);
+    }
+
+    .navbar.theme-stars .logo,
+    .navbar.theme-stars .nav-btn,
+    .navbar.theme-stars .theme-btn {
+      color: #8a2be2;
+      border-color: rgba(138, 43, 226, 0.3);
+    }
+
+    .navbar.theme-miles .logo,
+    .navbar.theme-miles .nav-btn,
+    .navbar.theme-miles .theme-btn {
+      color: #654321;
+      border-color: rgba(101, 67, 33, 0.3);
+    }
+
+    .navbar.theme-love .logo,
+    .navbar.theme-love .nav-btn,
+    .navbar.theme-love .theme-btn {
+      color: #ff69b4;
+      border-color: rgba(255, 105, 180, 0.3);
+    }
+
+    .navbar.theme-anhe .logo,
+    .navbar.theme-anhe .nav-btn,
+    .navbar.theme-anhe .theme-btn {
+      color: #1e90ff;
+      border-color: rgba(30, 144, 255, 0.3);
+    }
+
+    .navbar.theme-lemon .nav-btn:hover:not(:disabled),
+    .navbar.theme-lemon .theme-btn:hover {
+      background: #ffd700;
+      color: #000;
+    }
+
+    .navbar.theme-stars .nav-btn:hover:not(:disabled),
+    .navbar.theme-stars .theme-btn:hover {
+      background: #8a2be2;
+      color: #fff;
+    }
+
+    .navbar.theme-miles .nav-btn:hover:not(:disabled),
+    .navbar.theme-miles .theme-btn:hover {
+      background: #654321;
+      color: #fff;
+    }
+
+    .navbar.theme-love .nav-btn:hover:not(:disabled),
+    .navbar.theme-love .theme-btn:hover {
+      background: #ff69b4;
+      color: #fff;
+    }
+
+    .navbar.theme-anhe .nav-btn:hover:not(:disabled),
+    .navbar.theme-anhe .theme-btn:hover {
+      background: #1e90ff;
+      color: #fff;
+    }
+
+    /* 英雄区域 */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding-top: 80px;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      z-index: -1;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 800px;
+      padding: 0 2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    /* 音频可视化 */
+    .audio-visualizer {
+      display: flex;
+      align-items: end;
+      gap: 3px;
+      height: 50px;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .audio-bar {
+      width: 3px;
+      background: var(--primary-gold);
+      border-radius: 2px;
+      animation: audioWave 1.5s ease-in-out infinite;
+    }
+
+    @keyframes audioWave {
+      0%, 100% { height: 5px; }
+      50% { height: 35px; }
+    }
+
+    /* 按钮样式 */
+    .luxury-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      background: transparent;
+      border: 2px solid transparent;
+      color: var(--primary-gold);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.5rem;
+      background: linear-gradient(var(--dark-bg), var(--dark-bg)) padding-box,
+                  var(--gradient-primary) border-box;
+    }
+
+    .luxury-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-gold);
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+    .luxury-btn:hover::before {
+      left: 0;
+    }
+
+    .luxury-btn:hover {
+      color: var(--dark-bg);
+      transform: translateY(-2px);
+    }
+
+    .luxury-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .luxury-btn:disabled::before {
+      display: none;
+    }
+
+    /* 体验区域 */
+    .experience-section {
+      padding: 5rem 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    /* 上传区域 */
+    .upload-area {
+      border: 2px dashed var(--border-color);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+      border-radius: 0.75rem;
+      background: var(--surface-bg);
+      backdrop-filter: blur(10px);
+    }
+
+    .upload-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .feedback {
+      text-align: center;
+      margin: 1rem 0;
+      min-height: 40px;
+      color: var(--primary-gold);
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      transition: all 0.5s ease;
+    }
+
+    .feedback.correct {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+    }
+
+    .feedback.incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .feedback.warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #f59e0b;
+    }
+
+    /* 模板选择器 */
+    .template-selector {
+      margin: 1.5rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .template-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      border: 1px solid;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .template-btn.available {
+      border-color: var(--primary-gold);
+      color: var(--primary-gold);
+    }
+
+    .template-btn.available:hover,
+    .template-btn.available.active {
+      background: var(--primary-gold);
+      color: var(--dark-bg);
+    }
+
+    .template-btn.unavailable {
+      border-color: #4b5563;
+      color: #6b7280;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    /* 歌词显示区域 */
+    .lyric-display {
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .lyric-text {
+      font-size: clamp(1.25rem, 4vw, 2rem);
+      font-weight: 400;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      min-height: 160px;
+      color: var(--primary-gold);
+      font-family: Georgia, 'Times New Roman', serif;
+      text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .lyric-line {
+      margin-bottom: 0.5rem;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lyric-line.prev-line {
+      opacity: 0.4;
+      font-size: 0.875rem;
+    }
+
+    .lyric-line.current-line {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+    }
+
+    .lyric-line.next-line {
+      opacity: 0.4;
+      font-size: 0.875rem;
+    }
+
+    .lyric-translation {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+      min-height: 40px;
+      font-family: Georgia, 'Times New Roman', serif;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(5px);
+    }
+
+    /* 输入区域 */
+    .input-area {
+      margin: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .minimal-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-family: Georgia, 'Times New Roman', serif;
+      transition: all 0.3s ease;
+      outline: none;
+      border-radius: 0.5rem;
+    }
+
+    .minimal-input:focus {
+      border-color: var(--primary-gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+
+    .minimal-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 字符高亮 */
+    .char-highlights {
+      margin-bottom: 0.75rem;
+      text-align: center;
+      font-size: 1.1rem;
+      min-height: 30px;
+      width: 100%;
+    }
+
+    .char-highlight {
+      display: inline-block;
+      margin: 0 1px;
+      transition: all 0.3s ease-out;
+    }
+
+    .char-highlight.correct {
+      color: #22c55e;
+      transform: scale(1.1);
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    }
+
+    .char-highlight.incorrect {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 3px;
+      transform: scale(1.05);
+      animation: shake 0.5s ease-in-out;
+    }
+
+    .char-highlight.pending {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0) scale(1.05); }
+      25% { transform: translateX(-3px) scale(1.05); }
+      75% { transform: translateX(3px) scale(1.05); }
+    }
+
+    /* 控制按钮 */
+    .control-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    /* 特性区域 */
+    .features-section {
+      padding: 5rem 1rem;
+      background: var(--dark-surface);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      padding: 2rem 1.5rem;
+      background: var(--surface-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(212, 175, 55, 0.4);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      color: var(--primary-gold);
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .feature-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* 页脚 */
+    .footer {
+      padding: 3rem 1rem;
+      background: var(--dark-surface);
+      border-top: 1px solid rgba(212, 175, 55, 0.2);
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-gold);
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-text {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    /* 灵动岛 */
+    .dynamic-island-container {
+      position: fixed;
+      bottom: 2rem;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .dynamic-island {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      background: rgba(66, 66, 66, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      animation: islandSlideUp 0.5s ease;
+    }
+
+    @keyframes islandSlideUp {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .island-text {
+      color: var(--text-primary);
+      margin-right: 0.75rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .island-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-gold);
+      color: var(--dark-bg);
+    }
+
+    /* 粒子背景 */
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* 加载动画 */
+    .loading {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(212, 175, 55, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-gold);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 图标 */
+    .icon {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke: currentColor;
+    }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+      .navbar-content {
+        padding: 1rem;
+      }
+
+      .hero {
+        padding-top: 70px;
+      }
+
+      .lyric-text {
+        min-height: 140px;
+        padding: 1rem;
+      }
+
+      .lyric-line.current-line {
+        font-size: 1.25rem;
+      }
+
+      .btn-group,
+      .control-btns {
+        flex-direction: column;
+      }
+
+      .luxury-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    // SVG 图标组件
+    const Icons = {
+      Music: () => <svg className="icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+      Play: () => <svg className="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+      Pause: () => <svg className="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>,
+      Upload: () => <svg className="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+      Download: () => <svg className="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+      Info: () => <svg className="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>,
+      Moon: () => <svg className="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
+      Sun: () => <svg className="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+      Check: () => <svg className="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>,
+      Trophy: () => <svg className="icon" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>,
+      Compass: () => <svg className="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>,
+      Music2: () => <svg className="icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+      RefreshCw: () => <svg className="icon" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>,
+      AlertCircle: () => <svg className="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+    };
+
+    // 粒子类
+    class Particle {
+      constructor(canvasWidth, canvasHeight) {
+        this.x = Math.random() * canvasWidth;
+        this.y = Math.random() * canvasHeight;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.3 + 0.1;
+      }
+
+      update(canvasWidth, canvasHeight) {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvasWidth) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvasHeight) this.speedY *= -1;
+      }
+
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    // 粒子背景组件
+    function ParticleBackground() {
+      const canvasRef = useRef(null);
+      const particlesRef = useRef([]);
+      const animationRef = useRef(0);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const resize = () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        particlesRef.current = Array.from({ length: 50 }, () => new Particle(canvas.width, canvas.height));
+
+        const animate = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          particlesRef.current.forEach((p, i) => {
+            p.update(canvas.width, canvas.height);
+            p.draw(ctx);
+
+            for (let j = i + 1; j < particlesRef.current.length; j++) {
+              const other = particlesRef.current[j];
+              const dx = p.x - other.x;
+              const dy = p.y - other.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 150) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(other.x, other.y);
+                ctx.strokeStyle = `rgba(212, 175, 55, ${0.2 * (1 - dist / 150)})`;
+                ctx.stroke();
+              }
+            }
+          });
+
+          animationRef.current = requestAnimationFrame(animate);
+        };
+        animate();
+
+        return () => {
+          window.removeEventListener('resize', resize);
+          cancelAnimationFrame(animationRef.current);
+        };
+      }, []);
+
+      return <canvas ref={canvasRef} id="particles-canvas" />;
+    }
+
+    // 柠檬树落叶效果组件（CSS/SVG版本）
+    function LemonTreeEffect() {
+      return (
+        <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+          {Array.from({ length: 20 }).map((_, index) => (
+            <div
+              key={index}
+              className="absolute"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: '-50px',
+                animationDelay: `${Math.random() * 10}s`,
+                animationDuration: `${Math.random() * 10 + 10}s`,
+                opacity: Math.random() * 0.7 + 0.3
+              }}
+            >
+              {Math.random() > 0.5 ? (
+                // 柠檬
+                <svg width="30" height="30" viewBox="0 0 30 30">
+                  <circle cx="15" cy="15" r="15" fill="#FFD700" stroke="#FFC107" strokeWidth="1" />
+                </svg>
+              ) : (
+                // 叶子
+                <svg width="40" height="25" viewBox="0 0 40 25">
+                  <ellipse cx="20" cy="12.5" rx="20" ry="12.5" fill="#90EE90" stroke="#66CDAA" strokeWidth="1" />
+                </svg>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 星空闪烁效果组件（CSS/SVG版本）
+    function StarsEffect() {
+      return (
+        <div className="fixed inset-0 pointer-events-none z-[-1] bg-gradient-to-b from-[#0F172A] to-[#1E3A8A]">
+          {Array.from({ length: 100 }).map((_, index) => (
+            <div
+              key={index}
+              className="absolute"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${Math.random() * 3 + 2}s`
+              }}
+            >
+              <svg width="8" height="8" viewBox="0 0 8 8">
+                <path
+                  d="M4 0 L5.1 3 L8 3.8 L5.8 5.9 L6.9 9 L4 7.4 L1.1 9 L2.2 5.9 L0 3.8 L2.9 3 Z"
+                  fill="#FFFFFF"
+  
+                />
+              </svg>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 500英里沿途风景效果组件（CSS/SVG版本）
+    function MilesEffect() {
+      return (
+        <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+          {/* 天空背景 */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#87CEEB] to-[#B0E0E6]"></div>
+          
+          {/* 山丘 */}
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={`hill-${index}`}
+              className="absolute bottom-0"
+              style={{
+                left: `${index * 25}%`,
+                width: '40%',
+                height: `${Math.random() * 20 + 20}%`,
+                backgroundColor: `rgb(${100 + Math.random() * 50}, ${180 + Math.random() * 50}, ${100 + Math.random() * 30})`,
+                clipPath: 'polygon(0% 100%, 50% 0%, 100% 100%)',
+                animationDuration: `${Math.random() * 20 + 30}s`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            ></div>
+          ))}
+          
+          {/* 道路 */}
+          <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-[#333]">
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white" style={{ 
+              backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 20px, white 20px, white 40px)',
+              animation: 'roadMove 2s linear infinite'
+            }}></div>
+          </div>
+          
+          {/* 树木 */}
+          {Array.from({ length: 20 }).map((_, index) => (
+            <div
+              key={`tree-${index}`}
+              className="absolute bottom-[30%]"
+              style={{
+                left: `${Math.random() * 200}%`,
+                height: `${Math.random() * 20 + 10}%`,
+                animationDuration: `${Math.random() * 5 + 10}s`,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            >
+              {Math.random() > 0.5 ? (
+                // 松树
+                <svg width="30" height="100" viewBox="0 0 30 100">
+                  <rect x="12" y="70" width="6" height="30" fill="#8B4513" />
+                  <polygon points="15,0 0,30 30,30" fill="#228B22" />
+                  <polygon points="15,20 0,50 30,50" fill="#228B22" />
+                  <polygon points="15,40 0,70 30,70" fill="#228B22" />
+                </svg>
+              ) : (
+                // 阔叶树
+                <svg width="40" height="100" viewBox="0 0 40 100">
+                  <rect x="17" y="60" width="6" height="40" fill="#8B4513" />
+                  <circle cx="20" cy="30" r="30" fill="#32CD32" />
+                </svg>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 爱情故事爱心效果组件（CSS/SVG版本）
+    function LoveStoryEffect() {
+      const colors = ['#FF69B4', '#FF1493', '#C71585', '#DB7093', '#FFB6C1'];
+      
+      return (
+        <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+          {Array.from({ length: 15 }).map((_, index) => (
+            <div
+              key={index}
+              className="absolute"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${Math.random() * 10 + 15}s`,
+                opacity: Math.random() * 0.6 + 0.4
+              }}
+            >
+              <svg width="40" height="40" viewBox="0 0 40 40" fill={colors[Math.floor(Math.random() * colors.length)]}>
+                <path d="M20 25.5C20 25.5 3.5 12.5 3.5 5.5C3.5 2.5 6 0 9 0C11 0 12.5 1 14 2.5C15.5 1 17 0 19 0C22 0 24.5 2.5 24.5 5.5C24.5 12.5 8 25.5 8 25.5C8 25.5 12 32.5 20 38C28 32.5 32 25.5 32 25.5C32 25.5 15.5 12.5 15.5 5.5C15.5 2.5 18 0 20 0C22 0 24.5 2.5 24.5 5.5C24.5 12.5 20 25.5 20 25.5Z" />
+              </svg>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 安和桥回忆效果组件（CSS/SVG版本）
+    function AnheBridgeEffect() {
+      const memoriesTexts = ['回忆', '时光', '童年', '家乡', '思念', '过往', '记忆', '岁月'];
+      
+      return (
+        <div className="fixed inset-0 pointer-events-none z-[-1] bg-gradient-to-b from-[#1E3A8A] to-[#0F172A]">
+          {/* 灯笼 */}
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={`lantern-${index}`}
+              className="absolute top-[20%]"
+              style={{
+                left: `${(index + 0.5) * 12.5}%`,
+                animationDuration: `${Math.random() * 2 + 3}s`,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            >
+              <svg width="60" height="100" viewBox="0 0 60 100">
+                <circle cx="30" cy="15" r="15" fill="#8B0000" />
+                <rect x="15" y="15" width="30" height="60" fill="#FF4500" />
+                <rect x="15" y="30" width="30" height="2" fill="#FFD700" />
+                <rect x="15" y="45" width="30" height="2" fill="#FFD700" />
+                <rect x="15" y="60" width="30" height="2" fill="#FFD700" />
+                <rect x="15" y="75" width="30" height="2" fill="#FFD700" />
+                <circle cx="30" cy="75" r="15" fill="#8B0000" />
+                <polygon points="30,90 22,100 38,100" fill="#FFD700" />
+              </svg>
+            </div>
+          ))}
+          
+          {/* 回忆文字 */}
+          {Array.from({ length: 10 }).map((_, index) => (
+            <div
+              key={`memory-${index}`}
+              className="absolute text-white font-[Ma_Shan_Zheng] pointer-events-none"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                fontSize: `${Math.random() * 20 + 12}px`,
+                opacity: Math.random() * 0.4 + 0.2,
+                animationDuration: `${Math.random() * 20 + 30}s`,
+                animationDelay: `${Math.random() * 5}s`,
+
+              }}
+            >
+              {memoriesTexts[Math.floor(Math.random() * memoriesTexts.length)]}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // 主题效果组件
+    function ThemeEffect({ theme }) {
+      switch (theme) {
+        case 'lemon':
+          return <LemonTreeEffect />;
+        case 'stars':
+          return <StarsEffect />;
+        case 'miles':
+          return <MilesEffect />;
+        case 'love':
+          return <LoveStoryEffect />;
+        case 'anhe':
+          return <AnheBridgeEffect />;
+        default:
+          return <ParticleBackground />;
+      }
+    }
+
+    // 灵动岛组件
+    function DynamicIsland({ text, icon }) {
+      const IconComponent = Icons[icon] || Icons.Music;
+      return (
+        <div className="dynamic-island-container">
+          <div className="dynamic-island">
+            <span className="island-text">{text}</span>
+            <div className="island-icon">
+              <IconComponent />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 模板数据
+    const TEMPLATE_DATA = [
+      { id: 1, name: 'Lemon Tree', artist: 'Fool\'s Garden', image: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/0e591a107eb949249c243cd8d5d64610~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020916265687B611946780141B0DB2&rrcfp=f06b921b&x-expires=1773217629&x-signature=7F1LrqejzBFOhFAr029Lw8jNYCY%3D', theme: 'lemon' },
+      { id: 2, name: 'Counting Stars', artist: 'OneRepublic', image: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/c7bba3795f704845acd97213f433743c~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020916265687B611946780141B0DB2&rrcfp=f06b921b&x-expires=1773217640&x-signature=26hb2%2FgzQmJiyDahbq1nhytWCeE%3D', theme: 'stars' },
+      { id: 3, name: '500 Miles', artist: 'The Proclaimers', image: 'https://p11-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/ea29b6621cdd4b2ca66b1dc146647e0c~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020916265687B611946780141B0DB2&rrcfp=f06b921b&x-expires=1773217660&x-signature=ceZ%2FrtL3MKVi8fgoU4Dt6F1GzC8%3D', theme: 'journey' },
+      { id: 4, name: 'Love Story', artist: 'Taylor Swift', image: 'https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/6a4f5872e25d4c5faa9d261a3b6a57e5~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020916265687B611946780141B0DB2&rrcfp=f06b921b&x-expires=1773217683&x-signature=DGQ0Dt5DSuAmaVAkiDnZxNqUv4c%3D', theme: 'love' },
+      { id: 5, name: '安和桥', artist: '宋冬野', image: 'https://p26-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/a6ed7cddb9264f6f842d2a69a1993f0c~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020916265687B611946780141B0DB2&rrcfp=f06b921b&x-expires=1773217697&x-signature=PQXLTwGJF2F%2BH7%2Fhz%2BJ7YX6P6zo%3D', theme: 'chinese' }
+    ];
+
+    // 主应用
+    function App() {
+      const TEMPLATE_COUNT = 5;
+      const TEMPLATE_PREFIX = 'lyrictype-template';
+
+      const [isLightTheme, setIsLightTheme] = useState(false);
+      const [templateExists, setTemplateExists] = useState(new Array(TEMPLATE_COUNT + 1).fill(false));
+      const [currentTemplate, setCurrentTemplate] = useState(0);
+      const [isCheckingTemplates, setIsCheckingTemplates] = useState(true);
+      const [lrcData, setLrcData] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [userInput, setUserInput] = useState('');
+      const [feedback, setFeedback] = useState({ message: '', type: '' });
+      const [showFeedback, setShowFeedback] = useState(false);
+      const [island, setIsland] = useState({ text: '欢迎使用 LyricType', icon: 'Music' });
+      const [currentTheme, setCurrentTheme] = useState('');
+      const [currentTemplateData, setCurrentTemplateData] = useState(null);
+
+      const audioRef = useRef(null);
+      const inputRef = useRef(null);
+      const fileInputRef = useRef(null);
+      const checkIntervalRef = useRef(null);
+
+      // 主题切换
+      useEffect(() => {
+        const saved = localStorage.getItem('lyrictype-theme');
+        if (saved === 'light') {
+          setIsLightTheme(true);
+          document.documentElement.classList.add('light-theme');
+        }
+      }, []);
+
+      const toggleTheme = () => {
+        const newTheme = !isLightTheme;
+        setIsLightTheme(newTheme);
+        document.documentElement.classList.toggle('light-theme', newTheme);
+        localStorage.setItem('lyrictype-theme', newTheme ? 'light' : 'dark');
+        updateIsland(`已切换到${newTheme ? '浅色' : '深色'}主题`, 'Check');
+      };
+
+      const updateIsland = (text, icon = 'Music') => {
+        setIsland({ text, icon });
+      };
+
+      const showFeedbackMsg = (message, type) => {
+        setFeedback({ message, type });
+        setShowFeedback(true);
+        setTimeout(() => setShowFeedback(false), 3000);
+      };
+
+      // 检测模板
+      useEffect(() => {
+        const checkTemplate = async (num) => {
+          const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]+$/, '');
+          try {
+            const [lrcRes, mp3Res] = await Promise.all([
+              fetch(`${baseUrl}${TEMPLATE_PREFIX}${num}.lrc`, { method: 'HEAD' }),
+              fetch(`${baseUrl}${TEMPLATE_PREFIX}${num}.mp3`, { method: 'HEAD' })
+            ]);
+            return lrcRes.ok && mp3Res.ok;
+          } catch {
+            return false;
+          }
+        };
+
+        const checkAll = async () => {
+          setIsCheckingTemplates(true);
+          const results = await Promise.all(
+            Array.from({ length: TEMPLATE_COUNT }, (_, i) => checkTemplate(i + 1))
+          );
+          const exists = [false, ...results];
+          setTemplateExists(exists);
+          
+          const first = results.findIndex(v => v) + 1;
+          if (first > 0) loadTemplate(first);
+          setIsCheckingTemplates(false);
+        };
+
+        checkAll();
+      }, []);
+
+      // 解析LRC
+      const parseLRC = (text) => {
+        const lines = [];
+        const re = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/g;
+        let match;
+        
+        while ((match = re.exec(text)) !== null) {
+          const time = parseInt(match[1]) * 60 + parseInt(match[2]) + parseInt(match[3].padEnd(3, '0')) / 1000;
+          const [en = '', zh = ''] = match[4].trim().split('|').map(s => s.trim());
+          lines.push({ time, en: en.replace(/：/g, ':'), zh });
+        }
+        return lines.sort((a, b) => a.time - b.time);
+      };
+
+      // 加载模板
+      const loadTemplate = async (num) => {
+        if (!templateExists[num]) return;
+        
+        const templateData = TEMPLATE_DATA.find(t => t.id === num);
+        if (!templateData) return;
+        
+        setCurrentTemplate(num);
+        setCurrentTemplateData(templateData);
+        setLrcData([]);
+        setCurrentIndex(0);
+        setUserInput('');
+        setIsPlaying(false);
+        
+        // 切换主题
+        setCurrentTheme(templateData.theme);
+        document.documentElement.setAttribute('data-theme', templateData.theme);
+        
+        const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]+$/, '');
+        
+        try {
+          const res = await fetch(`${baseUrl}${TEMPLATE_PREFIX}${num}.lrc`);
+          if (!res.ok) throw new Error('加载失败');
+          
+          const text = await res.text();
+          const parsed = parseLRC(text);
+          if (parsed.length === 0) throw new Error('无有效歌词');
+          
+          setLrcData(parsed);
+          if (audioRef.current) {
+            audioRef.current.src = `${baseUrl}${TEMPLATE_PREFIX}${num}.mp3`;
+            audioRef.current.load();
+          }
+          
+          updateIsland(`${templateData.name} - ${templateData.artist}`, 'Check');
+          showFeedbackMsg(`《${templateData.name}》加载成功`, 'correct');
+        } catch (err) {
+          updateIsland('加载失败', 'AlertCircle');
+          showFeedbackMsg(err.message, 'incorrect');
+        }
+      };
+
+      // 文件上传
+      const handleFileUpload = (files) => {
+        if (!files) return;
+        
+        let audioFile = null;
+        let lrcFile = null;
+        
+        Array.from(files).forEach(f => {
+          if (f.type.startsWith('audio/')) audioFile = f;
+          if (f.name.endsWith('.lrc') || f.name.endsWith('.txt')) lrcFile = f;
+        });
+        
+        if (!audioFile || !lrcFile) {
+          showFeedbackMsg('请同时选择音频和歌词文件', 'warning');
+          return;
+        }
+        
+        setCurrentTemplate(0);
+        setCurrentTemplateData(null);
+        setCurrentTheme('');
+        document.documentElement.removeAttribute('data-theme');
+        
+        Promise.all([lrcFile.text(), audioFile.arrayBuffer()]).then(([lrcText, audioBuf]) => {
+          const parsed = parseLRC(lrcText);
+          if (parsed.length === 0) {
+            showFeedbackMsg('未解析到歌词', 'warning');
+            return;
+          }
+          
+          setLrcData(parsed);
+          const blob = new Blob([audioBuf], { type: audioFile.type });
+          const url = URL.createObjectURL(blob);
+          
+          if (audioRef.current) {
+            audioRef.current.src = url;
+            audioRef.current.load();
+          }
+          
+          updateIsland('文件上传成功', 'Check');
+          showFeedbackMsg('文件加载成功', 'correct');
+        });
+      };
+
+      // 开始练习
+      const startPractice = () => {
+        if (lrcData.length === 0) return;
+        setCurrentIndex(0);
+        setUserInput('');
+        setIsPlaying(true);
+        setTimeout(() => inputRef.current?.focus(), 100);
+        updateIsland('练习进行中', 'Play');
+      };
+
+      // 暂停练习
+      const pausePractice = () => {
+        audioRef.current?.pause();
+        if (checkIntervalRef.current) {
+          clearInterval(checkIntervalRef.current);
+          checkIntervalRef.current = null;
+        }
+        setIsPlaying(false);
+        updateIsland('练习已暂停', 'Pause');
+      };
+
+      // 播放片段 - 优化版
+      const playSegment = (startTime, onComplete) => {
+        if (!audioRef.current || !lrcData[currentIndex]) {
+          onComplete?.();
+          return;
+        }
+        
+        const audio = audioRef.current;
+        const currentLine = lrcData[currentIndex];
+        
+        // 清除之前的定时器
+        if (checkIntervalRef.current) {
+          clearInterval(checkIntervalRef.current);
+          checkIntervalRef.current = null;
+        }
+        
+        // 计算结束时间
+        let endTime;
+        if (currentIndex + 1 < lrcData.length) {
+          // 使用下一行的开始时间作为当前行的结束时间
+          endTime = lrcData[currentIndex + 1].time;
+          // 为了更好的体验，减去一点时间作为缓冲
+          endTime = Math.max(startTime + 0.5, endTime - 0.1);
+        } else {
+          // 如果是最后一行，使用固定时长
+          endTime = startTime + 5;
+        }
+        
+        // 确保时间在有效范围内
+        const duration = audio.duration || 0;
+        if (startTime >= duration) {
+          showFeedbackMsg('音频文件可能不完整', 'warning');
+          onComplete?.();
+          return;
+        }
+        
+        // 设置播放位置
+        audio.currentTime = Math.max(0, startTime);
+        
+        // 播放状态标志
+        let isPlaying = false;
+        let hasCalledComplete = false;
+        
+        const complete = () => {
+          if (hasCalledComplete) return;
+          hasCalledComplete = true;
+          
+          // 确保停止播放
+          if (audioRef.current && !audioRef.current.paused) {
+            audioRef.current.pause();
+          }
+          
+          // 清除定时器
+          if (checkIntervalRef.current) {
+            clearInterval(checkIntervalRef.current);
+            checkIntervalRef.current = null;
+          }
+          
+          onComplete?.();
+        };
+        
+        audio.play().then(() => {
+          isPlaying = true;
+          
+          // 使用更精确的时间检查
+          checkIntervalRef.current = setInterval(() => {
+            if (!audioRef.current || !isPlaying) {
+              complete();
+              return;
+            }
+            
+            const currentTime = audioRef.current.currentTime;
+            
+            // 检查是否到达结束时间
+            if (currentTime >= endTime) {
+              complete();
+            }
+          }, 20); // 更频繁的检查以提高精度
+          
+          // 设置最大播放时长保护
+          const maxDuration = endTime - startTime + 0.5;
+          setTimeout(() => {
+            if (isPlaying) {
+              complete();
+            }
+          }, maxDuration * 1000);
+          
+        }).catch(err => {
+          console.warn('播放失败:', err);
+          if (err.name === 'NotAllowedError') {
+            showFeedbackMsg('请点击页面后重试', 'warning');
+          } else if (err.name === 'AbortError') {
+            showFeedbackMsg('播放被中止', 'warning');
+          } else {
+            showFeedbackMsg('播放失败，请检查音频文件', 'warning');
+          }
+          complete();
+        });
+      };
+
+      // 输入处理
+      const handleInput = (e) => {
+        const value = e.target.value;
+        setUserInput(value);
+        
+        if (currentIndex >= lrcData.length) return;
+        
+        const correct = lrcData[currentIndex].en;
+        
+        if (value.toLowerCase() === correct.toLowerCase()) {
+          showFeedbackMsg('✓ 正确', 'correct');
+          
+          playSegment(lrcData[currentIndex].time, () => {
+            setCurrentIndex(prev => prev + 1);
+            setUserInput('');
+            
+            if (currentIndex + 1 >= lrcData.length) {
+              setIsPlaying(false);
+              updateIsland('练习完成', 'Trophy');
+              setTimeout(() => updateIsland('欢迎使用 LyricType', 'Music'), 3000);
+            }
+          });
+        }
+      };
+
+      // 导出歌词
+      const exportLyrics = () => {
+        if (lrcData.length === 0) {
+          showFeedbackMsg('无歌词可导出', 'warning');
+          return;
+        }
+        
+        let content = '';
+        lrcData.forEach(line => {
+          const m = Math.floor(line.time / 60);
+          const s = Math.floor(line.time % 60);
+          const cs = Math.floor((line.time % 1) * 100);
+          content += `[${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}]${line.en}|${line.zh}\n`;
+        });
+        
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lyrictype-${Date.now()}.lrc`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        updateIsland('歌词已导出', 'Check');
+        showFeedbackMsg('歌词已导出', 'correct');
+      };
+
+      // 获取显示歌词
+      const getDisplayLyrics = () => {
+        if (lrcData.length === 0) {
+          return { prev: '', current: isCheckingTemplates ? '' : '请加载模板或上传文件', next: '', translation: '' };
+        }
+        if (currentIndex >= lrcData.length) {
+          return { prev: '', current: '🎉 练习完成！', next: '', translation: '' };
+        }
+        return {
+          prev: currentIndex > 0 ? lrcData[currentIndex - 1].en : '',
+          current: lrcData[currentIndex].en,
+          next: currentIndex + 1 < lrcData.length ? lrcData[currentIndex + 1].en : '',
+          translation: lrcData[currentIndex].zh
+        };
+      };
+
+      // 渲染字符高亮
+      const renderHighlights = () => {
+        if (currentIndex >= lrcData.length) return null;
+        const correct = lrcData[currentIndex].en;
+        return correct.split('').map((char, i) => {
+          let cls = 'char-highlight ';
+          if (i < userInput.length) {
+            const userChar = userInput[i];
+            if (userChar.toLowerCase() === char.toLowerCase() || 
+                (userChar === ':' && char === ':')) {
+              cls += 'correct';
+            } else {
+              cls += 'incorrect';
+            }
+          } else {
+            cls += 'pending';
+          }
+          return <span key={i} className={cls}>{char}</span>;
+        });
+      };
+
+      const display = getDisplayLyrics();
+      const ThemeIcon = isLightTheme ? Icons.Sun : Icons.Moon;
+
+      return (
+        <>
+          <ThemeEffect theme={currentTheme} />
+          
+          {/* 导航栏 */}
+          <nav className={`navbar ${currentTheme ? `theme-${currentTheme}` : ''}`}>
+            <div className="navbar-content editing-breathing-bg">
+              <div className="logo-section">
+                <div className="logo">LyricType</div>
+                {currentTemplateData && (
+                  <div className="template-info">
+                    <span className="template-name">{currentTemplateData.name}</span>
+                    <span className="template-artist">{currentTemplateData.artist}</span>
+                  </div>
+                )}
+              </div>
+              <div className="nav-actions">
+                <button className="nav-btn" onClick={() => {
+                  const element = document.getElementById('experience');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }} title="开始体验">
+                  <Icons.Play />
+                </button>
+                <button className="nav-btn" onClick={exportLyrics} disabled={lrcData.length === 0} title="导出歌词">
+                  <Icons.Download />
+                </button>
+                <button className="theme-btn" onClick={toggleTheme} title="切换主题">
+                  <ThemeIcon />
+                </button>
+              </div>
+            </div>
+          </nav>
+
+          {/* 英雄区域 */}
+          <section className="hero">
+            <div className="hero-bg" />
+            <div className="hero-content">
+              <h1 className="hero-title luxury-font premium-text">LyricType</h1>
+              <p className="hero-subtitle">简奢音乐学习体验，让歌词学习成为一种艺术</p>
+              
+              <div className="audio-visualizer">
+                {Array.from({ length: 15 }, (_, i) => (
+                  <div key={i} className="audio-bar" style={{ animationDelay: `${i * 0.1}s` }} />
+                ))}
+              </div>
+              
+              <a href="#experience" className="luxury-btn" onClick={(e) => {
+                e.preventDefault();
+                const element = document.getElementById('experience');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}>
+                <Icons.Play /> 开始体验
+              </a>
+            </div>
+          </section>
+
+          {/* 体验区域 */}
+          <section id="experience" className="experience-section">
+            <div className="container">
+              <h2 className="section-title luxury-font premium-text">开始体验</h2>
+              
+              {/* 上传区域 */}
+              <div className="upload-area">
+                <h3 className="upload-title luxury-font premium-text">加载模板文件</h3>
+                <div className={`feedback ${showFeedback ? 'visible' : ''} ${feedback.type}`}>
+                  {isCheckingTemplates ? '正在检测模板文件...' : 
+                   templateExists.filter(Boolean).length === 0 ? '未检测到模板，请上传文件' :
+                   `检测到 ${templateExists.filter(Boolean).length} 个有效模板`}
+                </div>
+                
+                <div className="template-selector">
+                  {TEMPLATE_DATA.map(template => (
+                    <button
+                      key={template.id}
+                      onClick={() => loadTemplate(template.id)}
+                      disabled={!templateExists[template.id]}
+                      className={`template-btn ${templateExists[template.id] ? 'available' : 'unavailable'} ${currentTemplate === template.id ? 'active' : ''}`}
+                      title={`${template.name} - ${template.artist}`}
+                    >
+                      {template.name}
+                    </button>
+                  ))}
+                </div>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="audio/*,.lrc,.txt"
+                  className="file-input"
+                  onChange={(e) => handleFileUpload(e.target.files)}
+                />
+                
+                <div className="btn-group">
+                  <button className="luxury-btn" onClick={() => fileInputRef.current?.click()}>
+                    <Icons.Upload /> 上传文件
+                  </button>
+                  <button className="luxury-btn" onClick={() => alert('使用说明：\n\n1. 上传音频(MP3)和歌词(LRC)文件\n2. 或选择已检测到的模板\n3. 点击"开始练习"\n4. 输入对应的歌词\n\nLRC格式：[00:01.00]英文|中文')}>
+                    <Icons.Info /> 使用说明
+                  </button>
+                </div>
+              </div>
+              
+              {/* 歌曲图片显示 */}
+              {currentTemplateData && (
+                <div className="song-image-container" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                  <img 
+                    src={currentTemplateData.image} 
+                    alt={`${currentTemplateData.name} - ${currentTemplateData.artist}`}
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '300px', 
+                      borderRadius: '1rem',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                      border: '2px solid var(--border-color)'
+                    }}
+                  />
+                  <div style={{ marginTop: '1rem' }}>
+                    <h3 style={{ color: 'var(--text-primary)', margin: '0.5rem 0', fontFamily: 'Playfair Display, serif' }}>
+                      {currentTemplateData.name}
+                    </h3>
+                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+                      {currentTemplateData.artist}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {/* 歌词显示 */}
+              <div className="lyric-display">
+                <div className="lyric-text">
+                  <div className="lyric-line prev-line">{display.prev}</div>
+                  <div className="lyric-line current-line">
+                    {lrcData.length === 0 && isCheckingTemplates ? <div className="loading" /> : display.current}
+                  </div>
+                  <div className="lyric-line next-line">{display.next}</div>
+                </div>
+                <div className="lyric-translation">{display.translation}</div>
+              </div>
+              
+              {/* 输入区域 */}
+              <div className="input-area">
+                <div className="char-highlights">{renderHighlights()}</div>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={userInput}
+                  onChange={handleInput}
+                  placeholder="在此输入歌词..."
+                  disabled={!isPlaying || currentIndex >= lrcData.length}
+                  className="minimal-input"
+                  spellCheck="false"
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="off"
+                />
+              </div>
+              
+              {/* 控制按钮 */}
+              <div className="control-btns">
+                <button className="luxury-btn" onClick={startPractice} disabled={lrcData.length === 0 || isPlaying}>
+                  <Icons.Play /> 开始练习
+                </button>
+                <button className="luxury-btn" onClick={pausePractice} disabled={!isPlaying}>
+                  <Icons.Pause /> 暂停
+                </button>
+                <button className="luxury-btn" onClick={exportLyrics} disabled={lrcData.length === 0}>
+                  <Icons.Download /> 导出歌词
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* 特性区域 */}
+          <section className="features-section">
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon"><Icons.Music2 /></div>
+                <h3 className="feature-title">精准时间戳</h3>
+                <p className="feature-desc">严格按照LRC歌词时间戳播放每一句，确保学习节奏与音乐完美同步</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon"><Icons.RefreshCw /></div>
+                <h3 className="feature-title">实时反馈</h3>
+                <p className="feature-desc">输入时即时验证每个字符，正确显示绿色高亮，错误显示红色提示</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon"><Icons.Upload /></div>
+                <h3 className="feature-title">灵活加载</h3>
+                <p className="feature-desc">支持GitHub模板自动加载，也可上传自定义音频和歌词文件</p>
+              </div>
+            </div>
+          </section>
+
+          {/* 页脚 */}
+          <footer className="footer">
+            <div className="footer-logo">LyricType</div>
+            <p className="footer-text">简奢音乐学习体验，让歌词学习成为一种艺术</p>
+          </footer>
+
+          {/* 音频元素 */}
+          <audio ref={audioRef} preload="auto" />
+
+          {/* 灵动岛 */}
+          <DynamicIsland text={island.text} icon={island.icon} />
+        </>
+      );
+    }
+
+    // 渲染应用
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
