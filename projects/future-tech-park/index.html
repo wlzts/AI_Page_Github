@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050816" />
-  <meta name="description" content="未来科技游乐园：Three.js 太空场景、互动小游戏、智能 NPC、成就系统与本地排行榜。" />
-  <title>NOVA PARK 2099｜未来科技游乐园</title>
+  <meta name="description" content="NOVA FRONTIER：电影质感经典太空歌剧风 Three.js 互动宇宙、可飞行星舰、小游戏、NPC 与成就系统。" />
+  <title>NOVA FRONTIER｜电影级未来科技宇宙</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" />
   <link rel="stylesheet" href="style.css" />
 
@@ -23,11 +23,11 @@
   <div class="cursor-orb" id="cursorOrb" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a class="brand" href="#home" aria-label="NOVA PARK 首页">
+    <a class="brand" href="#home" aria-label="NOVA FRONTIER 首页">
       <span class="brand-mark">N</span>
       <span>
-        <strong>NOVA PARK</strong>
-        <small>SECTOR 2099</small>
+        <strong>NOVA FRONTIER</strong>
+        <small>DEEP SPACE COMMAND</small>
       </span>
     </a>
 
@@ -54,30 +54,41 @@
     <section class="hero" id="home">
       <canvas id="spaceCanvas" aria-label="Three.js 太空场景"></canvas>
       <div class="hero-vignette"></div>
+      <div class="cinema-letterbox" aria-hidden="true"></div>
+      <div class="hero-targeting" aria-hidden="true">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <span>LONG RANGE OPTICS // TRACKING</span>
+      </div>
       <div class="orbit-ring orbit-ring-a" aria-hidden="true"></div>
       <div class="orbit-ring orbit-ring-b" aria-hidden="true"></div>
 
       <div class="hero-content">
-        <div class="eyebrow reveal">NEON DISTRICT · GATE 07</div>
+        <div class="eyebrow reveal">STAR DATE 2099.224 · FRONTIER SECTOR 07</div>
         <h1 class="hero-title reveal">
-          <span>欢迎进入</span>
-          <span class="gradient-text">未来科技游乐园</span>
+          <span>穿越群星</span>
+          <span class="gradient-text">驶向未知边界</span>
         </h1>
         <p class="hero-copy reveal">
-          不用排队，不用系安全带。这里只有量子游戏、会吐槽的机器人、失控的能量核心，<br class="wide-only" />
-          以及一艘明显不该交给游客驾驶的飞船。
+          欢迎登舰。这里没有复制任何一部电影里的飞船，却保留了经典太空歌剧最迷人的东西：<br class="wide-only" />
+          巨舰、深空、舰桥仪表、跃迁光迹，以及“最好别按”的红色按钮。
         </p>
         <div class="hero-actions reveal">
           <a class="primary-cta" href="#zones">
-            <span>启动游园协议</span>
+            <span>进入主甲板</span>
             <span aria-hidden="true">↗</span>
           </a>
-          <button class="ghost-cta" id="scanButton" type="button">扫描未知信号</button>
+          <button class="ghost-cta" id="scanButton" type="button">长程传感器扫描</button>
+        </div>
+
+        <div class="bridge-readout reveal" aria-label="舰桥状态">
+          <div><span>VESSEL</span><strong>NFV ODYSSEY</strong></div>
+          <div><span>DRIVE</span><strong>ION / READY</strong></div>
+          <div><span>VECTOR</span><strong>72.4 / 018.9</strong></div>
         </div>
 
         <div class="hero-stats reveal">
           <div><small>访客等级</small><strong id="levelHero">LV.01</strong></div>
-          <div><small>已解锁成就</small><strong><span id="achievementCountHero">0</span>/8</strong></div>
+          <div><small>已解锁成就</small><strong><span id="achievementCountHero">0</span>/12</strong></div>
           <div><small>系统状态</small><strong class="status-online">ONLINE</strong></div>
         </div>
       </div>
@@ -94,11 +105,11 @@
 
     <section class="section intro-strip" aria-label="系统播报">
       <div class="ticker">
-        <span>✦ 今日园区重力：0.72G</span>
-        <span>✦ Nova-7 拒绝承认自己偷偷升级了笑话数据库</span>
-        <span>✦ 3 号船坞广播：请勿舔量子推进器</span>
-        <span>✦ 隐藏星球信号强度：不稳定</span>
-        <span>✦ 今日园区重力：0.72G</span>
+        <span>◈ 深空阵列：航道稳定</span>
+        <span>◈ NOVA-7：舰桥咖啡机仍被列为关键生命支持设备</span>
+        <span>◈ 3 号船坞：主推进器已完成预热</span>
+        <span>◈ 外环传感器：检测到非登记天体回波</span>
+        <span>◈ 深空阵列：航道稳定</span>
       </div>
     </section>
 
@@ -115,9 +126,9 @@
         <article class="zone-card tilt-card reveal" data-accent="cyan">
           <div class="card-index">A01</div>
           <div class="zone-icon">⌁</div>
-          <h3>量子街机厅</h3>
-          <p>系统每次随机生成一种挑战：反应、记忆或核心充能。手速慢也没事，宇宙很大。</p>
-          <a href="#arcade">进入挑战 <span>→</span></a>
+          <h3>星舰学院训练甲板</h3>
+          <p>星舰学院提供 9 项随机训练：反应、记忆、雷达、护盾、跃迁校准、规避与异常识别。连续通关还有额外 XP。</p>
+          <a href="#arcade">参加训练 <span>→</span></a>
         </article>
 
         <article class="zone-card tilt-card reveal" data-accent="violet">
@@ -138,58 +149,98 @@
       </div>
     </section>
 
-    <section class="section arcade-layout" id="arcade">
-      <div class="console-card reveal">
-        <div class="console-header">
-          <div>
-            <span class="kicker">02 / QUANTUM ARCADE</span>
-            <h2>随机小游戏生成器</h2>
-          </div>
-          <div class="console-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+    <section class="section academy-section" id="arcade">
+      <div class="academy-banner reveal">
+        <div>
+          <span class="kicker">02 / STARSHIP ACADEMY · TACTICAL DECK</span>
+          <h2>九项星舰训练协议</h2>
+          <p>每次随机抽取不同科目。反应、记忆、战术判断、跃迁校准、雷达锁定、护盾调度与驾驶躲避都会被记录。</p>
         </div>
-
-        <div class="game-shell">
-          <div class="game-meta">
-            <span id="gameType">等待生成任务</span>
-            <strong id="gameScore">BEST 0000</strong>
-          </div>
-          <div class="game-stage" id="gameStage">
-            <div class="game-placeholder">
-              <div class="placeholder-core"></div>
-              <h3>量子随机数发生器已就绪</h3>
-              <p>点击下面的按钮。系统将随机挑一种方式测试你是否适合驾驶昂贵设备。</p>
-            </div>
-          </div>
-          <button class="game-launch" id="gameLaunch" type="button">生成随机挑战</button>
+        <div class="academy-status">
+          <span>CADET STREAK</span><strong id="arcadeStreak">0</strong><small>连续通关</small>
         </div>
       </div>
 
-      <aside class="side-stack">
-        <article class="glass-panel reveal">
-          <span class="kicker">ENERGY CORE</span>
-          <h3>禁止游客触摸按钮</h3>
-          <p>园方认真建议你不要按。于是我们把它做得特别大。</p>
-          <button class="danger-button" id="energyButton" type="button">
-            <span class="danger-core"></span>
-            <strong>释放能量</strong>
-          </button>
-          <small id="energyStatus">核心稳定度 100%</small>
-        </article>
+      <div class="training-grid reveal" id="trainingGrid" aria-label="星舰训练项目">
+        <button class="training-chip" data-training="reaction" type="button"><b>01</b><span>神经反应</span><em>REFLEX</em></button>
+        <button class="training-chip" data-training="memory" type="button"><b>02</b><span>脉冲记忆</span><em>MEMORY</em></button>
+        <button class="training-chip" data-training="charge" type="button"><b>03</b><span>核心充能</span><em>POWER</em></button>
+        <button class="training-chip" data-training="target" type="button"><b>04</b><span>雷达锁敌</span><em>TACTICAL</em></button>
+        <button class="training-chip" data-training="cipher" type="button"><b>05</b><span>舰桥密码</span><em>LOGIC</em></button>
+        <button class="training-chip" data-training="warp" type="button"><b>06</b><span>跃迁校准</span><em>TIMING</em></button>
+        <button class="training-chip" data-training="shield" type="button"><b>07</b><span>护盾调度</span><em>DEFENSE</em></button>
+        <button class="training-chip" data-training="dodge" type="button"><b>08</b><span>小行星规避</span><em>PILOT</em></button>
+        <button class="training-chip" data-training="anomaly" type="button"><b>09</b><span>异常识别</span><em>SCIENCE</em></button>
+      </div>
 
-        <article class="glass-panel reveal">
-          <span class="kicker">IDENTITY FORGE</span>
-          <h3>锻造你的未来称号</h3>
-          <label class="field-label" for="nameInput">游客代号</label>
-          <div class="input-row">
-            <input id="nameInput" maxlength="18" placeholder="例如：驴子" autocomplete="off" />
-            <button id="titleButton" type="button" aria-label="生成未来称号">生成</button>
+      <div class="arcade-layout academy-layout">
+        <div class="console-card command-console reveal">
+          <div class="console-header">
+            <div>
+              <span class="kicker">CADET SIMULATION TERMINAL</span>
+              <h3 id="academyMissionTitle">等待训练指令</h3>
+            </div>
+            <div class="console-lights" aria-hidden="true"><i></i><i></i><i></i></div>
           </div>
-          <div class="title-ticket" id="titleTicket">
-            <small>身份系统待命</small>
-            <strong>等待录入游客代号</strong>
+
+          <div class="game-shell">
+            <div class="game-meta">
+              <span id="gameType">ACADEMY / STANDBY</span>
+              <strong id="gameScore">BEST 0000</strong>
+            </div>
+            <div class="game-stage academy-stage" id="gameStage">
+              <div class="game-placeholder academy-placeholder">
+                <div class="academy-emblem" aria-hidden="true"><i></i><i></i><span>NF</span></div>
+                <h3>训练甲板已连接</h3>
+                <p>随机系统会从 9 项训练中抽取一项。连续通关会提高奖励；失败会清空连胜。</p>
+              </div>
+            </div>
+            <div class="academy-actions">
+              <button class="game-launch" id="gameLaunch" type="button">随机抽取训练项目</button>
+              <button class="academy-reroll" id="academyReroll" type="button">战术重抽</button>
+            </div>
           </div>
-        </article>
-      </aside>
+        </div>
+
+        <aside class="side-stack academy-side">
+          <article class="glass-panel academy-panel reveal">
+            <span class="kicker">TRAINING RECORD</span>
+            <h3>学院记录</h3>
+            <div class="academy-metrics">
+              <div><span>完成科目</span><strong id="trainingCompleteCount">0/9</strong></div>
+              <div><span>最高连胜</span><strong id="bestArcadeStreak">0</strong></div>
+              <div><span>模拟总胜场</span><strong id="academyWins">0</strong></div>
+            </div>
+            <div class="academy-progress"><i id="academyProgressFill"></i></div>
+            <small>完成全部 9 个科目可解锁「学院荣誉章」。</small>
+          </article>
+
+          <article class="glass-panel reveal">
+            <span class="kicker">REACTOR CONTROL</span>
+            <h3>禁止学员触摸</h3>
+            <p>舰队工程部把危险设备做得非常醒目。显然没人预料到游客会把这当作邀请。</p>
+            <button class="danger-button" id="energyButton" type="button">
+              <span class="danger-core"></span>
+              <strong>释放能量</strong>
+            </button>
+            <small id="energyStatus">核心稳定度 100%</small>
+          </article>
+
+          <article class="glass-panel reveal">
+            <span class="kicker">CADET IDENTIFICATION</span>
+            <h3>生成舰队呼号</h3>
+            <label class="field-label" for="nameInput">驾驶员代号</label>
+            <div class="input-row">
+              <input id="nameInput" maxlength="18" placeholder="例如：驴子" autocomplete="off" />
+              <button id="titleButton" type="button" aria-label="生成未来称号">生成</button>
+            </div>
+            <div class="title-ticket" id="titleTicket">
+              <small>IDENTITY CORE STANDBY</small>
+              <strong>等待录入驾驶员代号</strong>
+            </div>
+          </article>
+        </aside>
+      </div>
     </section>
 
     <section class="section npc-section" id="npc">
@@ -225,33 +276,72 @@
       </div>
     </section>
 
-    <section class="section hangar-section" id="hangar">
+    <section class="section hangar-section flight-game-section" id="hangar">
       <div class="section-heading reveal">
         <div>
-          <span class="kicker">04 / ORBITAL HANGAR</span>
-          <h2>3D 星舰试飞区</h2>
+          <span class="kicker">04 / FLIGHT SIMULATOR</span>
+          <h2>你来驾驶。不是看它自己飞。</h2>
         </div>
-        <p>鼠标拖动旋转 · 滚轮缩放 · 手机双指缩放</p>
+        <p>W/S 推力 · A/D 偏航 · ↑/↓ 俯仰 · Q/E 翻滚 · Shift 加力 · Space 开火 · R 扫描</p>
       </div>
 
-      <div class="hangar-frame reveal">
-        <canvas id="shipCanvas" aria-label="可交互的 3D 飞船"></canvas>
-        <div class="hangar-hud hud-left">
-          <span>VESSEL</span>
-          <strong>NX-09 / KESTREL</strong>
-          <small>Experimental joyride craft</small>
+      <div class="flight-game-shell reveal" id="flightGameShell">
+        <div class="flight-stage">
+          <canvas id="shipCanvas" aria-label="可驾驶的 3D 飞船"></canvas>
+          <div class="flight-frame-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="crosshair" aria-hidden="true"><i></i><i></i><span></span></div>
+          <div class="cockpit-hud hud-top-left">
+            <span>NFV-09 / WAYFARER</span>
+            <strong id="flightStatus">DOCKED</strong>
+            <small id="objectiveReadout">选择任务并启动飞行</small>
+          </div>
+          <div class="cockpit-hud hud-top-right">
+            <span>VELOCITY</span><strong id="velocityReadout">000</strong><small>KM/S</small>
+          </div>
+          <div class="flight-bars">
+            <label>HULL <i><b id="hullBar"></b></i><em id="hullText">100%</em></label>
+            <label>ENERGY <i><b id="energyBar"></b></i><em id="energyText">100%</em></label>
+            <label>BOOST <i><b id="boostBar"></b></i><em id="boostText">100%</em></label>
+          </div>
+          <div class="radar" id="radar"><span></span><i class="radar-sweep"></i></div>
+          <div class="flight-message" id="flightMessage">舰载电脑：等待驾驶员。</div>
+          <button class="flight-start" id="flightStart" type="button">启动飞行系统</button>
+
+          <div class="touch-flight-controls" aria-label="移动端飞船控制">
+            <div class="touch-cluster touch-steer">
+              <button data-flight-key="ArrowUp">▲</button>
+              <button data-flight-key="KeyA">◀</button>
+              <button data-flight-key="ArrowDown">▼</button>
+              <button data-flight-key="KeyD">▶</button>
+            </div>
+            <div class="touch-cluster touch-actions">
+              <button data-flight-key="KeyW">推力</button>
+              <button data-flight-key="ShiftLeft">加力</button>
+              <button data-flight-key="Space">开火</button>
+              <button data-flight-key="KeyR">扫描</button>
+            </div>
+          </div>
         </div>
-        <div class="hangar-hud hud-right">
-          <span>VELOCITY</span>
-          <strong id="velocityReadout">000 km/s</strong>
-          <small id="shipModeReadout">MODE · DISPLAY</small>
-        </div>
-        <div class="ship-controls">
-          <button data-ship-mode="display" class="active">展示</button>
-          <button data-ship-mode="orbit">巡航</button>
-          <button data-ship-mode="boost">跃迁</button>
-        </div>
-        <button class="scan-planet" id="planetScanButton" type="button">扫描附近天体</button>
+
+        <aside class="mission-console">
+          <div class="mission-head"><span class="kicker">MISSION BOARD</span><h3>舰长任务板</h3><p>完成任务会获得 XP。飞出去，别把飞船停成昂贵屏保。</p></div>
+          <button class="mission-card active" data-mission="rings" type="button"><b>01</b><span><strong>导航训练</strong><small>穿过 6 个航行门 · +180 XP</small></span><em>READY</em></button>
+          <button class="mission-card" data-mission="salvage" type="button"><b>02</b><span><strong>深空打捞</strong><small>收集 5 个能量核心 · +240 XP</small></span><em>READY</em></button>
+          <button class="mission-card" data-mission="combat" type="button"><b>03</b><span><strong>无人机拦截</strong><small>击毁 4 架靶机 · +320 XP</small></span><em>READY</em></button>
+          <div class="mission-progress"><span>当前任务</span><strong id="missionName">导航训练</strong><div><i id="missionFill"></i></div><small id="missionProgressText">0 / 6</small></div>
+          <div class="key-guide"><span><kbd>W</kbd><kbd>S</kbd> 推力</span><span><kbd>A</kbd><kbd>D</kbd> 转向</span><span><kbd>↑</kbd><kbd>↓</kbd> 俯仰</span><span><kbd>Q</kbd><kbd>E</kbd> 翻滚</span><span><kbd>SHIFT</kbd> 加力</span><span><kbd>SPACE</kbd> 开火</span></div>
+          <button class="scan-planet" id="planetScanButton" type="button">长程扫描 / 彩蛋信号</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section universe-content" id="universe">
+      <div class="section-heading reveal"><div><span class="kicker">05 / FRONTIER ARCHIVE</span><h2>让宇宙不只是背景</h2></div><p>完成飞行任务后，你会逐渐解锁这些区域的故事档案。</p></div>
+      <div class="lore-grid">
+        <article class="lore-card reveal"><span>PLANET / AURELIA</span><h3>曙光行星</h3><p>永昼侧被巨型风暴切成金色云带。商船会沿晨昏线低轨飞行，以节省近 14% 的推进剂。</p><b>气候：极端 · 贸易：活跃</b></article>
+        <article class="lore-card reveal"><span>STATION / CALYPSO</span><h3>卡吕普索星港</h3><p>一座挂在气态巨行星阴影里的自由港。这里可以买到合法零件，也可以买到“非常努力证明自己合法”的零件。</p><b>人口：82,400 · 安保：复杂</b></article>
+        <article class="lore-card reveal"><span>ANOMALY / ECHO-9</span><h3>回声裂隙</h3><p>传感器会收到比发送时间早 0.7 秒的回波。NOVA-7 坚持称之为“宇宙提前剧透”。</p><b>危险：未知 · 科研价值：极高</b></article>
+        <article class="lore-card reveal"><span>FACTION / ORBITAL UNION</span><h3>轨道联合舰队</h3><p>负责维护边境航道与搜救协议。他们的飞船讲究耐用、模块化，以及让维修工程师能在戴手套时拆掉一半舰体。</p><b>关系：中立 · 通行许可：有效</b></article>
       </div>
     </section>
 
@@ -259,7 +349,7 @@
       <div class="progress-main reveal">
         <div class="section-heading compact-heading">
           <div>
-            <span class="kicker">05 / PLAYER PROFILE</span>
+            <span class="kicker">06 / PLAYER PROFILE</span>
             <h2>游园进度</h2>
           </div>
         </div>
@@ -302,7 +392,7 @@
   </main>
 
   <footer class="footer">
-    <span>NOVA PARK 2099 · SIMULATION BUILD</span>
+    <span>NOVA FRONTIER 2099 · SIMULATION BUILD</span>
     <button id="footerSecret" type="button" aria-label="未知字符">// 07-?? //</button>
     <span>NO ACTUAL SPACESHIPS WERE HARMED</span>
   </footer>
