@@ -1,4 +1,4 @@
-/* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
+/* 由 V8 在线管理员后台发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
     "id": "wash-hair",
@@ -11,8 +11,7 @@ window.AIProjects = [
     "keywords": "洗头 睡觉 拖延 清洁 审批",
     "visible": true,
     "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/",
-    "featured": false,
-    "pinned": false
+    "featured": false
   },
   {
     "id": "basketball-position-matching",
@@ -126,5 +125,18 @@ window.AIProjects = [
     "externalUrl": "",
     "visible": true,
     "featured": true
+  },
+  {
+    "id": "Future-tech-park",
+    "title": "未来科幻",
+    "description": "",
+    "category": "实验",
+    "date": "",
+    "path": "Future-tech-park",
+    "accent": "#555b4a",
+    "keywords": "",
+    "externalUrl": "",
+    "visible": true,
+    "featured": false
   }
 ];
