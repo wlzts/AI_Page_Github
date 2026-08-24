@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050816" />
+  <meta name="description" content="未来科技游乐园：Three.js 太空场景、互动小游戏、智能 NPC、成就系统与本地排行榜。" />
+  <title>NOVA PARK 2099｜未来科技游乐园</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="page-noise" aria-hidden="true"></div>
+  <div class="cursor-orb" id="cursorOrb" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="NOVA PARK 首页">
+      <span class="brand-mark">N</span>
+      <span>
+        <strong>NOVA PARK</strong>
+        <small>SECTOR 2099</small>
+      </span>
+    </a>
+
+    <nav class="nav-links" aria-label="主导航">
+      <a href="#zones">园区</a>
+      <a href="#arcade">游戏</a>
+      <a href="#npc">NOVA-7</a>
+      <a href="#hangar">船坞</a>
+    </nav>
+
+    <div class="top-actions">
+      <button class="icon-button" id="musicToggle" type="button" aria-pressed="false" title="背景音乐">
+        <span id="musicIcon">♪</span>
+        <span class="desktop-only" id="musicLabel">音乐 OFF</span>
+      </button>
+      <div class="hud-pill" title="你的未来积分">
+        <span>XP</span>
+        <strong id="xpTop">0</strong>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <canvas id="spaceCanvas" aria-label="Three.js 太空场景"></canvas>
+      <div class="hero-vignette"></div>
+      <div class="orbit-ring orbit-ring-a" aria-hidden="true"></div>
+      <div class="orbit-ring orbit-ring-b" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <div class="eyebrow reveal">NEON DISTRICT · GATE 07</div>
+        <h1 class="hero-title reveal">
+          <span>欢迎进入</span>
+          <span class="gradient-text">未来科技游乐园</span>
+        </h1>
+        <p class="hero-copy reveal">
+          不用排队，不用系安全带。这里只有量子游戏、会吐槽的机器人、失控的能量核心，<br class="wide-only" />
+          以及一艘明显不该交给游客驾驶的飞船。
+        </p>
+        <div class="hero-actions reveal">
+          <a class="primary-cta" href="#zones">
+            <span>启动游园协议</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <button class="ghost-cta" id="scanButton" type="button">扫描未知信号</button>
+        </div>
+
+        <div class="hero-stats reveal">
+          <div><small>访客等级</small><strong id="levelHero">LV.01</strong></div>
+          <div><small>已解锁成就</small><strong><span id="achievementCountHero">0</span>/8</strong></div>
+          <div><small>系统状态</small><strong class="status-online">ONLINE</strong></div>
+        </div>
+      </div>
+
+      <button class="mystery-signal" id="mysterySignal" type="button" aria-label="一个微弱的未知信号">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="scroll-cue" aria-hidden="true">
+        <span>SCROLL TO ENTER</span>
+        <i></i>
+      </div>
+    </section>
+
+    <section class="section intro-strip" aria-label="系统播报">
+      <div class="ticker">
+        <span>✦ 今日园区重力：0.72G</span>
+        <span>✦ Nova-7 拒绝承认自己偷偷升级了笑话数据库</span>
+        <span>✦ 3 号船坞广播：请勿舔量子推进器</span>
+        <span>✦ 隐藏星球信号强度：不稳定</span>
+        <span>✦ 今日园区重力：0.72G</span>
+      </div>
+    </section>
+
+    <section class="section" id="zones">
+      <div class="section-heading reveal">
+        <div>
+          <span class="kicker">01 / PARK MAP</span>
+          <h2>选择你的混乱方式</h2>
+        </div>
+        <p>每个区域都会给 XP。对，连和机器人闲聊也算生产力。</p>
+      </div>
+
+      <div class="zone-grid">
+        <article class="zone-card tilt-card reveal" data-accent="cyan">
+          <div class="card-index">A01</div>
+          <div class="zone-icon">⌁</div>
+          <h3>量子街机厅</h3>
+          <p>系统每次随机生成一种挑战：反应、记忆或核心充能。手速慢也没事，宇宙很大。</p>
+          <a href="#arcade">进入挑战 <span>→</span></a>
+        </article>
+
+        <article class="zone-card tilt-card reveal" data-accent="violet">
+          <div class="card-index">B07</div>
+          <div class="zone-icon">◎</div>
+          <h3>NOVA-7 通讯站</h3>
+          <p>一个本地智能 NPC。能接梗、能发任务，偶尔会对你的操作进行不必要的点评。</p>
+          <a href="#npc">接通频道 <span>→</span></a>
+        </article>
+
+        <article class="zone-card tilt-card reveal" data-accent="pink">
+          <div class="card-index">C12</div>
+          <div class="zone-icon">△</div>
+          <h3>星舰试飞船坞</h3>
+          <p>真正的 Three.js 3D 飞船。拖动观察、切换巡航模式，然后假装维修费与自己无关。</p>
+          <a href="#hangar">前往船坞 <span>→</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section arcade-layout" id="arcade">
+      <div class="console-card reveal">
+        <div class="console-header">
+          <div>
+            <span class="kicker">02 / QUANTUM ARCADE</span>
+            <h2>随机小游戏生成器</h2>
+          </div>
+          <div class="console-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="game-shell">
+          <div class="game-meta">
+            <span id="gameType">等待生成任务</span>
+            <strong id="gameScore">BEST 0000</strong>
+          </div>
+          <div class="game-stage" id="gameStage">
+            <div class="game-placeholder">
+              <div class="placeholder-core"></div>
+              <h3>量子随机数发生器已就绪</h3>
+              <p>点击下面的按钮。系统将随机挑一种方式测试你是否适合驾驶昂贵设备。</p>
+            </div>
+          </div>
+          <button class="game-launch" id="gameLaunch" type="button">生成随机挑战</button>
+        </div>
+      </div>
+
+      <aside class="side-stack">
+        <article class="glass-panel reveal">
+          <span class="kicker">ENERGY CORE</span>
+          <h3>禁止游客触摸按钮</h3>
+          <p>园方认真建议你不要按。于是我们把它做得特别大。</p>
+          <button class="danger-button" id="energyButton" type="button">
+            <span class="danger-core"></span>
+            <strong>释放能量</strong>
+          </button>
+          <small id="energyStatus">核心稳定度 100%</small>
+        </article>
+
+        <article class="glass-panel reveal">
+          <span class="kicker">IDENTITY FORGE</span>
+          <h3>锻造你的未来称号</h3>
+          <label class="field-label" for="nameInput">游客代号</label>
+          <div class="input-row">
+            <input id="nameInput" maxlength="18" placeholder="例如：驴子" autocomplete="off" />
+            <button id="titleButton" type="button" aria-label="生成未来称号">生成</button>
+          </div>
+          <div class="title-ticket" id="titleTicket">
+            <small>身份系统待命</small>
+            <strong>等待录入游客代号</strong>
+          </div>
+        </article>
+      </aside>
+    </section>
+
+    <section class="section npc-section" id="npc">
+      <div class="npc-copy reveal">
+        <span class="kicker">03 / LOCAL INTELLIGENCE</span>
+        <h2>和 NOVA-7 聊两句。<br /><span class="gradient-text">它嘴有点碎。</span></h2>
+        <p>
+          NOVA-7 是运行在浏览器里的本地智能 NPC，不会把对话发到服务器。它能识别一些主题、记住本轮上下文，还会随机给你小任务。
+        </p>
+        <div class="npc-pills">
+          <button class="prompt-chip" data-prompt="给我一个隐藏区域的线索">给我彩蛋线索</button>
+          <button class="prompt-chip" data-prompt="我今天适合玩什么？">推荐玩法</button>
+          <button class="prompt-chip" data-prompt="吐槽一下这个游乐园">让它吐槽</button>
+        </div>
+      </div>
+
+      <div class="chat-terminal reveal">
+        <div class="chat-top">
+          <div class="bot-avatar"><span></span></div>
+          <div><strong>NOVA-7</strong><small>LOCAL NPC · ONLINE</small></div>
+          <div class="signal-bars" aria-label="信号良好"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="chat-log" id="chatLog" aria-live="polite">
+          <div class="message bot-message">
+            <span>NOVA-7</span>
+            <p>检测到新游客。欢迎。请放心，我已经把“如何优雅地处理飞船爆炸”从首页推荐里移除了。</p>
+          </div>
+        </div>
+        <form class="chat-form" id="chatForm">
+          <input id="chatInput" maxlength="120" placeholder="对 NOVA-7 说点什么…" autocomplete="off" />
+          <button type="submit">发送 ↗</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section hangar-section" id="hangar">
+      <div class="section-heading reveal">
+        <div>
+          <span class="kicker">04 / ORBITAL HANGAR</span>
+          <h2>3D 星舰试飞区</h2>
+        </div>
+        <p>鼠标拖动旋转 · 滚轮缩放 · 手机双指缩放</p>
+      </div>
+
+      <div class="hangar-frame reveal">
+        <canvas id="shipCanvas" aria-label="可交互的 3D 飞船"></canvas>
+        <div class="hangar-hud hud-left">
+          <span>VESSEL</span>
+          <strong>NX-09 / KESTREL</strong>
+          <small>Experimental joyride craft</small>
+        </div>
+        <div class="hangar-hud hud-right">
+          <span>VELOCITY</span>
+          <strong id="velocityReadout">000 km/s</strong>
+          <small id="shipModeReadout">MODE · DISPLAY</small>
+        </div>
+        <div class="ship-controls">
+          <button data-ship-mode="display" class="active">展示</button>
+          <button data-ship-mode="orbit">巡航</button>
+          <button data-ship-mode="boost">跃迁</button>
+        </div>
+        <button class="scan-planet" id="planetScanButton" type="button">扫描附近天体</button>
+      </div>
+    </section>
+
+    <section class="section progress-section" id="progress">
+      <div class="progress-main reveal">
+        <div class="section-heading compact-heading">
+          <div>
+            <span class="kicker">05 / PLAYER PROFILE</span>
+            <h2>游园进度</h2>
+          </div>
+        </div>
+
+        <div class="level-card">
+          <div class="level-orb"><span id="levelNumber">01</span></div>
+          <div class="level-info">
+            <small>CURRENT RANK</small>
+            <h3 id="rankName">初来乍到的碳基游客</h3>
+            <div class="xp-line"><i id="xpFill"></i></div>
+            <p><strong id="xpCurrent">0</strong> XP · 距离下一等级还需 <span id="xpNext">150</span> XP</p>
+          </div>
+        </div>
+
+        <div class="achievement-grid" id="achievementGrid"></div>
+      </div>
+
+      <aside class="leaderboard reveal">
+        <div class="leaderboard-head">
+          <div>
+            <span class="kicker">LOCAL LEADERBOARD</span>
+            <h3>本机排行榜</h3>
+          </div>
+          <span class="live-dot">LOCAL</span>
+        </div>
+        <p class="leaderboard-note">没有服务器，没有假装全球在线。分数只保存在你的浏览器里。</p>
+        <div class="leaderboard-list" id="leaderboardList"></div>
+        <button class="subtle-button" id="resetProgress" type="button">重置本机进度</button>
+      </aside>
+    </section>
+
+    <section class="section final-cta reveal">
+      <div>
+        <span class="kicker">END OF PUBLIC MAP</span>
+        <h2>你确定已经把园区逛完了吗？</h2>
+        <p>传感器说还有一个东西不在地图上。它大概也不希望出现在地图上。</p>
+      </div>
+      <a class="primary-cta" href="#home">重新进入轨道 ↑</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>NOVA PARK 2099 · SIMULATION BUILD</span>
+    <button id="footerSecret" type="button" aria-label="未知字符">// 07-?? //</button>
+    <span>NO ACTUAL SPACESHIPS WERE HARMED</span>
+  </footer>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <dialog class="secret-modal" id="secretModal">
+    <button class="modal-close" id="secretClose" type="button" aria-label="关闭">×</button>
+    <div class="secret-glyph">✦</div>
+    <span class="kicker">CLASSIFIED / SECTOR Ω</span>
+    <h2>彩蛋发现：幽灵星球「MIRA」</h2>
+    <p>你成功发现了不在官方地图上的第零号区域。NOVA-7 声称它“完全不知道这件事”，说完以后立刻删了三条日志。</p>
+    <strong>+500 XP · 成就「地图之外」已记录</strong>
+    <button class="primary-cta modal-action" id="secretAccept" type="button">收下这份可疑奖励</button>
+  </dialog>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

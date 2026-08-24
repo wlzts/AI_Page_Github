@@ -1,4 +1,4 @@
-/* 由 V8 在线管理员后台发布。AI_Page 首页与可玩简历共享此数据。 */
+/* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
     "id": "wash-hair",
@@ -10,8 +10,7 @@ window.AIProjects = [
     "accent": "#235b4e",
     "keywords": "洗头 睡觉 拖延 清洁 审批",
     "visible": true,
-    "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/",
-    "featured": false
+    "externalUrl": "https://wlzts.github.io/AI_Page/projects/wash-hair/"
   },
   {
     "id": "basketball-position-matching",
@@ -110,8 +109,7 @@ window.AIProjects = [
     "path": "playable-resume",
     "accent": "#2f6b53",
     "keywords": "个人简历 RPG 像素游戏 后端工程师 Java Portfolio 曹继贤",
-    "visible": true,
-    "featured": false
+    "visible": true
   },
   {
     "id": "Lyrictype Project",
@@ -123,20 +121,17 @@ window.AIProjects = [
     "accent": "#155b4a",
     "keywords": "音乐，工具",
     "externalUrl": "",
-    "visible": true,
-    "featured": true
+    "visible": true
   },
   {
-    "id": "Future-tech-park",
-    "title": "未来科幻",
+    "id": "https://wlzts.dpdns.org",
+    "title": "Future-tech-park",
     "description": "",
-    "category": "实验",
-    "date": "",
-    "path": "Future-tech-park",
-    "accent": "#555b4a",
+    "category": "工具",
+    "date": "2026.08.24",
+    "path": "future-tech-park",
+    "accent": "#2f6b53",
     "keywords": "",
-    "externalUrl": "",
-    "visible": true,
-    "featured": false
+    "visible": true
   }
 ];
