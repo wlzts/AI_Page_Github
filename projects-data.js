@@ -1,4 +1,4 @@
-/* 由 V9 项目发布管理器发布。AI_Page 首页与可玩简历共享此数据。 */
+/* 由 V8 在线管理员后台发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
     "id": "wash-hair",
@@ -125,7 +125,7 @@ window.AIProjects = [
   },
   {
     "id": "https://wlzts.dpdns.org",
-    "title": "Future-tech-park",
+    "title": "未来科技游乐园",
     "description": "",
     "category": "工具",
     "date": "2026.08.24",
