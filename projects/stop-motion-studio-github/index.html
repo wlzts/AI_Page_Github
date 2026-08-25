@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#090b10" />
+  <meta name="color-scheme" content="dark" />
+  <title>定格动画工作室 · STOP MOTION STUDIO</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-group">
+        <a class="back-link" href="../../" title="返回 AI 网页实验室" aria-label="返回 AI 网页实验室">← AI 网页实验室</a>
+        <div class="brand-lockup" aria-label="STOP MOTION STUDIO">
+          <span class="brand-kicker">STOP MOTION</span>
+          <span class="brand-title">STUDIO</span>
+        </div>
+        <input id="projectName" class="project-name" value="我的定格动画" maxlength="60" aria-label="项目名称" title="点击修改项目名称" />
+      </div>
+      <div class="top-actions" role="toolbar" aria-label="项目工具栏">
+        <button id="newProjectBtn" class="tool-btn" type="button" title="新建项目" aria-label="新建项目">新建</button>
+        <span id="saveStatus" class="save-status" aria-live="polite">已保存</span>
+        <button id="undoBtn" class="icon-btn" type="button" title="撤销" aria-label="撤销" disabled>↶</button>
+        <button id="redoBtn" class="icon-btn" type="button" title="重做" aria-label="重做" disabled>↷</button>
+        <button id="importBtn" class="tool-btn" type="button" title="导入图片" aria-label="导入图片">导入</button>
+        <button id="exportBtn" class="tool-btn primary" type="button" title="导出 WebM" aria-label="导出 WebM">导出</button>
+        <button id="settingsBtn" class="icon-btn" type="button" title="设置" aria-label="设置">⚙</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="viewer-panel" aria-label="摄像头和动画预览">
+        <div class="viewer-meta">
+          <div class="mode-indicator"><span id="modeDot" class="mode-dot"></span><span id="modeLabel">拍摄模式</span></div>
+          <div class="frame-stats"><strong id="frameCount">0 FRAMES</strong><span id="durationLabel">00:00</span></div>
+        </div>
+
+        <div id="stage" class="stage ratio-16-9">
+          <video id="cameraVideo" playsinline muted aria-label="实时摄像头画面"></video>
+          <img id="onionOverlay" class="onion-overlay" alt="上一帧洋葱皮参考" />
+          <canvas id="playbackCanvas" class="playback-canvas" aria-label="动画播放画布"></canvas>
+          <div id="cameraEmpty" class="camera-empty">
+            <div class="empty-mark" aria-hidden="true"></div>
+            <h1>开始你的第一段定格动画</h1>
+            <p>启动摄像头后，每次按下快门都会保存一帧。画面只在你的浏览器中处理，不会上传。</p>
+            <div class="empty-actions">
+              <button id="startCameraBtn" class="primary-action" type="button">启动摄像头</button>
+              <button id="emptyImportBtn" class="secondary-action" type="button">导入图片制作</button>
+            </div>
+            <small>摄像头需要 HTTPS 或 localhost；GitHub Pages 满足 HTTPS 要求。</small>
+          </div>
+          <div id="cameraError" class="camera-error hidden" role="alert">
+            <h2>无法访问摄像头</h2>
+            <p id="cameraErrorText">请检查浏览器摄像头权限，然后重新尝试。</p>
+            <div class="empty-actions">
+              <button id="retryCameraBtn" class="primary-action" type="button">重新尝试</button>
+              <button id="errorImportBtn" class="secondary-action" type="button">导入图片制作</button>
+            </div>
+          </div>
+          <div id="shutterFlash" class="shutter-flash" aria-hidden="true"></div>
+        </div>
+
+        <div class="camera-strip">
+          <div class="camera-controls">
+            <button id="cameraToggleBtn" class="compact-btn" type="button" title="启动或关闭摄像头" aria-label="启动或关闭摄像头">摄像头</button>
+            <select id="cameraSelect" class="select-control" aria-label="选择摄像头" title="选择摄像头">
+              <option value="">默认摄像头</option>
+            </select>
+            <button id="switchCameraBtn" class="compact-btn" type="button" title="切换前后摄像头" aria-label="切换前后摄像头">切换镜头</button>
+          </div>
+          <div class="aspect-controls" aria-label="画面比例">
+            <span>比例</span>
+            <button class="ratio-btn active" data-ratio="16:9" type="button">16:9</button>
+            <button class="ratio-btn" data-ratio="4:3" type="button">4:3</button>
+            <button class="ratio-btn" data-ratio="1:1" type="button">1:1</button>
+            <button class="ratio-btn" data-ratio="9:16" type="button">9:16</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="capture-panel" aria-label="拍摄与播放控制">
+        <div class="capture-left">
+          <label class="toggle-row" for="onionToggle">
+            <input id="onionToggle" type="checkbox" />
+            <span class="toggle-ui" aria-hidden="true"></span>
+            <span>洋葱皮</span>
+          </label>
+          <label class="range-row" for="onionOpacity">
+            <span>透明度</span>
+            <input id="onionOpacity" type="range" min="0" max="100" value="40" />
+            <output id="onionOpacityValue">40%</output>
+          </label>
+        </div>
+
+        <div class="shutter-wrap">
+          <button id="shutterBtn" class="shutter-btn" type="button" aria-label="拍摄一帧" title="拍摄一帧（Space）">
+            <span class="shutter-inner" aria-hidden="true"></span>
+          </button>
+          <span class="shutter-caption">SPACE · 拍摄一帧</span>
+        </div>
+
+        <div class="capture-right">
+          <div class="playback-controls" role="toolbar" aria-label="播放控制">
+            <button id="firstFrameBtn" class="icon-btn" type="button" title="第一帧" aria-label="第一帧">|◀</button>
+            <button id="prevFrameBtn" class="icon-btn" type="button" title="上一帧" aria-label="上一帧">◀</button>
+            <button id="playBtn" class="play-btn" type="button" title="播放" aria-label="播放">▶</button>
+            <button id="nextFrameBtn" class="icon-btn" type="button" title="下一帧" aria-label="下一帧">▶</button>
+            <label class="loop-label" for="loopToggle"><input id="loopToggle" type="checkbox" checked />循环</label>
+          </div>
+          <label class="fps-row" for="fpsRange">
+            <span>FPS</span>
+            <input id="fpsRange" type="range" min="1" max="24" value="8" />
+            <output id="fpsValue">8 FPS</output>
+          </label>
+          <div class="fps-presets" aria-label="FPS 预设">
+            <button type="button" data-fps="4">4</button><button type="button" data-fps="6">6</button><button class="active" type="button" data-fps="8">8</button><button type="button" data-fps="10">10</button><button type="button" data-fps="12">12</button><button type="button" data-fps="15">15</button><button type="button" data-fps="24">24</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="timeline-panel" aria-label="帧时间线">
+      <div class="timeline-head">
+        <div><strong>FRAME TIMELINE</strong><span id="timelineSummary">0 帧</span></div>
+        <div id="selectionTools" class="selection-tools hidden" role="toolbar" aria-label="选中帧工具">
+          <button id="duplicateBtn" type="button" title="复制选中帧" aria-label="复制选中帧">复制</button>
+          <button id="moveLeftBtn" type="button" title="向左移动" aria-label="向左移动">左移</button>
+          <button id="moveRightBtn" type="button" title="向右移动" aria-label="向右移动">右移</button>
+          <button id="deleteBtn" class="danger" type="button" title="删除选中帧" aria-label="删除选中帧">删除</button>
+        </div>
+      </div>
+      <div id="timeline" class="timeline" tabindex="0" aria-label="帧时间线，可横向滚动">
+        <div id="timelineEmpty" class="timeline-empty">
+          <strong>还没有画面</strong>
+          <span>调整好物体的位置，然后拍下第一帧。</span>
+          <span class="timeline-arrow" aria-hidden="true">↑</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <input id="fileInput" type="file" accept="image/*" multiple hidden />
+
+  <div id="modalBackdrop" class="modal-backdrop hidden" aria-hidden="true">
+    <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h2 id="confirmTitle">确认操作</h2>
+      <p id="confirmText"></p>
+      <div class="modal-actions">
+        <button id="confirmCancelBtn" class="secondary-action" type="button">取消</button>
+        <button id="confirmOkBtn" class="primary-action" type="button">确认</button>
+      </div>
+    </div>
+
+    <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <h2 id="settingsTitle">工作室设置</h2>
+      <div class="settings-grid">
+        <label>画面比例
+          <select id="settingsRatio" class="select-control">
+            <option value="16:9">16:9</option><option value="4:3">4:3</option><option value="1:1">1:1</option><option value="9:16">9:16</option>
+          </select>
+        </label>
+        <label>默认 FPS
+          <input id="settingsFps" type="number" min="1" max="24" value="8" />
+        </label>
+        <label class="toggle-row"><input id="settingsLoop" type="checkbox" checked /><span class="toggle-ui" aria-hidden="true"></span><span>循环播放</span></label>
+      </div>
+      <div class="modal-actions"><button id="settingsCloseBtn" class="primary-action" type="button">完成</button></div>
+    </div>
+
+    <div id="exportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+      <h2 id="exportTitle">导出 WebM</h2>
+      <p id="exportMessage">正在准备画面…</p>
+      <div class="progress-track" aria-label="导出进度"><div id="exportProgress" class="progress-bar"></div></div>
+      <strong id="exportPercent">0%</strong>
+      <div class="modal-actions"><button id="exportCancelBtn" class="secondary-action" type="button">取消</button></div>
+    </div>
+  </div>
+
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
