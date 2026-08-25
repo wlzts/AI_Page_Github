@@ -1,0 +1,4 @@
+export function ConfirmDialog({ open, title, message, confirmText, onConfirm, onCancel }: { open: boolean; title: string; message: string; confirmText: string; onConfirm: () => void; onCancel: () => void }) {
+  if (!open) return null
+  return <div className="fixed inset-0 z-[60] grid place-items-center bg-black/70 p-4 backdrop-blur-sm"><div className="w-full max-w-sm rounded-2xl border border-white/10 bg-zinc-900 p-5 shadow-2xl"><h2 className="font-semibold text-white">{title}</h2><p className="mt-2 text-sm leading-6 text-zinc-400">{message}</p><div className="mt-5 flex justify-end gap-2"><button onClick={onCancel} className="rounded-xl border border-white/10 px-4 py-2 text-sm text-zinc-300 hover:bg-white/5">取消</button><button onClick={onConfirm} className="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400">{confirmText}</button></div></div></div>
+}
