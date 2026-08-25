@@ -124,7 +124,7 @@ window.AIProjects = [
     "visible": true
   },
   {
-    "id": "https://wlzts.dpdns.org",
+    "id": "future-park",
     "title": "未来科技游乐园",
     "description": "",
     "category": "工具",
@@ -133,5 +133,18 @@ window.AIProjects = [
     "accent": "#2f6b53",
     "keywords": "",
     "visible": true
+  },
+  {
+    "id": "cartoon",
+    "title": "定格动画",
+    "description": "",
+    "category": "工具",
+    "date": "2026.8.25",
+    "path": "stop-motion-studio-github",
+    "accent": "#111b4a",
+    "keywords": "",
+    "externalUrl": "",
+    "visible": true,
+    "featured": false
   }
 ];
