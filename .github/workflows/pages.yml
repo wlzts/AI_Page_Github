@@ -1,50 +1,24 @@
 name: Deploy AI_Page to GitHub Pages
-
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
-      # 定格动画是 React + TypeScript + Vite 项目，
-      # 必须先安装 Node 环境并编译。
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Stop Motion dependencies
-        working-directory: projects/stop-motion-studio-github
-        run: npm install --no-audit --no-fund
-
-      - name: Build Stop Motion Studio
-        working-directory: projects/stop-motion-studio-github
-        run: npm run build
-
-      # 构建主网站
       - name: Build static Pages bundle
         run: |
-          rm -rf _site
           mkdir -p _site
-
-          # 复制原来的静态网站
-          # 定格动画源码目录不要直接复制进去
           rsync -a ./ _site/ \
             --exclude '.git/' \
             --exclude '.github/' \
@@ -54,48 +28,19 @@ jobs:
             --exclude 'package.json' \
             --exclude 'vercel.json' \
             --exclude '.env*' \
-            --exclude '.gitignore' \
-            --exclude 'node_modules/' \
-            --exclude '/projects/stop-motion-studio-github/'
-
-          # 把 Vite 编译后的 dist 放到真正的子网站地址
-          mkdir -p _site/projects/stop-motion-studio-github
-
-          cp -a \
-            projects/stop-motion-studio-github/dist/. \
-            _site/projects/stop-motion-studio-github/
-
-          touch _site/.nojekyll
-
-      # 防止以后再次把 Vite 源码直接部署出去
-      - name: Verify Stop Motion build
-        run: |
-          test -f _site/projects/stop-motion-studio-github/index.html
-
-          if grep -q "/src/main.tsx" \
-            _site/projects/stop-motion-studio-github/index.html; then
-            echo "ERROR: Stop Motion Studio was not compiled by Vite."
-            exit 1
-          fi
-
-          echo "Stop Motion Studio build looks good."
-
+            --exclude '.gitignore'
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
-
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     runs-on: ubuntu-latest
     needs: build
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
