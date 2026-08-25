@@ -1,0 +1,7 @@
+{
+  "name": "cao-jixian-ai-page-v9-project-publisher",
+  "private": true,
+  "version": "9.0.0",
+  "type": "module",
+  "engines": { "node": ">=20" }
+}
