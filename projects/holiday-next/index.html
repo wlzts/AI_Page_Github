@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5efe5" />
+  <meta name="description" content="查看距离下一个中国法定假期还有多久，计算最佳请假方案，并发现适合这个假期去旅行的地方。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="放假去哪儿｜中国法定节假日倒计时 & 旅行灵感" />
+  <meta property="og:description" content="距离下次放假还有多久？请几天能连休？这个季节去哪儿？一次算清。" />
+  <meta property="og:locale" content="zh_CN" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.88em' font-size='82'>🧳</text></svg>" type="image/svg+xml" />
+  <title>放假去哪儿｜中国法定节假日倒计时 & 旅行灵感</title>
+  <style>
+    :root {
+      --bg: #f5efe5;
+      --paper: #fffaf2;
+      --paper-strong: #fffdf8;
+      --ink: #1e211d;
+      --muted: #716f68;
+      --muted-2: #98958c;
+      --line: rgba(39, 42, 35, .12);
+      --accent: #c63d32;
+      --accent-soft: #f3d8d1;
+      --accent-ink: #7d231f;
+      --green: #446c58;
+      --orange: #c97834;
+      --blue: #4d6f91;
+      --weekend: #5c7ca0;
+      --workday: #d07931;
+      --holiday: #c63d32;
+      --shadow: 0 22px 70px rgba(74, 58, 35, .12);
+      --shadow-soft: 0 10px 32px rgba(74, 58, 35, .075);
+      --radius: 26px;
+      --radius-sm: 16px;
+      --max: 1180px;
+      --ease: cubic-bezier(.22,.8,.2,1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 34rem),
+        radial-gradient(circle at 92% 20%, rgba(224, 177, 89, .15), transparent 29rem),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: .34;
+      background-image:
+        linear-gradient(rgba(76, 63, 44, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(76, 63, 44, .035) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(to bottom, #000 0%, transparent 72%);
+    }
+    button, select, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    button, a, select, input { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 36%, transparent);
+      outline-offset: 3px;
+    }
+    ::selection { background: color-mix(in srgb, var(--accent) 20%, transparent); }
+    .shell { width: min(calc(100% - 28px), var(--max)); margin: 0 auto; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      min-height: 68px; padding: 12px 0;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 900; letter-spacing: .04em; text-decoration: none; }
+    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 13px; background: var(--accent); color: #fff; box-shadow: 0 9px 22px color-mix(in srgb,var(--accent) 28%,transparent); }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .ghost-btn, .year-select {
+      min-height: 44px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.54); color: var(--ink); padding: 0 13px;
+    }
+    .ghost-btn { cursor: pointer; font-weight: 760; }
+    .year-select { cursor: pointer; }
+    .hero {
+      position: relative; overflow: hidden;
+      display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr); gap: 26px;
+      min-height: min(760px, calc(100svh - 86px));
+      padding: clamp(28px, 6vw, 66px);
+      border: 1px solid var(--line); border-radius: 36px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,250,242,.9)),
+        var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "放假";
+      position: absolute; right: -22px; top: -38px;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: clamp(120px, 19vw, 260px); line-height: 1; font-weight: 900;
+      color: color-mix(in srgb,var(--accent) 7%,transparent);
+      transform: rotate(8deg); pointer-events: none;
+    }
+    .hero-main, .hero-side { position: relative; z-index: 1; }
+    .kicker { margin: 0 0 18px; color: var(--accent); font-size: 12px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; }
+    .next-name { margin: 0; font-size: clamp(28px, 4vw, 52px); line-height: 1.05; letter-spacing: -.045em; }
+    .count-number {
+      margin: 16px 0 -8px; font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(116px, 22vw, 260px); line-height: .82; letter-spacing: -.08em; color: var(--accent);
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    .days-label { margin-left: 8px; font-size: clamp(20px, 2.8vw, 34px); font-weight: 900; letter-spacing: .28em; }
+    .hero-date { margin: 22px 0 4px; font-size: clamp(18px, 2vw, 24px); font-weight: 850; letter-spacing: .02em; }
+    .hero-sub { margin: 0; color: var(--muted); font-size: 14px; }
+    .live-countdown { display: flex; gap: 7px; flex-wrap: wrap; margin: 20px 0 0; }
+    .time-pill { min-width: 76px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.64); }
+    .time-pill strong { display: block; font: 800 20px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .time-pill small { color: var(--muted); font-size: 10px; }
+    .today-line { max-width: 650px; margin: 22px 0 0; padding: 13px 15px; border-left: 3px solid var(--accent); background: color-mix(in srgb,var(--accent) 6%,white); border-radius: 0 14px 14px 0; font-size: 14px; }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px;
+      border: 0; border-radius: 999px; cursor: pointer; text-decoration: none; font-weight: 850; transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0) scale(.985); }
+    .btn-primary { color: #fff; background: var(--accent); box-shadow: 0 12px 28px color-mix(in srgb,var(--accent) 28%,transparent); }
+    .btn-secondary { color: var(--ink); border: 1px solid var(--line); background: rgba(255,255,255,.68); }
+    .hero-side { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+    .ticket {
+      position: relative; overflow: hidden; padding: 20px; min-height: 250px; border-radius: 26px; color: #fff;
+      background: linear-gradient(150deg, color-mix(in srgb,var(--accent) 88%,#242424), color-mix(in srgb,var(--accent) 58%,#6d4b38));
+      box-shadow: 0 18px 42px color-mix(in srgb,var(--accent) 20%,transparent);
+    }
+    .ticket::before, .ticket::after { content:""; position:absolute; width:24px; height:24px; border-radius:50%; background:var(--paper); top:50%; transform:translateY(-50%); }
+    .ticket::before { left:-12px; } .ticket::after { right:-12px; }
+    .ticket small { opacity:.72; font-weight:800; letter-spacing:.12em; }
+    .ticket h3 { margin: 20px 0 6px; font-size: 28px; line-height: 1.08; }
+    .ticket p { margin: 0; color: rgba(255,255,255,.76); font-size: 13px; }
+    .ticket-route { display:flex; align-items:center; gap:8px; margin-top: 26px; padding-top:18px; border-top:1px dashed rgba(255,255,255,.28); font:700 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .quick-dests { display: grid; gap: 9px; }
+    .quick-dest { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.58); }
+    .quick-dest b { font-size: 13px; } .quick-dest span { color: var(--muted); font-size: 11px; }
+    section { scroll-margin-top: 18px; }
+    .section { padding: clamp(64px, 9vw, 108px) 0 0; }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:22px; }
+    .section-head h2 { margin:0; font-size:clamp(30px,5vw,50px); line-height:1; letter-spacing:-.05em; }
+    .section-head p { max-width:580px; margin:8px 0 0; color:var(--muted); font-size:14px; }
+    .section-index { color:var(--accent); font:800 11px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.14em; }
+    .timeline-wrap { overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:thin; padding: 4px 2px 12px; }
+    .timeline { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(145px,1fr); min-width:max-content; gap:10px; }
+    .holiday-node {
+      position:relative; min-height:150px; padding:16px; text-align:left; border:1px solid var(--line); border-radius:20px; background:rgba(255,255,255,.6); cursor:pointer; transition:.2s var(--ease);
+    }
+    .holiday-node::after { content:""; position:absolute; left:16px; right:-11px; top:34px; height:1px; background:var(--line); z-index:-1; }
+    .holiday-node:last-child::after{display:none}
+    .holiday-node:hover { transform:translateY(-3px); box-shadow:var(--shadow-soft); }
+    .holiday-node.past { opacity:.48; filter:saturate(.45); }
+    .holiday-node.current { border-color:color-mix(in srgb,var(--accent) 50%,var(--line)); box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 9%,transparent); }
+    .holiday-node.next { background:var(--accent); color:#fff; border-color:transparent; box-shadow:0 14px 32px color-mix(in srgb,var(--accent) 24%,transparent); }
+    .holiday-node .dot { display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paper-strong);border:1px solid var(--line);font-size:18px; }
+    .holiday-node.next .dot { color:var(--ink); }
+    .holiday-node strong { display:block;margin-top:18px;font-size:15px; }
+    .holiday-node small { display:block;margin-top:5px;color:var(--muted);font-size:11px; }
+    .holiday-node.next small { color:rgba(255,255,255,.75); }
+    .unpublished { padding:24px; border:1px dashed var(--line); border-radius:22px; background:rgba(255,255,255,.45); color:var(--muted); }
+    .detail-grid { display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:18px; }
+    .card { border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.68);box-shadow:var(--shadow-soft); }
+    .detail-card { padding:clamp(22px,4vw,34px); }
+    .detail-card h3 { margin:0;font-size:clamp(34px,5vw,58px);line-height:1;letter-spacing:-.05em; }
+    .date-range { margin:16px 0 4px;font:800 clamp(20px,3vw,30px)/1.15 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .detail-days { color:var(--accent);font-size:16px;font-weight:900; }
+    .stats { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px; }
+    .stat { padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.62); }
+    .stat b { display:block;font-size:22px;line-height:1.1; }.stat span{color:var(--muted);font-size:10px;}
+    .plain-explain { margin:18px 0 0;color:var(--muted);font-size:13px;line-height:1.8; }
+    .source-link { display:inline-flex;margin-top:18px;color:var(--accent-ink);font-size:11px;font-weight:800;text-underline-offset:3px; }
+    .calendar-card { padding:20px; }
+    .cal-head { display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px; }
+    .cal-head strong { font-size:16px; }.cal-head span{color:var(--muted);font-size:11px;}
+    .cal-week, .cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:6px; }
+    .cal-week span { text-align:center;color:var(--muted);font-size:10px;padding:5px 0; }
+    .cal-day { position:relative;min-height:58px;padding:7px;border:1px solid transparent;border-radius:13px;background:rgba(255,255,255,.5);font-size:12px; }
+    .cal-day.muted { opacity:.25; }.cal-day strong{font-size:12px;}.cal-day small{display:block;margin-top:4px;font-size:9px;line-height:1.2;color:var(--muted);}
+    .cal-day.is-holiday { background:color-mix(in srgb,var(--holiday) 11%,white);border-color:color-mix(in srgb,var(--holiday) 22%,transparent); }
+    .cal-day.is-statutory { color:#8a201c;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--holiday) 26%,transparent); }
+    .cal-day.is-workday { background:color-mix(in srgb,var(--workday) 13%,white);border-color:color-mix(in srgb,var(--workday) 25%,transparent); }
+    .cal-day.is-weekend:not(.is-holiday):not(.is-workday) { background:color-mix(in srgb,var(--weekend) 8%,white); }
+    .legend { display:flex;flex-wrap:wrap;gap:8px 13px;margin-top:14px;color:var(--muted);font-size:10px; }
+    .legend i { display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px; }
+    .magic-card { display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);overflow:hidden; }
+    .magic-control { padding:clamp(24px,4vw,38px);background:linear-gradient(150deg,#252a24,#3a4a39);color:#f8f2e8; }
+    .magic-control .section-index{color:#f0b257}.magic-control h3{margin:12px 0 8px;font-size:clamp(32px,5vw,54px);line-height:1.02;letter-spacing:-.045em}.magic-control p{margin:0;color:rgba(255,255,255,.68);font-size:13px;}
+    .range-wrap { margin-top:28px; }.range-label{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.range-label strong{font-size:42px;line-height:1}.range-label span{font-size:11px;color:rgba(255,255,255,.6)}
+    input[type="range"] { width:100%;margin:18px 0 8px;accent-color:#f0b257; }.range-ticks{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.6)}
+    .magic-result { padding:clamp(24px,4vw,38px); }.magic-result h4{margin:0;color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase}.magic-big{margin:10px 0 8px;font-size:clamp(36px,6vw,68px);line-height:.98;letter-spacing:-.05em}.magic-big b{color:var(--accent)}
+    .leave-dates { display:flex;flex-wrap:wrap;gap:7px;margin:18px 0; }.leave-date{padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:var(--paper-strong);font-size:11px;font-weight:800}.rating-line{padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 6%,white);font-size:13px}.magic-note{margin:14px 0 0;color:var(--muted);font-size:11px;line-height:1.7}
+    .planner-grid { display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start; }
+    .filters { position:sticky;top:14px;padding:20px; }
+    .filter-group + .filter-group { margin-top:22px; }.filter-group h4{margin:0 0 10px;font-size:12px}.filter-help{margin:6px 0 0;color:var(--muted);font-size:10px;line-height:1.55}
+    .chips { display:flex;flex-wrap:wrap;gap:7px; }.chip { min-height:38px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);cursor:pointer;font-size:11px;font-weight:760;transition:.16s var(--ease); }.chip[aria-pressed="true"], .chip.active { color:#fff;background:var(--accent);border-color:var(--accent); }
+    .location-row { display:grid;grid-template-columns:1fr auto;gap:7px; }.city-select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:13px;background:var(--paper-strong);padding:0 10px;color:var(--ink)}
+    .small-btn{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:13px;background:var(--paper-strong);cursor:pointer;font-size:11px;font-weight:800}.privacy{display:flex;gap:7px;margin-top:10px;color:var(--muted);font-size:10px;line-height:1.5}.filters-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}.text-btn{border:0;background:none;padding:7px 0;color:var(--muted);cursor:pointer;font-size:10px;text-decoration:underline;text-underline-offset:3px}.match-count{color:var(--muted);font-size:10px}
+    .dest-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }.dest-card{position:relative;overflow:hidden;padding:20px;min-height:300px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.7);box-shadow:var(--shadow-soft);}.dest-card::after{content:"";position:absolute;width:130px;height:130px;border:24px solid color-mix(in srgb,var(--accent) 7%,transparent);border-radius:50%;right:-58px;bottom:-60px;pointer-events:none}.dest-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.dest-card h3{margin:14px 0 8px;font-size:25px;line-height:1.1;letter-spacing:-.035em}.dest-line{margin:0;color:var(--muted);font-size:12px;line-height:1.7}.stars{font-size:11px;letter-spacing:.05em}.crowd{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;background:rgba(40,40,40,.06);font-size:10px;font-weight:800}.dest-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}.dest-tags span{padding:6px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 6%,white);font-size:9px}.dest-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:16px}.dest-meta div{padding:10px;border-top:1px dashed var(--line);font-size:10px;color:var(--muted)}.dest-meta b{display:block;color:var(--ink);font-size:11px}.dest-quote{margin:16px 0 0;font-family:"Songti SC","STSong",serif;font-size:15px;line-height:1.55}.distance-note{margin-top:9px;color:var(--muted-2);font-size:9px}
+    .slot-card { position:relative;overflow:hidden;padding:clamp(28px,5vw,50px);text-align:center;background:linear-gradient(155deg,#921f1b,#c83e32 55%,#d5653e);color:#fff; }.slot-card::before{content:"";position:absolute;inset:14px;border:1px dashed rgba(255,255,255,.28);border-radius:21px;pointer-events:none}.slot-card > *{position:relative;z-index:1}.slot-card h2{margin:10px auto 6px;max-width:760px;font-size:clamp(38px,7vw,72px);line-height:.98;letter-spacing:-.055em}.slot-sub{margin:0 auto;color:rgba(255,255,255,.72);font-size:13px}.slot-window{width:min(100%,620px);margin:28px auto 20px;padding:20px;border:1px solid rgba(255,255,255,.32);border-radius:20px;background:#fffaf2;color:var(--ink);box-shadow:inset 0 0 0 7px rgba(91,26,22,.06)}.slot-window small{display:block;color:var(--muted);font-size:10px}.slot-city{margin:7px 0;font-size:clamp(32px,6vw,58px);line-height:1;font-weight:950;letter-spacing:-.04em}.slot-note{color:var(--muted);font-size:11px}.slot-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}.slot-actions .btn-primary{background:#f2c465;color:#5b2818;box-shadow:none}.slot-actions .btn-secondary{border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1);color:#fff}
+    .balance-grid { display:grid;grid-template-columns:1.1fr .9fr;gap:18px; }.progress-card,.balance-card{padding:clamp(24px,4vw,36px)}.progress-card h3,.balance-card h3{margin:0;font-size:28px;letter-spacing:-.035em}.bar{height:18px;margin:22px 0 12px;border-radius:999px;background:rgba(35,38,34,.08);overflow:hidden}.bar > span{display:block;height:100%;width:0;background:var(--accent);border-radius:inherit;transition:width .6s var(--ease)}.progress-numbers{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}.progress-numbers strong{font-size:44px;line-height:1;color:var(--accent)}.progress-numbers span{color:var(--muted);font-size:11px}.balance-list{display:grid;gap:0;margin-top:16px}.balance-row{display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px dashed var(--line);font-size:12px}.balance-row span{color:var(--muted)}.balance-row b{text-align:right}.share-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+    .fortune { margin-top:18px;padding:20px;border:1px dashed var(--line);border-radius:20px;background:rgba(255,255,255,.45); }.fortune-title{font-size:22px;font-weight:900}.fortune p{margin:8px 0 0;color:var(--muted);font-size:13px;white-space:pre-line}.fortune small{display:block;margin-top:10px;color:var(--muted-2);font-size:9px}
+    .year-calendar { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px; }.month-mini{padding:14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.55)}.month-mini h4{margin:0 0 9px;font-size:12px}.mini-week,.mini-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.mini-week span{font-size:7px;text-align:center;color:var(--muted-2)}.mini-day{display:grid;place-items:center;aspect-ratio:1;border-radius:6px;font-size:8px}.mini-day.other{opacity:.15}.mini-day.holiday{background:color-mix(in srgb,var(--holiday) 16%,white);color:#8a201c;font-weight:900}.mini-day.workday{background:color-mix(in srgb,var(--workday) 15%,white);color:#8a4c17;font-weight:900}.mini-day.weekend:not(.holiday):not(.workday){color:var(--blue)}
+    .disclaimer { margin-top:22px;padding:18px;border:1px solid var(--line);border-radius:18px;color:var(--muted);font-size:10px;line-height:1.75;background:rgba(255,255,255,.42) }
+    footer { margin-top:80px;padding:28px 0 42px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:10px;line-height:1.7}.footer-links{display:flex;gap:14px;flex-wrap:wrap}.footer-links a{text-underline-offset:3px}
+    .reveal { opacity:0; transform:translateY(18px); transition:opacity .55s var(--ease),transform .55s var(--ease); }.reveal.in{opacity:1;transform:none}
+    dialog { width:min(calc(100% - 24px),760px);max-height:min(88svh,820px);padding:0;border:0;border-radius:26px;background:var(--paper);box-shadow:0 35px 110px rgba(36,31,23,.3);color:var(--ink) } dialog::backdrop{background:rgba(28,27,24,.45);backdrop-filter:blur(4px)}.modal-inner{padding:24px}.modal-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.modal-top h3{margin:0;font-size:28px}.close-btn{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:#fff;cursor:pointer}.modal-content{margin-top:18px}
+    .toast { position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));z-index:50;transform:translate(-50%,20px);max-width:min(calc(100% - 30px),520px);padding:12px 15px;border-radius:999px;background:#232822;color:#fff;font-size:11px;font-weight:760;opacity:0;pointer-events:none;transition:.22s var(--ease);box-shadow:0 12px 35px rgba(0,0,0,.22)}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media (max-width: 960px) {
+      .hero{grid-template-columns:1fr;min-height:auto}.hero-side{display:grid;grid-template-columns:1fr 1fr}.planner-grid{grid-template-columns:1fr}.filters{position:static}.detail-grid,.magic-card,.balance-grid{grid-template-columns:1fr}.year-calendar{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 700px) {
+      .shell{width:min(calc(100% - 20px),var(--max))}.topbar{min-height:60px}.top-actions .ghost-btn{display:none}.hero{padding:26px 18px;border-radius:26px}.hero-side{grid-template-columns:1fr}.ticket{min-height:210px}.count-number{font-size:clamp(116px,39vw,176px)}.days-label{font-size:18px}.time-pill{min-width:66px;padding:9px 10px}.section{padding-top:68px}.section-head{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}.calendar-card{padding:14px}.cal-day{min-height:48px;padding:5px}.cal-day small{font-size:8px}.magic-control,.magic-result{padding:24px 18px}.dest-grid{grid-template-columns:1fr}.filters{padding:17px}.chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{flex:0 0 auto;min-height:44px}.location-row{grid-template-columns:1fr}.slot-card{padding:34px 18px}.year-calendar{grid-template-columns:1fr 1fr}.modal-inner{padding:18px}.brand span:last-child{display:none}
+    }
+    @media (max-width: 390px) {
+      .hero{padding:24px 15px}.count-number{font-size:132px}.hero-cta .btn{width:100%}.stats{grid-template-columns:1fr}.year-calendar{grid-template-columns:1fr}.progress-numbers strong{font-size:38px}.dest-card{padding:18px}.cal-grid,.cal-week{gap:4px}
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="topbar" aria-label="主导航">
+      <a class="brand" href="../../" aria-label="返回 AI Page 首页"><span class="brand-mark">休</span><span>放假去哪儿</span></a>
+      <div class="top-actions">
+        <button class="ghost-btn" id="fortuneTopBtn" type="button">🔮 假期命运签</button>
+        <label>
+          <span class="sr-only" style="position:absolute;clip:rect(0 0 0 0);clip-path:inset(50%);width:1px;height:1px;overflow:hidden">查看年份</span>
+          <select class="year-select" id="yearSelect" aria-label="查看年份"></select>
+        </label>
+      </div>
+    </nav>
+
+    <header class="hero reveal" id="top">
+      <div class="hero-main">
+        <p class="kicker">NEXT HOLIDAY · CHINA MAINLAND</p>
+        <h1 class="next-name" id="heroName">正在计算下一次放假…</h1>
+        <div class="count-number" id="heroDays">—</div>
+        <div class="days-label">DAYS</div>
+        <p class="hero-date" id="heroDate">读取官方节假日安排中</p>
+        <p class="hero-sub" id="heroSub">实际连续休假以国务院办公厅当年度通知为准。</p>
+        <div class="live-countdown" id="liveCountdown" aria-live="polite"></div>
+        <p class="today-line" id="todayLine">你的身体还在工位，搜索记录已经开始出发。</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#travel">看看去哪儿 →</a>
+          <a class="btn btn-secondary" href="#leave-magic">🧙 请假魔法</a>
+        </div>
+      </div>
+      <aside class="hero-side" aria-label="快速旅行灵感">
+        <div class="ticket">
+          <small>IF YOU START PLANNING NOW</small>
+          <h3>如果现在开始计划……</h3>
+          <p id="heroTravelHint">先挑一个不必凌晨抢票也值得去的地方。</p>
+          <div class="ticket-route"><span id="ticketFrom">你所在的城市</span><span>······→</span><span id="ticketTo">下一站</span></div>
+        </div>
+        <div class="quick-dests" id="quickDests"></div>
+      </aside>
+    </header>
+
+    <main>
+      <section class="section reveal" id="timeline" aria-labelledby="timelineTitle">
+        <div class="section-head"><div><span class="section-index">01 / HOLIDAY LINE</span><h2 id="timelineTitle">今年还能放几次假？</h2><p>过去的变灰，正在进行的高亮，下一个假期会自己站到 C 位。</p></div></div>
+        <div id="timelineContent"></div>
+      </section>
+
+      <section class="section reveal" id="holiday-detail" aria-labelledby="detailTitle">
+        <div class="section-head"><div><span class="section-index">02 / DETAILS</span><h2 id="detailTitle">这次到底怎么放？</h2><p>把“法定节日本身”“连续休假”和“调休上班”拆开看，不让日历绕晕你。</p></div></div>
+        <div class="detail-grid" id="detailGrid"></div>
+      </section>
+
+      <section class="section reveal" id="leave-magic" aria-labelledby="magicTitle">
+        <div class="section-head"><div><span class="section-index">03 / LEAVE MAGIC</span><h2 id="magicTitle">请假魔法</h2><p>不是写死攻略：它会真的逐日判断周末、官方假期和调休工作日，再找最长连续休息区间。</p></div></div>
+        <div class="card magic-card">
+          <div class="magic-control">
+            <span class="section-index">ANNUAL LEAVE SPELL</span>
+            <h3>我最多愿意请</h3><p>拖动滑块，看看几天年假能撬动多长的连续休息。</p>
+            <div class="range-wrap"><div class="range-label"><strong id="leaveBudgetLabel">2 天</strong><span>老板接受度未知</span></div><input id="leaveRange" type="range" min="0" max="4" step="1" value="2" aria-label="最多愿意请几天假"/><div class="range-ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>5</span></div></div>
+          </div>
+          <div class="magic-result" id="magicResult"></div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="travel" aria-labelledby="travelTitle">
+        <div class="section-head"><div><span class="section-index">04 / TRIP GENERATOR</span><h2 id="travelTitle">这个假期去哪儿？</h2><p>目的地按季节、假期长度、偏好、预算、出发地和“最怕什么”动态排序。所有预算、人流与距离均为静态参考，不伪装成实时数据。</p></div></div>
+        <div class="planner-grid">
+          <aside class="card filters" aria-label="旅行筛选">
+            <div class="filter-group"><h4>📍 我从哪儿出发</h4><div class="location-row"><select class="city-select" id="originSelect" aria-label="选择出发城市"></select><button class="small-btn" id="geoBtn" type="button">使用我的位置</button></div><div class="privacy">🔒 <span>位置信息仅在浏览器本地用于估算直线距离，不会上传。拒绝定位也完全可以手动选择城市。</span></div></div>
+            <div class="filter-group"><h4>离我近点</h4><div class="chips" id="distanceChips"><button class="chip active" data-distance="all" type="button">不限距离</button><button class="chip" data-distance="near" type="button">🚄 周末能去</button><button class="chip" data-distance="mid" type="button">🧳 3～4 天</button><button class="chip" data-distance="far" type="button">✈️ 5～8 天</button></div><p class="filter-help">按主要城市经纬度 + Haversine 直线距离粗略分类，不等于真实高铁/飞行时间。</p></div>
+            <div class="filter-group"><h4>你想怎么过这个假？</h4><div class="chips" id="styleChips"></div></div>
+            <div class="filter-group"><h4>预算</h4><div class="chips" id="budgetChips"><button class="chip" data-budget="1" type="button">¥ 穷游</button><button class="chip active" data-budget="2" type="button">¥¥ 舒服一点</button><button class="chip" data-budget="3" type="button">¥¥¥ 钱不是主要问题</button></div></div>
+            <div class="filter-group"><h4>最怕什么</h4><div class="chips" id="avoidChips"></div></div>
+            <div class="filters-footer"><span class="match-count" id="matchCount">正在排序</span><button class="text-btn" id="clearPrefsBtn" type="button">清除我的偏好</button></div>
+          </aside>
+          <div><div class="unpublished" id="travelModeNote" style="display:none;margin-bottom:12px"></div><div class="dest-grid" id="destinationGrid"></div><div class="disclaimer">👥 “人类密度预测”基于节假日类型、目的地静态热度与小众程度做娱乐性分级，仅供选题灵感；预算为常见 3～5 天国内游粗略区间，季节描述是通常情况，不代表实时天气、票价、酒店价格或景区客流。</div></div>
+        </div>
+      </section>
+
+      <section class="section reveal" id="slot" aria-labelledby="slotTitle">
+        <div class="card slot-card"><span class="section-index" style="color:#ffd782">05 / RANDOM DESTINY</span><h2 id="slotTitle">🎰 不想选了，直接告诉我去哪</h2><p class="slot-sub">如果你已经选了出发地、预算和旅行人格，抽签池也会跟着收窄。</p><div class="slot-window" aria-live="polite"><small>DESTINATION DRAW</small><div class="slot-city" id="slotCity">福建 · 泉州</div><div class="slot-note" id="slotNote">就它了，别再纠结。</div></div><div class="slot-actions"><button class="btn btn-primary" id="spinBtn" type="button">啪！替我决定</button><button class="btn btn-secondary" id="spinAgainBtn" type="button">再抽一次</button></div></div>
+      </section>
+
+      <section class="section reveal" id="balance" aria-labelledby="balanceTitle">
+        <div class="section-head"><div><span class="section-index">06 / BALANCE</span><h2 id="balanceTitle">打工人假期余额</h2><p>把今年剩下的官方连续休假、下一次放假和最佳请假方案压缩成一张适合截图的状态卡。</p></div></div>
+        <div class="balance-grid"><div class="card progress-card" id="progressCard"></div><div class="card balance-card" id="balanceCard"></div></div>
+      </section>
+
+      <section class="section reveal" id="year-calendar-section" aria-labelledby="calendarTitle">
+        <div class="section-head"><div><span class="section-index">07 / YEAR AT A GLANCE</span><h2 id="calendarTitle">全年日历</h2><p>红色是官方实际休息日，橙色是调休上班日；周末若被调成上班，会以橙色为准。</p></div></div>
+        <div class="year-calendar" id="yearCalendar"></div>
+      </section>
+    </main>
+
+    <footer><div>「放假去哪儿」· 纯 HTML / CSS / JavaScript · 不需要 API Key。<br/>节假日以国务院办公厅当年度通知为准；旅行信息均为静态灵感参考。</div><div class="footer-links"><a href="https://www.gov.cn/zhengce/zhengceku/202411/content_6986383.htm" target="_blank" rel="noreferrer">2025 官方通知</a><a href="https://www.gov.cn/zhengce/zhengceku/202511/content_7047091.htm" target="_blank" rel="noreferrer">2026 官方通知</a><a href="#top">回到顶部 ↑</a></div></footer>
+  </div>
+
+  <dialog id="holidayDialog" aria-labelledby="dialogTitle"><div class="modal-inner"><div class="modal-top"><h3 id="dialogTitle">假期详情</h3><button class="close-btn" id="dialogClose" type="button" aria-label="关闭详情">✕</button></div><div class="modal-content" id="dialogContent"></div></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="shareCanvas" width="1080" height="1440" hidden></canvas>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const DAY = 86400000;
+      const LEAVE_OPTIONS = [0, 1, 2, 3, 5];
+      const OFFICIAL_SOURCE = {
+        2025: 'https://www.gov.cn/zhengce/zhengceku/202411/content_6986383.htm',
+        2026: 'https://www.gov.cn/zhengce/zhengceku/202511/content_7047091.htm'
+      };
+
+      const HOLIDAY_YEARS = {
+        2025: {
+          published: true,
+          notice: '国办发明电〔2024〕12号',
+          holidays: [
+            { id:'new-year', name:'元旦', emoji:'🎆', start:'2025-01-01', end:'2025-01-01', workdays:[], statutory:['2025-01-01'], theme:'#9b4a40', slogan:'新的一年，先合法地晚起一次。' },
+            { id:'spring-festival', name:'春节', emoji:'🧧', start:'2025-01-28', end:'2025-02-04', workdays:['2025-01-26','2025-02-08'], statutory:['2025-01-28','2025-01-29','2025-01-30','2025-01-31'], theme:'#b72f28', slogan:'从年夜饭开始，把消息免打扰开到正月。' },
+            { id:'qingming', name:'清明节', emoji:'🌿', start:'2025-04-04', end:'2025-04-06', workdays:[], statutory:['2025-04-04'], theme:'#4f7959', slogan:'春天刚好，适合慢一点走。' },
+            { id:'labor', name:'劳动节', emoji:'☀️', start:'2025-05-01', end:'2025-05-05', workdays:['2025-04-27'], statutory:['2025-05-01','2025-05-02'], theme:'#d17a2b', slogan:'劳动值得尊重，休息也一样。' },
+            { id:'dragon-boat', name:'端午节', emoji:'🎋', start:'2025-05-31', end:'2025-06-02', workdays:[], statutory:['2025-05-31'], theme:'#44705c', slogan:'粽子可以咸甜都要，行程不必塞满。' },
+            { id:'national-midautumn', name:'国庆节 · 中秋节', shortName:'国庆 / 中秋', emoji:'🇨🇳', start:'2025-10-01', end:'2025-10-08', workdays:['2025-09-28','2025-10-11'], statutory:['2025-10-01','2025-10-02','2025-10-03','2025-10-06'], theme:'#c83c32', slogan:'八天很长，热门景区的队也可能很长。' }
+          ]
+        },
+        2026: {
+          published: true,
+          notice: '国办发明电〔2025〕7号',
+          holidays: [
+            { id:'new-year', name:'元旦', emoji:'🎆', start:'2026-01-01', end:'2026-01-03', workdays:['2026-01-04'], statutory:['2026-01-01'], theme:'#9b4a40', slogan:'三天，足够把年度计划写得很乐观。' },
+            { id:'spring-festival', name:'春节', emoji:'🧧', start:'2026-02-15', end:'2026-02-23', workdays:['2026-02-14','2026-02-28'], statutory:['2026-02-16','2026-02-17','2026-02-18','2026-02-19'], theme:'#b72f28', slogan:'九天大假，适合认真回家，也适合认真消失。' },
+            { id:'qingming', name:'清明节', emoji:'🌿', start:'2026-04-04', end:'2026-04-06', workdays:[], statutory:['2026-04-05'], theme:'#4f7959', slogan:'三天春色，不必安排得像季度 OKR。' },
+            { id:'labor', name:'劳动节', emoji:'☀️', start:'2026-05-01', end:'2026-05-05', workdays:['2026-05-09'], statutory:['2026-05-01','2026-05-02'], theme:'#d17a2b', slogan:'五天够你换个城市，也够你在家把觉补回来。' },
+            { id:'dragon-boat', name:'端午节', emoji:'🎋', start:'2026-06-19', end:'2026-06-21', workdays:[], statutory:['2026-06-19'], theme:'#44705c', slogan:'初夏三天，适合去有风、有水、有树的地方。' },
+            { id:'mid-autumn', name:'中秋节', emoji:'🌕', start:'2026-09-25', end:'2026-09-27', workdays:[], statutory:['2026-09-25'], theme:'#405c82', slogan:'月亮负责圆，你只负责把行程留一点空。' },
+            { id:'national-day', name:'国庆节', emoji:'🇨🇳', start:'2026-10-01', end:'2026-10-07', workdays:['2026-09-20','2026-10-10'], statutory:['2026-10-01','2026-10-02','2026-10-03'], theme:'#c83c32', slogan:'七天很珍贵，没必要全部贡献给排队。' }
+          ]
+        },
+        2027: { published:false, notice:'官方安排尚未公布', holidays:[] }
+      };
+
+      const ORIGINS = {
+        '北京':[39.9042,116.4074], '上海':[31.2304,121.4737], '广州':[23.1291,113.2644], '深圳':[22.5431,114.0579],
+        '杭州':[30.2741,120.1551], '成都':[30.5728,104.0668], '武汉':[30.5928,114.3055], '西安':[34.3416,108.9398],
+        '南京':[32.0603,118.7969], '重庆':[29.5630,106.5516], '长沙':[28.2282,112.9388], '苏州':[31.2989,120.5853],
+        '天津':[39.0842,117.2009], '青岛':[36.0671,120.3826], '厦门':[24.4798,118.0894], '郑州':[34.7466,113.6254]
+      };
+
+      const STYLE_OPTIONS = ['🌊 看海','🏔️ 爬山','🌲 去森林','🏯 逛古城','🍜 吃东西','📷 拍照','♨️ 泡温泉','🏕️ 户外','🛋️ 什么都不干','🚗 自驾','🚄 高铁','✈️ 飞远一点'];
+      const AVOID_OPTIONS = ['人多','太贵','太冷','太热','太累','下雨'];
+
+      const DESTINATIONS = [
+        {name:'福建 · 泉州',city:'泉州',lat:24.8741,lng:118.6757,rating:5,months:[3,4,5,9,10,11],days:[3,4],budget:[1400,3000],budgetLevel:2,popularity:3,tags:['🏯 逛古城','🍜 吃东西','📷 拍照','🚄 高铁'],risks:[],keywords:['古城','闽南','小吃','寺庙'],why:'老城密度高，三四天不用赶，秋天尤其适合慢慢走。',quote:'香火、骑楼、面线糊，一座很会让人放慢脚步的城。'},
+        {name:'福建 · 平潭',city:'平潭',lat:25.5037,lng:119.7899,rating:5,months:[4,5,6,9,10],days:[3,4],budget:[1500,3200],budgetLevel:2,popularity:3,tags:['🌊 看海','📷 拍照','🚗 自驾','🛋️ 什么都不干'],risks:['下雨'],keywords:['海岛','骑行','日落','发呆'],why:'海岛节奏适合短假，春末与初秋通常体感更舒服。',quote:'风大是真的，海蓝也是真的。'},
+        {name:'江西 · 景德镇',city:'景德镇',lat:29.2688,lng:117.1784,rating:5,months:[3,4,5,9,10,11],days:[2,4],budget:[1100,2600],budgetLevel:1,popularity:3,tags:['📷 拍照','🍜 吃东西','🚄 高铁','🛋️ 什么都不干'],risks:[],keywords:['陶瓷','市集','咖啡','手作'],why:'城市尺度不大，适合三天慢逛；即使不买瓷器，也很容易拍满相册。',quote:'来之前觉得自己不买杯子，离开时通常会多一个箱子。'},
+        {name:'云南 · 建水',city:'建水',lat:23.6347,lng:102.8266,rating:5,months:[2,3,4,10,11,12],days:[3,5],budget:[1500,3200],budgetLevel:2,popularity:2,tags:['🏯 逛古城','🍜 吃东西','📷 拍照','🛋️ 什么都不干'],risks:[],keywords:['古城','小火车','豆腐','慢生活'],why:'比大理更收敛，适合想要云南气质、又不想全程追热门机位的人。',quote:'古城、烤豆腐和小火车，行程天然不着急。'},
+        {name:'云南 · 沙溪',city:'沙溪',lat:26.3190,lng:99.8513,rating:5,months:[3,4,5,9,10,11],days:[3,5],budget:[1800,3800],budgetLevel:2,popularity:2,tags:['🏯 逛古城','📷 拍照','🛋️ 什么都不干','🏔️ 爬山'],risks:['太冷'],keywords:['古镇','山谷','咖啡','徒步'],why:'适合把假期空下来，不追景点数量，反而更有记忆点。',quote:'把“去哪儿玩”改成“在哪儿待着”，沙溪就成立了。'},
+        {name:'云南 · 腾冲',city:'腾冲',lat:25.0205,lng:98.4973,rating:5,months:[2,3,4,10,11,12],days:[4,6],budget:[2200,4500],budgetLevel:2,popularity:3,tags:['♨️ 泡温泉','🌲 去森林','🚗 自驾','📷 拍照'],risks:[],keywords:['温泉','火山','银杏','边城'],why:'长一点的假期刚好够把温泉、火山和周边小镇排得松一点。',quote:'如果假期的 KPI 是“把人泡松”，腾冲很会。'},
+        {name:'贵州 · 黔东南',city:'凯里',lat:26.5676,lng:107.9804,rating:5,months:[4,5,6,9,10],days:[4,6],budget:[1700,3600],budgetLevel:2,popularity:2,tags:['🏯 逛古城','🍜 吃东西','🚗 自驾','📷 拍照'],risks:['下雨'],keywords:['苗寨','侗寨','酸汤','山路'],why:'适合四五天串几个寨子，热门度比传统大城市更可控。',quote:'把城市地图缩小一点，山里的生活会变得很近。'},
+        {name:'湖北 · 恩施',city:'恩施',lat:30.2722,lng:109.4882,rating:5,months:[4,5,6,9,10],days:[4,5],budget:[1600,3300],budgetLevel:2,popularity:4,tags:['🏔️ 爬山','🌲 去森林','🏕️ 户外','🚄 高铁'],risks:['太累','下雨'],keywords:['峡谷','山水','徒步','土家'],why:'春末初夏与秋季都很能打，但要留意户外行程体力消耗。',quote:'山是真大，腿第二天也是真的会有意见。'},
+        {name:'浙江 · 台州',city:'台州',lat:28.6564,lng:121.4208,rating:5,months:[3,4,5,9,10,11],days:[3,4],budget:[1400,3000],budgetLevel:2,popularity:2,tags:['🌊 看海','🍜 吃东西','🏯 逛古城','🚄 高铁'],risks:[],keywords:['海鲜','古城','山海','糯叽叽'],why:'临海古城、山海路线和小吃可以自由组合，短假也不显仓促。',quote:'山海都有，小吃更多，台州很擅长低调地把人喂饱。'},
+        {name:'浙江 · 安吉',city:'安吉',lat:30.6387,lng:119.6804,rating:4,months:[3,4,5,6,9,10],days:[2,3],budget:[1200,3200],budgetLevel:2,popularity:3,tags:['🌲 去森林','🏕️ 户外','🚗 自驾','🛋️ 什么都不干'],risks:['下雨'],keywords:['竹海','民宿','露营','茶园'],why:'特别适合周末或三天假，核心玩法是换个有树的地方睡觉。',quote:'去竹林里把手机信号和工作消息一起调低。'},
+        {name:'江苏 · 溧阳',city:'溧阳',lat:31.4169,lng:119.4842,rating:4,months:[3,4,5,9,10,11],days:[2,3],budget:[1200,3000],budgetLevel:2,popularity:2,tags:['🌲 去森林','♨️ 泡温泉','🚗 自驾','🛋️ 什么都不干'],risks:[],keywords:['竹海','温泉','湖','自驾'],why:'江浙沪短途友好，适合不想请太多假又想明显换环境的人。',quote:'两三天不求远，只求醒来窗外不是写字楼。'},
+        {name:'山东 · 威海',city:'威海',lat:37.5131,lng:122.1204,rating:5,months:[5,6,9,10],days:[3,5],budget:[1500,3400],budgetLevel:2,popularity:4,tags:['🌊 看海','📷 拍照','🚗 自驾','🍜 吃东西'],risks:['太冷'],keywords:['海岸线','骑行','海鲜','日落'],why:'五一后到初秋通常更适合海边，城市尺度也适合三四天。',quote:'海风很认真，行程可以不用那么认真。'},
+        {name:'山东 · 烟台',city:'烟台',lat:37.4638,lng:121.4479,rating:4,months:[5,6,9,10],days:[3,5],budget:[1500,3300],budgetLevel:2,popularity:3,tags:['🌊 看海','🍜 吃东西','🚗 自驾','🛋️ 什么都不干'],risks:['太冷'],keywords:['海鲜','葡萄酒','海岸','小城'],why:'海边城市里相对松弛，适合把景点密度降下来。',quote:'不追网红机位，也能把一整天过得很海边。'},
+        {name:'吉林 · 延吉',city:'延吉',lat:42.8913,lng:129.5089,rating:5,months:[1,2,5,9,10,12],days:[3,4],budget:[1700,3400],budgetLevel:2,popularity:3,tags:['🍜 吃东西','📷 拍照','✈️ 飞远一点'],risks:['太冷'],keywords:['朝鲜族','烤肉','咖啡','边城'],why:'短假也能吃得非常有主题感，秋天和雪季各有氛围。',quote:'一天五顿不是特种兵，是对延吉最基本的尊重。'},
+        {name:'内蒙古 · 阿尔山',city:'阿尔山',lat:47.1776,lng:119.9437,rating:5,months:[6,7,8,9,10],days:[4,6],budget:[2500,4800],budgetLevel:3,popularity:2,tags:['🌲 去森林','🏕️ 户外','🚗 自驾','📷 拍照'],risks:['太冷','太累'],keywords:['森林','火山','自驾','秋色'],why:'国庆前后秋色通常很强，小城体量也比传统热门目的地轻。',quote:'把导航交给森林公路，秋天会替你做剩下的设计。'},
+        {name:'新疆 · 阿勒泰',city:'阿勒泰',lat:47.8484,lng:88.1318,rating:5,months:[5,6,7,9,10],days:[6,8],budget:[4200,8000],budgetLevel:3,popularity:4,tags:['🏔️ 爬山','🌲 去森林','🏕️ 户外','✈️ 飞远一点','🚗 自驾'],risks:['太贵','太冷','太累'],keywords:['草原','雪山','公路','长线'],why:'适合 5～8 天长假，距离远、预算高，但景观回报也高。',quote:'路很远，所以更适合把假期一次用完整。'},
+        {name:'新疆 · 伊犁',city:'伊宁',lat:43.9771,lng:81.5275,rating:5,months:[5,6,7,8,9],days:[6,8],budget:[4200,8500],budgetLevel:3,popularity:4,tags:['🏔️ 爬山','🏕️ 户外','🚗 自驾','✈️ 飞远一点'],risks:['太贵','太累'],keywords:['草原','公路','花海','长线'],why:'五一后到初秋更合适，长假能把公路和草原安排得不像赶场。',quote:'真正奢侈的不是酒店，是在路上留出一整天空白。'},
+        {name:'西藏 · 林芝',city:'林芝',lat:29.6491,lng:94.3615,rating:5,months:[3,4,9,10],days:[5,8],budget:[4500,9000],budgetLevel:3,popularity:4,tags:['🏔️ 爬山','🌲 去森林','📷 拍照','✈️ 飞远一点'],risks:['太贵','太累','太冷'],keywords:['桃花','雪山','峡谷','长线'],why:'清明前后花期通常最有吸引力，秋季则更偏山色与晴朗感。',quote:'桃花只是开场，雪山负责把画面撑起来。'},
+        {name:'江西 · 婺源',city:'婺源',lat:29.2487,lng:117.8619,rating:5,months:[3,4,10,11],days:[2,4],budget:[1200,2800],budgetLevel:2,popularity:4,tags:['📷 拍照','🏯 逛古城','🚗 自驾','🚄 高铁'],risks:['人多','下雨'],keywords:['油菜花','徽派','乡村','摄影'],why:'清明前后春色匹配度很高，但热门花期人流也会显著上升。',quote:'春天很上镜，代价是大家都知道它很上镜。'},
+        {name:'安徽 · 歙县',city:'歙县',lat:29.8677,lng:118.4150,rating:5,months:[3,4,5,9,10,11],days:[2,4],budget:[1100,2600],budgetLevel:1,popularity:2,tags:['🏯 逛古城','📷 拍照','🚄 高铁','🛋️ 什么都不干'],risks:['下雨'],keywords:['徽州','古村','牌坊','山水'],why:'徽州气质很足，但比最知名景区更容易找到安静的村落。',quote:'如果你喜欢白墙黛瓦，但不喜欢和所有人拍同一张照片。'},
+        {name:'贵州 · 镇远',city:'镇远',lat:27.0490,lng:108.4299,rating:4,months:[4,5,6,9,10],days:[2,3],budget:[1000,2400],budgetLevel:1,popularity:2,tags:['🏯 逛古城','🍜 吃东西','📷 拍照','🚄 高铁'],risks:['下雨'],keywords:['古城','舞阳河','夜景','慢游'],why:'小而完整，适合三天假，不需要把路线拉得很长。',quote:'一条河把古城弯出节奏，散步就是主项目。'},
+        {name:'湖南 · 郴州',city:'郴州',lat:25.7706,lng:113.0147,rating:4,months:[4,5,6,9,10],days:[3,4],budget:[1300,2900],budgetLevel:2,popularity:3,tags:['🌲 去森林','📷 拍照','🚗 自驾','🏕️ 户外'],risks:['下雨'],keywords:['湖','雾','草原','自驾'],why:'华南与华中出发都不算离谱，三四天能组合湖区和山地。',quote:'有雾的时候像电影，没雾的时候也不用退票。'},
+        {name:'广东 · 潮州',city:'潮州',lat:23.6567,lng:116.6226,rating:5,months:[1,2,3,4,10,11,12],days:[2,4],budget:[1100,2600],budgetLevel:1,popularity:4,tags:['🍜 吃东西','🏯 逛古城','🚄 高铁','📷 拍照'],risks:['太热'],keywords:['牛肉','古城','工夫茶','夜宵'],why:'秋冬春更舒服，短假也能把吃和逛安排得非常扎实。',quote:'攻略可以少做一点，胃的日程会自己排满。'},
+        {name:'广东 · 汕头',city:'汕头',lat:23.3540,lng:116.6820,rating:5,months:[1,2,3,4,10,11,12],days:[2,4],budget:[1100,2700],budgetLevel:1,popularity:4,tags:['🍜 吃东西','🌊 看海','🚄 高铁','🛋️ 什么都不干'],risks:['太热'],keywords:['牛肉火锅','海鲜','老城','南澳岛'],why:'吃饭主线明确，也可以顺手接海岛；适合把行程重心从景点转向餐桌。',quote:'景点之间最可靠的交通工具，是下一顿饭。'},
+        {name:'福建 · 东山岛',city:'东山',lat:23.7010,lng:117.4300,rating:4,months:[3,4,5,9,10,11],days:[3,4],budget:[1400,3000],budgetLevel:2,popularity:3,tags:['🌊 看海','📷 拍照','🚗 自驾','🛋️ 什么都不干'],risks:['下雨'],keywords:['海岛','渔村','日落','骑行'],why:'比超热门海岛更适合短假慢游，春秋通常更舒服。',quote:'不必飞很远，也能得到一段真正的海岛时间。'},
+        {name:'山西 · 大同',city:'大同',lat:40.0768,lng:113.3001,rating:5,months:[4,5,6,9,10],days:[3,4],budget:[1300,2900],budgetLevel:2,popularity:3,tags:['🏯 逛古城','🍜 吃东西','📷 拍照','🚄 高铁'],risks:['太冷'],keywords:['石窟','古建','面食','历史'],why:'北方短途历史线里性价比很高，秋天尤其适合看古建。',quote:'不是“看几个老建筑”，是一次很高密度的时间旅行。'},
+        {name:'福建 · 湄洲岛',city:'莆田',lat:25.0834,lng:119.1142,rating:4,months:[3,4,5,9,10,11],days:[2,3],budget:[1200,2600],budgetLevel:1,popularity:2,tags:['🌊 看海','📷 拍照','🛋️ 什么都不干'],risks:['下雨'],keywords:['海岛','妈祖文化','环岛','日落'],why:'岛不算大，三天内完整度很高，适合福建周边反向短途。',quote:'小岛的好处是：不用为了“来都来了”每天走两万步。'},
+        {name:'广西 · 崇左',city:'崇左',lat:22.3772,lng:107.3648,rating:5,months:[2,3,4,10,11,12],days:[3,5],budget:[1600,3300],budgetLevel:2,popularity:2,tags:['🌲 去森林','🚗 自驾','📷 拍照','🛋️ 什么都不干'],risks:['太热','下雨'],keywords:['喀斯特','边境','田园','自驾'],why:'适合想看山水又想避开传统热门城市的人，秋冬春更友好。',quote:'山水很广西，人流可以不用那么“黄金周”。'},
+        {name:'四川 · 阆中',city:'阆中',lat:31.5584,lng:105.9750,rating:4,months:[3,4,5,9,10,11],days:[2,3],budget:[1000,2400],budgetLevel:1,popularity:2,tags:['🏯 逛古城','🍜 吃东西','🚄 高铁','🛋️ 什么都不干'],risks:[],keywords:['古城','嘉陵江','川北','慢游'],why:'适合川渝出发短假，古城规模足够玩，但不用把行程做成任务表。',quote:'古城最好的玩法，是允许自己在同一条街走第二遍。'},
+        {name:'四川 · 四姑娘山',city:'小金',lat:31.1045,lng:102.9010,rating:5,months:[5,6,7,9,10],days:[3,5],budget:[1900,4200],budgetLevel:2,popularity:4,tags:['🏔️ 爬山','🏕️ 户外','📷 拍照','🚗 自驾'],risks:['太累','太冷'],keywords:['雪山','徒步','高原','摄影'],why:'三到五天能做轻徒步或沟谷路线，但高海拔和体力都要保守一点。',quote:'风景负责震撼，身体负责提醒你别把假期当拉练。'},
+        {name:'海南 · 万宁',city:'万宁',lat:18.7953,lng:110.3911,rating:5,months:[1,2,3,4,11,12],days:[4,6],budget:[2500,5200],budgetLevel:3,popularity:4,tags:['🌊 看海','🛋️ 什么都不干','📷 拍照','✈️ 飞远一点'],risks:['太贵','太热'],keywords:['冲浪','海湾','椰林','度假'],why:'冬春更舒服，适合把“景点”换成海湾、咖啡和躺着。',quote:'不一定要学会冲浪，学会不安排事情也算进步。'},
+        {name:'青海 · 西宁 / 青海湖',city:'西宁',lat:36.6171,lng:101.7782,rating:4,months:[6,7,8,9],days:[5,7],budget:[2800,5800],budgetLevel:3,popularity:3,tags:['🏔️ 爬山','🏕️ 户外','🚗 自驾','✈️ 飞远一点'],risks:['太冷','太累'],keywords:['高原','湖','公路','草原'],why:'更适合夏季与初秋长假，路线跨度大，假期短就别硬塞。',quote:'辽阔是优点，也是提醒：别把每天都排成转场。'},
+        {name:'陕西 · 汉中',city:'汉中',lat:33.0676,lng:107.0238,rating:4,months:[3,4,5,9,10],days:[2,4],budget:[1000,2500],budgetLevel:1,popularity:2,tags:['🌲 去森林','🍜 吃东西','🚄 高铁','📷 拍照'],risks:[],keywords:['油菜花','古道','山水','米皮'],why:'清明前后春色很适配，西安成都方向出发尤其适合短线。',quote:'当春天需要一个不太吵的落脚点，汉中很合格。'}
+      ];
+
+      const QUIPS = [
+        '从法律角度讲还不算近，从心理角度讲已经开始放假了。','你的身体还在公司，搜索记录已经去了云南。','建议现在订票。再晚一点，就只能刷别人朋友圈。','Excel 还在打开，你的灵魂已经开始安检。','假期不是生产力工具，不需要每一天都“高效利用”。','距离放假越近，会议纪要的字越容易从眼前飘过去。','今天适合工作，也适合偷偷看两眼地图。','机票先不买没关系，收藏夹可以先失控。','真正的旅行计划，通常从“随便看看”开始。','别急，先把年假余额和老板日历同时打开。','假期的意义之一，是让星期几突然变得不重要。','你以为你在查节假日，其实你在给自己发精神补贴。','把攻略做得太满，会让旅行看起来像另一个项目管理工具。','下一次放假正在靠近，请保持基本的职业表情管理。','假期还远，但收藏酒店不犯法。','工作有工作流，休息最好没有。','路线可以改，票可以退，别把心情也做成不可取消。','如果三天假还要跨四个城市，建议重新理解“休息”。','反向旅游不是去哪儿都没人，是少一点“必须打卡”。','请假是一门组合数学，也是一门组织行为学。','假期余额珍贵，请优先消费在你真的想去的地方。','热门不是原罪，排三个小时队才是你需要评估的成本。','今天不一定适合辞职，但很适合打开地图。','先决定想怎么过，再决定去哪儿，通常会轻松很多。','旅途中最贵的不是票，是“来都来了”四个字。','你的年假很短，所以更不该把它浪费在复制别人的 Top 10。','有时候最好的目的地，是一个你没听过两遍的地方。','三天假也能旅行，前提是别把自己当物流包裹。','行程里留半天发呆，不算规划失败。','如果攻略已经做到第 12 页，建议删掉一半。','旅行是为了换空气，不是换一个地方继续赶进度。','距离假期越近，工位的引力越小。','下一站不一定远，但最好和今天不一样。','如果你只想躺着，本网站完全尊重这种高级需求。','放假前最难的不是收尾，是假装自己还没开始期待。'
+      ];
+
+      const FORTUNES = [
+        ['上上签','宜：临时订票\n宜：吃当地小馆\n忌：早上 6 点特种兵集合'],
+        ['宜躺平','此假不宜远行。\n外卖、空调、床，三者皆吉。'],
+        ['小吉','宜：把一个下午留白\n宜：坐慢一点的车\n忌：一小时换三个景点'],
+        ['风向很好','宜：去海边\n宜：关掉工作群提醒\n忌：把笔记本电脑塞进行李箱'],
+        ['山水签','宜：早睡一次\n宜：走一段有树的路\n忌：为了出片硬爬没必要的坡'],
+        ['吃好喝好','宜：菜市场与小馆\n宜：当地早餐\n忌：只吃商场连锁'],
+        ['反向旅行签','宜：少看两个 Top 10\n宜：挑一个没那么响亮的地名\n忌：黄金周挑战全国最热门入口'],
+        ['随缘签','宜：只订第一晚\n宜：允许路线变化\n忌：把分钟级计划发给同行的人'],
+        ['安静发财签','宜：预算留给住得舒服\n宜：少转场\n忌：因为“回本”每天走三万步'],
+        ['普通但很好','宜：睡到自然醒\n宜：认真吃饭\n忌：把假期过成员工团建']
+      ];
+
+      const state = {
+        selectedYear: Number(localStorage.getItem('holidayNext.year')) || new Date().getFullYear(),
+        selectedHolidayId: localStorage.getItem('holidayNext.holiday') || null,
+        leaveBudget: Number(localStorage.getItem('holidayNext.leaveBudget') || 2),
+        origin: localStorage.getItem('holidayNext.origin') || '上海',
+        distance: localStorage.getItem('holidayNext.distance') || 'all',
+        styles: JSON.parse(localStorage.getItem('holidayNext.styles') || '[]'),
+        budget: Number(localStorage.getItem('holidayNext.budget') || 2),
+        avoids: JSON.parse(localStorage.getItem('holidayNext.avoids') || '[]'),
+        lastRecommendations: []
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const clamp = (v,min,max) => Math.max(min,Math.min(max,v));
+      const pad = (n) => String(n).padStart(2,'0');
+      const parseLocal = (s, hour=12) => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d,hour,0,0,0); };
+      const atStart = (s) => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d,0,0,0,0); };
+      const localNoon = (d=new Date()) => new Date(d.getFullYear(),d.getMonth(),d.getDate(),12,0,0,0);
+      const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      const addDays = (d,n) => new Date(d.getFullYear(),d.getMonth(),d.getDate()+n,12,0,0,0);
+      const diffDays = (a,b) => Math.round((localNoon(b)-localNoon(a))/DAY);
+      const fmtMD = (s) => { const d=parseLocal(s); return `${pad(d.getMonth()+1)}.${pad(d.getDate())}`; };
+      const fmtCN = (s) => { const d=parseLocal(s); return `${d.getMonth()+1} 月 ${d.getDate()} 日`; };
+      const fmtShort = (s) => { const d=parseLocal(s); return `${d.getMonth()+1}.${d.getDate()}`; };
+      const daysInclusive = (a,b) => diffDays(parseLocal(a),parseLocal(b))+1;
+      const dateRangeText = (h) => `${fmtMD(h.start)} — ${fmtMD(h.end)}`;
+      const escapeHTML = (v) => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+      const randomOf = (arr) => arr[Math.floor(Math.random()*arr.length)];
+      const isWeekend = (d) => d.getDay()===0 || d.getDay()===6;
+
+      function allHolidayDates(yearData){
+        const set = new Set();
+        if(!yearData?.published) return set;
+        yearData.holidays.forEach(h => {
+          for(let d=parseLocal(h.start); d<=parseLocal(h.end); d=addDays(d,1)) set.add(keyOf(d));
+        });
+        return set;
+      }
+      function allWorkdays(yearData){
+        const set = new Set();
+        if(!yearData?.published) return set;
+        yearData.holidays.forEach(h => h.workdays.forEach(k=>set.add(k)));
+        return set;
+      }
+      function dayStatus(d, yearData){
+        const k=keyOf(d); const holidays=allHolidayDates(yearData); const workdays=allWorkdays(yearData);
+        if(workdays.has(k)) return 'workday';
+        if(holidays.has(k)) return 'holiday';
+        if(isWeekend(d)) return 'weekend';
+        return 'weekday';
+      }
+      function isRestDay(d, yearData){ const s=dayStatus(d,yearData); return s==='holiday'||s==='weekend'; }
+      function holidayState(h, now=new Date()){
+        const today=localNoon(now), start=parseLocal(h.start), end=parseLocal(h.end);
+        if(today<start) return 'future'; if(today>end) return 'past'; return 'current';
+      }
+      function findHolidayByDate(yearData,d){
+        if(!yearData?.published) return null;
+        const k=localNoon(d);
+        return yearData.holidays.find(h => k>=parseLocal(h.start) && k<=parseLocal(h.end)) || null;
+      }
+      function findNextContext(now=new Date()){
+        const today=localNoon(now); const currentYear=today.getFullYear();
+        const currentData=HOLIDAY_YEARS[currentYear];
+        const ongoing=findHolidayByDate(currentData,today);
+        if(ongoing) return {type:'ongoing', holiday:ongoing, year:currentYear, data:currentData};
+        if(currentData?.published){
+          const yesterdayHoliday=currentData.holidays.find(h => diffDays(parseLocal(h.end),today)===1);
+          const future=currentData.holidays.find(h => parseLocal(h.start)>today);
+          if(yesterdayHoliday && future) return {type:'dayafter',holiday:future,previous:yesterdayHoliday,year:currentYear,data:currentData};
+          if(yesterdayHoliday){
+            const nextYearData=HOLIDAY_YEARS[currentYear+1];
+            if(nextYearData?.published && nextYearData.holidays.length) return {type:'dayafter',holiday:nextYearData.holidays[0],previous:yesterdayHoliday,year:currentYear+1,data:nextYearData};
+            return {type:'unpublished',previous:yesterdayHoliday,year:currentYear+1,data:nextYearData};
+          }
+          if(future) return {type:'upcoming',holiday:future,year:currentYear,data:currentData};
+        }
+        for(let y=currentYear+1;y<=currentYear+3;y++){
+          const yd=HOLIDAY_YEARS[y];
+          if(yd?.published && yd.holidays.length) return {type:'upcoming',holiday:yd.holidays[0],year:y,data:yd};
+          if(yd && !yd.published) return {type:'unpublished',year:y,data:yd};
+        }
+        return {type:'unpublished',year:currentYear+1,data:null};
+      }
+      function themeFromHoliday(h){ if(!h) return; document.documentElement.style.setProperty('--accent',h.theme); document.documentElement.style.setProperty('--accent-ink',h.theme); }
+      function countdownParts(target){
+        let ms=Math.max(0,target-new Date());
+        const days=Math.floor(ms/DAY); ms-=days*DAY;
+        const hours=Math.floor(ms/3600000); ms-=hours*3600000;
+        const minutes=Math.floor(ms/60000);
+        return {days,hours,minutes};
+      }
+      function quipForDays(days, ongoing=false, lastDay=false){
+        if(ongoing && lastDay) return '😭 建议不要查看明天的闹钟。';
+        if(ongoing) return '🎉 谁还记得工作的密码？';
+        if(days>60) return '稳住，暂时还得上班。';
+        if(days>=30) return '已经可以偷偷看机票了。';
+        if(days>=15) return '可以开始认真做攻略了。';
+        if(days>=7) return '请假审批了吗？';
+        if(days>=3) return '工作已经开始失去意义。';
+        if(days>=1) return '🥳 灵魂已经提前下班。';
+        return randomOf(QUIPS);
+      }
+      function renderHero(){
+        const ctx=findNextContext();
+        if(ctx.type==='unpublished'){
+          $('heroName').textContent=`🕒 ${ctx.year} 官方安排尚未公布`;
+          $('heroDays').textContent='?'; $('heroDate').textContent='不猜农历，不编调休。';
+          $('heroSub').textContent='等国务院办公厅发布当年度具体安排后再更新倒计时。';
+          $('liveCountdown').innerHTML=''; $('todayLine').textContent='先把年假留好，具体怎么拼，等官方通知落地再算。';
+          renderQuickDests(null); return;
+        }
+        const h=ctx.holiday; themeFromHoliday(h);
+        if(ctx.type==='ongoing'){
+          const today=localNoon(), dayNo=diffDays(parseLocal(h.start),today)+1, remain=diffDays(today,parseLocal(h.end));
+          $('heroName').textContent=`🎉 ${h.name}假期进行中`;
+          $('heroDays').textContent=String(Math.max(0,remain));
+          $('heroDate').textContent=`今天是假期第 ${dayNo} 天 · ${dateRangeText(h)}`;
+          $('heroSub').textContent=remain===0?'今天是最后一天。':`还剩 ${remain} 天假期。`;
+          $('liveCountdown').innerHTML=`<div class="time-pill"><strong>${remain}</strong><small>剩余整天</small></div><div class="time-pill"><strong>${h.workdays.length}</strong><small>调休上班日</small></div>`;
+          $('todayLine').textContent=quipForDays(0,true,remain===0 && new Date().getHours()>=18);
+        } else {
+          const target=atStart(h.start); const parts=countdownParts(target);
+          $('heroName').textContent=`${h.emoji} ${h.name}`; $('heroDays').textContent=String(parts.days);
+          $('heroDate').textContent=`${dateRangeText(h)} · 连休 ${daysInclusive(h.start,h.end)} 天`;
+          $('heroSub').textContent=`官方实际休假 ${daysInclusive(h.start,h.end)} 天${h.workdays.length?` · 调休上班 ${h.workdays.length} 天`:' · 无调休上班日'}`;
+          $('liveCountdown').innerHTML=`<div class="time-pill"><strong>${parts.days}</strong><small>天</small></div><div class="time-pill"><strong>${pad(parts.hours)}</strong><small>小时</small></div><div class="time-pill"><strong>${pad(parts.minutes)}</strong><small>分钟</small></div>`;
+          $('todayLine').textContent=(ctx.type==='dayafter'?'😭 已经开始想念放假了。':quipForDays(parts.days)) + ` ${randomOf(QUIPS)}`;
+        }
+        renderQuickDests(h);
+      }
+      function renderQuickDests(h){
+        const month=h?parseLocal(h.start).getMonth()+1:new Date().getMonth()+1;
+        const ranked=rankDestinations(h,month).slice(0,3);
+        $('quickDests').innerHTML=ranked.map((d,i)=>`<div class="quick-dest"><div><b>${escapeHTML(d.name)}</b><span>${escapeHTML(d.keywords.slice(0,2).join(' / '))}</span></div><span>#0${i+1}</span></div>`).join('');
+        if(ranked[0]) { $('ticketTo').textContent=ranked[0].city; $('heroTravelHint').textContent=ranked[0].quote; }
+        $('ticketFrom').textContent=state.origin || '你所在的城市';
+      }
+
+      function populateYears(){
+        const years=Object.keys(HOLIDAY_YEARS).map(Number).sort();
+        if(!years.includes(state.selectedYear)) state.selectedYear = years.includes(new Date().getFullYear()) ? new Date().getFullYear() : years[years.length-1];
+        $('yearSelect').innerHTML=years.map(y=>`<option value="${y}" ${y===state.selectedYear?'selected':''}>${y}${HOLIDAY_YEARS[y].published?'':' · 待公布'}</option>`).join('');
+      }
+      function selectedYearData(){ return HOLIDAY_YEARS[state.selectedYear]; }
+      function pickDefaultHoliday(){
+        const yd=selectedYearData(); if(!yd?.published || !yd.holidays.length) return null;
+        let h=yd.holidays.find(x=>x.id===state.selectedHolidayId);
+        if(h) return h;
+        const today=localNoon();
+        if(state.selectedYear===today.getFullYear()) h=findHolidayByDate(yd,today)||yd.holidays.find(x=>parseLocal(x.start)>=today)||yd.holidays[yd.holidays.length-1];
+        else h=yd.holidays[0];
+        state.selectedHolidayId=h.id; return h;
+      }
+      function renderTimeline(){
+        const yd=selectedYearData(); const box=$('timelineContent');
+        if(!yd?.published){
+          box.innerHTML=`<div class="unpublished"><strong>🕒 ${state.selectedYear} 年官方安排尚未公布</strong><br/>本页不会根据农历或往年规律猜测实际连续放假与调休日期。等国务院办公厅发布通知后，只需在数据对象里补充该年度即可。</div>`;
+          return;
+        }
+        const now=localNoon(); let nextId=null;
+        if(state.selectedYear===now.getFullYear()) nextId=(yd.holidays.find(h=>parseLocal(h.end)>=now)||{}).id;
+        box.innerHTML=`<div class="timeline-wrap"><div class="timeline">${yd.holidays.map(h=>{
+          const hs=state.selectedYear===now.getFullYear()?holidayState(h,now):(state.selectedYear<now.getFullYear()?'past':'future');
+          const cls=[hs==='past'?'past':'',hs==='current'?'current':'',h.id===nextId&&hs!=='current'?'next':''].filter(Boolean).join(' ');
+          let sub=`${dateRangeText(h)} · ${daysInclusive(h.start,h.end)} 天`;
+          if(state.selectedYear===now.getFullYear() && hs==='future') sub=`还有 ${diffDays(now,parseLocal(h.start))} 天`;
+          if(hs==='past') sub='已经放过 ✓'; if(hs==='current') sub='正在放假中';
+          return `<button class="holiday-node ${cls}" data-holiday-id="${h.id}" type="button"><span class="dot">${h.emoji}</span><strong>${escapeHTML(h.shortName||h.name)}</strong><small>${sub}</small></button>`;
+        }).join('')}</div></div>`;
+        box.querySelectorAll('.holiday-node').forEach(btn=>btn.addEventListener('click',()=>selectHoliday(btn.dataset.holidayId,true)));
+      }
+      function classifyHoliday(h){
+        const statutory=new Set(h.statutory); let weekend=0;
+        for(let d=parseLocal(h.start);d<=parseLocal(h.end);d=addDays(d,1)) if(isWeekend(d)) weekend++;
+        return {statutory:statutory.size, weekend, workdays:h.workdays.length, total:daysInclusive(h.start,h.end)};
+      }
+      function explainHoliday(h){
+        const c=classifyHoliday(h);
+        const overlap=h.statutory.filter(k=>isWeekend(parseLocal(k))).length;
+        return `这次官方连续休息 ${c.total} 天。法定节日本身有 ${c.statutory} 天${overlap?`，其中 ${overlap} 天刚好落在周末`:''}；假期区间里一共有 ${c.weekend} 个周六/周日。${c.workdays?`为了拼出连续休假，另外有 ${c.workdays} 个周末被调成上班日：${h.workdays.map(fmtCN).join('、')}。`:'这次没有额外调休上班日。'}注意：这些分类会重叠，所以不会把“法定节日 + 周末 + 调休”硬加成总天数。`;
+      }
+      function renderDetail(){
+        const yd=selectedYearData(), grid=$('detailGrid');
+        if(!yd?.published){ grid.innerHTML=`<div class="card detail-card"><h3>🕒 待公布</h3><p class="plain-explain">${state.selectedYear} 年的具体休假与调休日期暂不写死。数据结构已预留，官方通知发布后补充即可。</p></div>`; return; }
+        const h=pickDefaultHoliday(); if(!h) return;
+        themeFromHoliday(h);
+        const c=classifyHoliday(h);
+        grid.innerHTML=`
+          <article class="card detail-card"><h3>${h.emoji} ${escapeHTML(h.name)}</h3><div class="date-range">${dateRangeText(h)}</div><div class="detail-days">连续休 ${c.total} 天</div><div class="stats"><div class="stat"><b>${c.statutory}</b><span>法定节日日期</span></div><div class="stat"><b>${c.weekend}</b><span>区间内周末</span></div><div class="stat"><b>${c.workdays}</b><span>调休上班日</span></div></div><p class="plain-explain">${escapeHTML(explainHoliday(h))}</p><p class="plain-explain"><strong>${escapeHTML(h.slogan)}</strong></p><a class="source-link" href="${OFFICIAL_SOURCE[state.selectedYear]}" target="_blank" rel="noreferrer">查看 ${state.selectedYear} 国务院办公厅通知 ↗</a></article>
+          <article class="card calendar-card">${calendarHTML(h)}</article>`;
+        renderMagic(); renderRecommendations();
+      }
+      function monthMatrix(year,month){
+        const first=new Date(year,month,1,12), mondayOffset=(first.getDay()+6)%7, start=addDays(first,-mondayOffset); const cells=[];
+        for(let i=0;i<42;i++) cells.push(addDays(start,i)); return cells;
+      }
+      function calendarHTML(h){
+        const start=parseLocal(h.start); const year=start.getFullYear(), month=start.getMonth(); const yd=HOLIDAY_YEARS[year];
+        const statutory=new Set(h.statutory), workdays=allWorkdays(yd), holidays=allHolidayDates(yd);
+        return `<div class="cal-head"><strong>${year} 年 ${month+1} 月</strong><span>${escapeHTML(h.name)} · 点击时间轴可切换</span></div><div class="cal-week">${['一','二','三','四','五','六','日'].map(x=>`<span>${x}</span>`).join('')}</div><div class="cal-grid">${monthMatrix(year,month).map(d=>{
+          const k=keyOf(d), same=d.getMonth()===month; const classes=['cal-day',same?'':'muted',holidays.has(k)?'is-holiday':'',statutory.has(k)?'is-statutory':'',workdays.has(k)?'is-workday':'',isWeekend(d)?'is-weekend':''].filter(Boolean).join(' ');
+          let label=''; if(statutory.has(k)) label='法定'; else if(workdays.has(k)) label='调休上班'; else if(holidays.has(k)) label='放假'; else if(isWeekend(d)) label='周末';
+          return `<div class="${classes}"><strong>${d.getDate()}</strong><small>${label}</small></div>`;
+        }).join('')}</div><div class="legend"><span><i style="background:var(--holiday)"></i>官方休假</span><span><i style="background:var(--workday)"></i>调休上班</span><span><i style="background:var(--weekend)"></i>普通周末</span><span><i style="background:#fff;border:2px solid var(--holiday)"></i>法定节日日期</span></div>`;
+      }
+      function selectHoliday(id, openDialog=false){
+        state.selectedHolidayId=id; localStorage.setItem('holidayNext.holiday',id); renderDetail(); renderProgress(); renderYearCalendar();
+        const h=pickDefaultHoliday(); if(openDialog && h){
+          $('dialogTitle').textContent=`${h.emoji} ${h.name}`;
+          $('dialogContent').innerHTML=`<div class="date-range">${dateRangeText(h)} · ${daysInclusive(h.start,h.end)} 天</div><p class="plain-explain">${escapeHTML(explainHoliday(h))}</p><div class="calendar-card" style="padding:0;margin-top:16px">${calendarHTML(h)}</div>`;
+          $('holidayDialog').showModal();
+        }
+      }
+
+      function bestLeavePlan(h,budget){
+        const yd=HOLIDAY_YEARS[parseLocal(h.start).getFullYear()];
+        const anchorStart=parseLocal(h.start), anchorEnd=parseLocal(h.end);
+        const windowStart=addDays(anchorStart,-18), windowEnd=addDays(anchorEnd,18);
+        const days=[]; for(let d=windowStart;d<=windowEnd;d=addDays(d,1)) days.push(d);
+        let best=null;
+        for(let i=0;i<days.length;i++){
+          let leave=[];
+          for(let j=i;j<days.length;j++){
+            const d=days[j], status=dayStatus(d,yd);
+            if(status==='weekday'||status==='workday') leave.push(keyOf(d));
+            if(leave.length>budget) break;
+            const includesHoliday=days[i]<=anchorStart && days[j]>=anchorEnd;
+            if(!includesHoliday) continue;
+            const span=j-i+1;
+            const candidate={start:days[i],end:days[j],span,leave:[...leave]};
+            if(!best || span>best.span || (span===best.span && leave.length<best.leave.length) || (span===best.span && leave.length===best.leave.length && Math.abs(diffDays(anchorStart,days[i]))<Math.abs(diffDays(anchorStart,best.start)))) best=candidate;
+          }
+        }
+        return best || {start:anchorStart,end:anchorEnd,span:daysInclusive(h.start,h.end),leave:[]};
+      }
+      function leaveRating(n){ if(n<=1)return '🟢 老板应该还能接受'; if(n<=3)return '🟡 建议提前申请'; return '🔴 建议先观察老板心情'; }
+      function renderMagic(){
+        const h=pickDefaultHoliday(); if(!h || !selectedYearData()?.published){ $('magicResult').innerHTML='<p>官方安排公布后再计算。</p>'; return; }
+        const plan=bestLeavePlan(h,state.leaveBudget);
+        $('leaveBudgetLabel').textContent=`${state.leaveBudget} 天`;
+        const leaveText=plan.leave.length ? plan.leave.map(k=>`<span class="leave-date">${fmtCN(k)}</span>`).join('') : '<span class="leave-date">不用请假</span>';
+        $('magicResult').innerHTML=`<h4>${escapeHTML(h.name)} · BEST BRIDGE</h4><div class="magic-big">请 <b>${plan.leave.length}</b> 天 → 连休 <b>${plan.span}</b> 天</div><div class="leave-dates">${leaveText}</div><div class="rating-line">${leaveRating(plan.leave.length)}</div><p class="magic-note">连续区间：${fmtCN(keyOf(plan.start))} — ${fmtCN(keyOf(plan.end))}。算法逐日把官方休假与普通周末视为休息，把普通工作日和调休上班日视为“需要请假”；结果不是预制文案。</p>`;
+        renderProgress();
+      }
+
+      function haversine(lat1,lon1,lat2,lon2){
+        const R=6371,rad=x=>x*Math.PI/180,dLat=rad(lat2-lat1),dLon=rad(lon2-lon1);
+        const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLon/2)**2;
+        return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+      }
+      function distanceFor(d){ const o=ORIGINS[state.origin]; return o?haversine(o[0],o[1],d.lat,d.lng):null; }
+      function distanceBucket(km){ if(km==null)return 'unknown'; if(km<=650)return 'near'; if(km<=1600)return 'mid'; return 'far'; }
+      function holidayCrowdFactor(h){ if(!h)return 1; if(h.id.includes('national'))return 2; if(h.id==='labor'||h.id==='spring-festival')return 1.5; return .7; }
+      function crowdInfo(d,h){
+        const score=clamp(Math.round(d.popularity+holidayCrowdFactor(h)),1,5);
+        return [null,['🟢','悠闲'],['🟡','有点人'],['🟠','到处都是人'],['🔴','人类大型迁徙现场'],['🟣','建议在家躺着']][score];
+      }
+      function holidayMonth(h){ return h?parseLocal(h.start).getMonth()+1:new Date().getMonth()+1; }
+      function rankDestinations(h, month=holidayMonth(h)){
+        const days=h?daysInclusive(h.start,h.end):4;
+        return DESTINATIONS.map(d=>{
+          let score=d.rating*10;
+          if(d.months.includes(month)) score+=14; else score-=5;
+          if(days>=d.days[0]&&days<=d.days[1]+1) score+=8; else if(days<d.days[0]) score-=8;
+          state.styles.forEach(s=>{if(d.tags.includes(s))score+=8});
+          const budgetDelta=Math.abs(d.budgetLevel-state.budget); score-=budgetDelta*4;
+          state.avoids.forEach(a=>{
+            if(a==='人多') score-=d.popularity*3+holidayCrowdFactor(h)*2;
+            if(a==='太贵' && d.budgetLevel>=3) score-=12;
+            if(a==='太冷' && d.risks.includes('太冷')) score-=11;
+            if(a==='太热' && d.risks.includes('太热')) score-=11;
+            if(a==='太累' && d.risks.includes('太累')) score-=11;
+            if(a==='下雨' && d.risks.includes('下雨')) score-=8;
+          });
+          const km=distanceFor(d), bucket=distanceBucket(km);
+          if(state.distance!=='all') score += bucket===state.distance?14:-18;
+          if(h && h.id.includes('national')) score += (5-d.popularity)*3 - d.popularity;
+          if(state.styles.includes('✈️ 飞远一点') && bucket==='far')score+=7;
+          if(state.styles.includes('🚄 高铁') && (bucket==='near'||bucket==='mid'))score+=6;
+          return {...d,_score:score,_km:km,_bucket:bucket};
+        }).filter(d=>state.distance==='all'||d._bucket===state.distance).sort((a,b)=>b._score-a._score);
+      }
+      function starString(n){ return '★'.repeat(n)+'☆'.repeat(5-n); }
+      function renderRecommendations(){
+        const h=pickDefaultHoliday() || findNextContext().holiday || null;
+        const ranked=rankDestinations(h); state.lastRecommendations=ranked;
+        $('matchCount').textContent=`${ranked.length} 个匹配目的地`;
+        const modeNote=$('travelModeNote');
+        if(h && h.id.includes('national')){ modeNote.style.display='block'; modeNote.innerHTML='<strong>↩ 国庆反向旅游模式</strong><br/>黄金周会自动给高热度目的地一点拥挤惩罚，把更小众的地方往前推；这仍然只是静态灵感排序，不代表实时客流。'; } else { modeNote.style.display='none'; modeNote.textContent=''; }
+        $('destinationGrid').innerHTML=ranked.slice(0,10).map(d=>{
+          const crowd=crowdInfo(d,h), dist=d._km==null?'未设置出发地':`直线约 ${Math.round(d._km)} km`;
+          return `<article class="dest-card"><div class="dest-top"><span class="stars" aria-label="推荐指数 ${d.rating} 星">${starString(d.rating)}</span><span class="crowd">${crowd[0]} ${crowd[1]}</span></div><h3>${escapeHTML(d.name)}</h3><p class="dest-line">${escapeHTML(d.why)}</p><div class="dest-tags">${d.keywords.map(x=>`<span>${escapeHTML(x)}</span>`).join('')}</div><div class="dest-meta"><div><b>${d.days[0]}～${d.days[1]} 天</b>建议游玩</div><div><b>¥${d.budget[0]}～${d.budget[1]}</b>大致预算 / 人</div><div><b>${d.months.join(' / ')} 月</b>通常更适合</div><div><b>${dist}</b>仅作距离灵感</div></div><p class="dest-quote">“${escapeHTML(d.quote)}”</p><div class="distance-note">人流、预算、季节均为静态参考，不是实时 API 数据。</div></article>`;
+        }).join('') || '<div class="unpublished">这个组合太严格了。放宽一个条件，世界会重新出现。</div>';
+        renderQuickDests(findNextContext().holiday || h);
+      }
+
+      function renderFilterControls(){
+        $('styleChips').innerHTML=STYLE_OPTIONS.map(s=>`<button class="chip" data-style="${escapeHTML(s)}" type="button" aria-pressed="${state.styles.includes(s)}">${escapeHTML(s)}</button>`).join('');
+        $('avoidChips').innerHTML=AVOID_OPTIONS.map(s=>`<button class="chip" data-avoid="${s}" type="button" aria-pressed="${state.avoids.includes(s)}">${s}</button>`).join('');
+        $('originSelect').innerHTML=Object.keys(ORIGINS).map(c=>`<option value="${c}" ${c===state.origin?'selected':''}>${c}</option>`).join('')+'<option value="其他" '+(state.origin==='其他'?'selected':'')+'>其他</option>';
+        document.querySelectorAll('[data-distance]').forEach(b=>b.classList.toggle('active',b.dataset.distance===state.distance));
+        document.querySelectorAll('[data-budget]').forEach(b=>b.classList.toggle('active',Number(b.dataset.budget)===state.budget));
+        $('styleChips').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>toggleArrayPref('styles',b.dataset.style,b)));
+        $('avoidChips').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>toggleArrayPref('avoids',b.dataset.avoid,b)));
+      }
+      function toggleArrayPref(key,value,btn){ const arr=state[key]; const i=arr.indexOf(value); if(i>=0)arr.splice(i,1);else arr.push(value); btn.setAttribute('aria-pressed',arr.includes(value)); savePrefs(); renderRecommendations(); }
+      function savePrefs(){
+        localStorage.setItem('holidayNext.origin',state.origin); localStorage.setItem('holidayNext.distance',state.distance); localStorage.setItem('holidayNext.styles',JSON.stringify(state.styles)); localStorage.setItem('holidayNext.budget',state.budget); localStorage.setItem('holidayNext.avoids',JSON.stringify(state.avoids)); localStorage.setItem('holidayNext.leaveBudget',state.leaveBudget);
+      }
+      function nearestOrigin(lat,lng){ let best=null; Object.entries(ORIGINS).forEach(([city,[clat,clng]])=>{const km=haversine(lat,lng,clat,clng);if(!best||km<best.km)best={city,km};}); return best; }
+      function useGeolocation(){
+        if(!navigator.geolocation){showToast('这个浏览器不支持定位，请手动选城市。');return;}
+        $('geoBtn').disabled=true; $('geoBtn').textContent='定位中…';
+        navigator.geolocation.getCurrentPosition(pos=>{
+          const nearest=nearestOrigin(pos.coords.latitude,pos.coords.longitude); state.origin=nearest.city; $('originSelect').value=nearest.city; savePrefs(); renderRecommendations(); showToast(`已按 ${nearest.city} 附近估算距离（约 ${Math.round(nearest.km)} km）`); $('geoBtn').disabled=false;$('geoBtn').textContent='使用我的位置';
+        },()=>{showToast('没有获得定位权限，继续用手动城市也完全没问题。');$('geoBtn').disabled=false;$('geoBtn').textContent='使用我的位置';},{enableHighAccuracy:false,timeout:8000,maximumAge:600000});
+      }
+
+      function drawEligible(d,h){
+        if(d.budgetLevel>state.budget) return false;
+        if(state.styles.length && !state.styles.some(s=>d.tags.includes(s))) return false;
+        if(state.avoids.includes('人多') && d.popularity>3) return false;
+        if(state.avoids.includes('太贵') && d.budgetLevel>=3) return false;
+        if(state.avoids.includes('太冷') && d.risks.includes('太冷')) return false;
+        if(state.avoids.includes('太热') && d.risks.includes('太热')) return false;
+        if(state.avoids.includes('太累') && d.risks.includes('太累')) return false;
+        if(state.avoids.includes('下雨') && d.risks.includes('下雨')) return false;
+        return true;
+      }
+      function spin(){
+        const h=pickDefaultHoliday() || findNextContext().holiday || null;
+        const base=state.lastRecommendations.length?state.lastRecommendations:rankDestinations(h);
+        const strict=base.filter(d=>drawEligible(d,h));
+        const pool=(strict.length?strict:base.slice(0,8));
+        if(!pool.length){showToast('先放宽一点筛选条件，再来抽。');return;}
+        const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches; let ticks=0;
+        const finish=()=>{const pick=randomOf(pool);$('slotCity').textContent=pick.name;$('slotNote').textContent=`${pick.quote} 就它了，别再纠结。`; state.lastSpin=pick; renderProgress();};
+        if(reduced){finish();return;}
+        $('spinBtn').disabled=true; $('spinAgainBtn').disabled=true;
+        const timer=setInterval(()=>{const d=randomOf(pool);$('slotCity').textContent=d.name;ticks++;if(ticks>=18){clearInterval(timer);finish();$('spinBtn').disabled=false;$('spinAgainBtn').disabled=false;}},70);
+      }
+      function drawFortune(){ const f=randomOf(FORTUNES); const html=`<div class="fortune"><div class="fortune-title">🔮 ${escapeHTML(f[0])}</div><p>${escapeHTML(f[1])}</p><small>娱乐内容，不做任何严肃迷信判断。</small></div>`; const target=$('balanceCard'); if(target){target.querySelector('.fortune')?.remove();target.insertAdjacentHTML('beforeend',html);target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});} }
+
+      function yearlyHolidayStats(year){
+        const yd=HOLIDAY_YEARS[year]; if(!yd?.published)return null;
+        const all=allHolidayDates(yd), today=localNoon(); let past=0,future=0;
+        all.forEach(k=>{const d=parseLocal(k); if(year<today.getFullYear() || d<today)past++; else future++;});
+        const total=all.size, pct=total?Math.round(past/total*100):0;
+        const upcoming=yd.holidays.filter(h=>parseLocal(h.end)>=today).length;
+        return {total,past,future,pct,upcoming};
+      }
+      function renderProgress(){
+        const yd=selectedYearData(); if(!yd?.published){ $('progressCard').innerHTML=`<h3>${state.selectedYear} 放假进度</h3><p class="plain-explain">🕒 官方安排尚未公布，因此不计算假期余额。</p>`;$('balanceCard').innerHTML=`<h3>我的 ${state.selectedYear} 假期余额</h3><p class="plain-explain">先不猜。等官方通知。</p>`;return; }
+        const stats=yearlyHolidayStats(state.selectedYear), h=pickDefaultHoliday(), plan=h?bestLeavePlan(h,state.leaveBudget):null;
+        let message=stats.pct>85?'😭 本年度假期余额严重不足':`今年还有 ${stats.upcoming} 个官方假期块值得期待。`;
+        $('progressCard').innerHTML=`<h3>${state.selectedYear} 放假进度</h3><div class="bar" aria-label="假期进度 ${stats.pct}%"><span style="width:${stats.pct}%"></span></div><div class="progress-numbers"><div><strong>${stats.pct}%</strong><span> 已度过</span></div><span>剩余 ${stats.future} 天官方休假</span></div><p class="plain-explain">${message}</p><div class="fortune"><div class="fortune-title">今日状态</div><p>${escapeHTML(randomOf(QUIPS))}</p><small>每次刷新可能不一样，班还是同一个班。</small></div>`;
+        const nextCtx=findNextContext(); const nextText=nextCtx.holiday?`${nextCtx.holiday.name} · ${Math.max(0,diffDays(localNoon(),parseLocal(nextCtx.holiday.start)))} 天`:'官方待公布';
+        const dest=state.lastSpin || state.lastRecommendations[0] || DESTINATIONS[0];
+        $('balanceCard').innerHTML=`<h3>我的 ${state.selectedYear} 假期余额</h3><div class="balance-list"><div class="balance-row"><span>已过官方休假</span><b>${stats.past} 天</b></div><div class="balance-row"><span>剩余官方休假</span><b>${stats.future} 天</b></div><div class="balance-row"><span>距离下次放假</span><b>${escapeHTML(nextText)}</b></div><div class="balance-row"><span>当前请假魔法</span><b>${plan?`请 ${plan.leave.length} 天 → 连休 ${plan.span} 天`:'—'}</b></div><div class="balance-row"><span>最值得请假的日期</span><b>${plan&&plan.leave.length?fmtCN(plan.leave[0]):'不用请假'}</b></div><div class="balance-row"><span>此刻推荐</span><b>${escapeHTML(dest.name)}</b></div></div><div class="share-actions"><button class="btn btn-primary" id="shareBtn" type="button">📸 生成我的假期报告</button><button class="btn btn-secondary" id="fortuneBtn" type="button">🔮 测测这个假期适合干嘛</button></div>`;
+        $('shareBtn').addEventListener('click',generateShareCard); $('fortuneBtn').addEventListener('click',drawFortune);
+      }
+      function roundedRect(ctx,x,y,w,h,r){
+        const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();ctx.fill();
+      }
+      function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
+        const chars=[...text]; let line='',lines=[]; for(const ch of chars){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch;}else line=test;} if(line)lines.push(line);lines.slice(0,maxLines).forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight)); return Math.min(lines.length,maxLines)*lineHeight;
+      }
+      function generateShareCard(){
+        const canvas=$('shareCanvas'),ctx=canvas.getContext('2d'),scale=1; const next=findNextContext(); const h=next.holiday||pickDefaultHoliday(); const plan=h?bestLeavePlan(h,state.leaveBudget):null; const dest=state.lastSpin||state.lastRecommendations[0]||DESTINATIONS[0]; const stats=yearlyHolidayStats(new Date().getFullYear())||yearlyHolidayStats(state.selectedYear);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        const grad=ctx.createLinearGradient(0,0,1080,1440);grad.addColorStop(0,'#f8efe2');grad.addColorStop(1,'#efe3cf');ctx.fillStyle=grad;ctx.fillRect(0,0,1080,1440);
+        ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c83c32';ctx.fillRect(0,0,1080,24);
+        ctx.fillStyle='#1f211e';ctx.font='800 34px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText('放假去哪儿',78,108);ctx.font='500 22px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillStyle='#7a756c';ctx.fillText(`我的 ${new Date().getFullYear()} 假期状态`,78,150);
+        ctx.fillStyle='#fffaf2';roundedRect(ctx,62,205,956,520,38);ctx.fillStyle='#716f68';ctx.font='700 22px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText(h?`距离 ${h.name}`:'下一次放假',104,278);
+        const days=h?Math.max(0,countdownParts(atStart(h.start)).days):0;ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c83c32';ctx.font='900 210px Georgia, serif';ctx.fillText(String(days),96,500);ctx.font='900 32px -apple-system, BlinkMacSystemFont, sans-serif';ctx.fillText('DAYS',104,552);
+        ctx.fillStyle='#1f211e';ctx.font='800 30px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText(plan?`请 ${plan.leave.length} 天，可以连休 ${plan.span} 天`:'官方安排待公布',104,630);ctx.font='500 22px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillStyle='#716f68';ctx.fillText(h?dateRangeText(h):'不猜日期',104,674);
+        ctx.fillStyle='#1f211e';ctx.font='800 26px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText('推荐目的地',78,808);ctx.fillStyle='#fffaf2';roundedRect(ctx,62,846,956,272,34);ctx.fillStyle='#1f211e';ctx.font='900 52px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText(dest.name,104,930);ctx.font='500 24px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillStyle='#716f68';wrapCanvasText(ctx,dest.quote,104,990,850,38,3);
+        ctx.fillStyle='#1f211e';ctx.font='800 26px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText('今年假期余额',78,1198);ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c83c32';ctx.font='900 68px Georgia, serif';ctx.fillText(stats?`${stats.future} 天`:'—',78,1282);ctx.fillStyle='#716f68';ctx.font='500 20px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText('官方连续休假天数 · 非年假余额',310,1278);
+        ctx.fillStyle='#98958c';ctx.font='500 18px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';ctx.fillText('数据以国务院办公厅当年度节假日安排为准 · 放假去哪儿',78,1368);
+        const a=document.createElement('a');a.download=`holiday-report-${new Date().getFullYear()}.png`;a.href=canvas.toDataURL('image/png');a.click();showToast('假期报告 PNG 已生成。');
+      }
+
+      function renderYearCalendar(){
+        const yd=selectedYearData(), root=$('yearCalendar'); if(!yd?.published){root.innerHTML='<div class="unpublished">官方安排尚未公布，全年日历不预填假期。</div>';return;}
+        const holidays=allHolidayDates(yd),workdays=allWorkdays(yd),week=['一','二','三','四','五','六','日'];
+        root.innerHTML=Array.from({length:12},(_,m)=>{
+          const cells=monthMatrix(state.selectedYear,m);
+          return `<div class="month-mini"><h4>${m+1} 月</h4><div class="mini-week">${week.map(w=>`<span>${w}</span>`).join('')}</div><div class="mini-days">${cells.map(d=>{const k=keyOf(d),same=d.getMonth()===m,cls=['mini-day',same?'':'other',holidays.has(k)?'holiday':'',workdays.has(k)?'workday':'',isWeekend(d)?'weekend':''].filter(Boolean).join(' ');return `<span class="${cls}" title="${k}">${d.getDate()}</span>`}).join('')}</div></div>`;
+        }).join('');
+      }
+
+      let toastTimer;
+      function showToast(text){ const t=$('toast'); t.textContent=text;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600); }
+      function clearPrefs(){ state.styles=[];state.avoids=[];state.distance='all';state.budget=2;state.origin='上海';state.leaveBudget=2;savePrefs();$('leaveRange').value=2;renderFilterControls();renderMagic();renderRecommendations();showToast('已清除本地偏好。'); }
+
+      function bindEvents(){
+        $('yearSelect').addEventListener('change',e=>{state.selectedYear=Number(e.target.value);localStorage.setItem('holidayNext.year',state.selectedYear);state.selectedHolidayId=null;renderTimeline();renderDetail();renderProgress();renderYearCalendar();});
+        $('leaveRange').value=String(Math.max(0,LEAVE_OPTIONS.indexOf(state.leaveBudget))); $('leaveRange').addEventListener('input',e=>{state.leaveBudget=LEAVE_OPTIONS[Number(e.target.value)];savePrefs();renderMagic();});
+        $('originSelect').addEventListener('change',e=>{state.origin=e.target.value;savePrefs();renderRecommendations();}); $('geoBtn').addEventListener('click',useGeolocation);
+        $('distanceChips').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{state.distance=b.dataset.distance;document.querySelectorAll('[data-distance]').forEach(x=>x.classList.toggle('active',x===b));savePrefs();renderRecommendations();}));
+        $('budgetChips').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{state.budget=Number(b.dataset.budget);document.querySelectorAll('[data-budget]').forEach(x=>x.classList.toggle('active',x===b));savePrefs();renderRecommendations();}));
+        $('clearPrefsBtn').addEventListener('click',clearPrefs); $('spinBtn').addEventListener('click',spin); $('spinAgainBtn').addEventListener('click',spin); $('fortuneTopBtn').addEventListener('click',()=>{$('balance').scrollIntoView({behavior:'smooth'});setTimeout(drawFortune,250)});
+        $('dialogClose').addEventListener('click',()=>$('holidayDialog').close()); $('holidayDialog').addEventListener('click',e=>{if(e.target===$('holidayDialog'))$('holidayDialog').close();});
+      }
+      function initReveal(){ const items=document.querySelectorAll('.reveal'); if(matchMedia('(prefers-reduced-motion: reduce)').matches){items.forEach(x=>x.classList.add('in'));return;} const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});items.forEach(x=>io.observe(x)); }
+      function init(){
+        populateYears();renderFilterControls();bindEvents();renderHero();renderTimeline();renderDetail();renderProgress();renderYearCalendar();initReveal();
+        setInterval(renderHero,60000);
+      }
+      init();
+    })();
+  </script>
+</body>
+</html>
