@@ -3,7 +3,7 @@ window.AIProjects = [
   {
     "id": "water-tracker",
     "title": "打水时间簿",
-    "description": "记录每一次打水时间，实时查看距离上次打水已经过去多久，并保留完整历史间隔。",
+    "description": "所有设备共享同一份打水记录，实时查看距离上次打水已经过去多久，并保留完整历史间隔。",
     "category": "工具",
     "date": "2026.11.18",
     "path": "water-tracker",

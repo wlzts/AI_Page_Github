@@ -118,6 +118,7 @@
     }
     .record-button:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0, 0, 0, .16); }
     .record-button:active { transform: translateY(1px) scale(.99); }
+    .record-button:disabled, .secondary-button:disabled { opacity: .58; cursor: wait; transform: none; box-shadow: none; }
     .record-button svg { width: 20px; height: 20px; }
     .button-note { position: relative; z-index: 1; margin: 12px 0 0; color: rgba(255, 255, 255, .55); text-align: center; font-size: 10px; }
 
@@ -247,7 +248,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
         返回网页实验室
       </a>
-      <span class="local-note">记录仅保存在当前浏览器</span>
+      <span class="local-note" id="syncStatus">正在连接共享记录</span>
     </nav>
 
     <header class="hero">
@@ -260,8 +261,8 @@
       <article class="timer-card">
         <div class="timer-top"><span class="status-dot" aria-hidden="true"></span>距离上次打水</div>
         <div class="timer-empty" id="timerEmpty">
-          <strong>还没有打水记录</strong>
-          <p>点击下方按钮，从这一次开始计时。</p>
+          <strong id="emptyTitle">正在读取共享记录</strong>
+          <p id="emptyHint">正在从云端获取最新数据，请稍候。</p>
         </div>
         <div class="elapsed-wrap" id="timerContent" hidden>
           <div class="elapsed" role="timer" aria-label="距离上次打水的时长">
@@ -275,7 +276,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3c-2.2 4.1-6 7.8-6 11.3a6 6 0 0 0 12 0C18 10.8 14.2 7.1 12 3Z" /><path d="M9.5 15.5a2.8 2.8 0 0 0 2.5 1.6" /></svg>
           记录现在打水
         </button>
-        <p class="button-note">自动保存当前设备时间</p>
+        <p class="button-note">由服务器记录当前时间并同步到所有设备</p>
       </article>
 
       <aside class="stats" aria-label="打水统计">
@@ -291,21 +292,21 @@
         <form id="manualForm" novalidate>
           <label class="field-label" for="manualTime">实际打水时间</label>
           <input class="datetime-input" id="manualTime" name="manualTime" type="datetime-local" step="1" required />
-          <button class="secondary-button" type="submit">保存这条记录</button>
+          <button class="secondary-button" id="manualSubmit" type="submit">保存这条记录</button>
           <p class="form-error" id="formError" role="alert" hidden></p>
         </form>
-        <p class="panel-tip">时间按当前设备的本地时区保存。补记较早时间后，历史间隔会自动重新计算。</p>
+        <p class="panel-tip">按设备本地时区显示。补记较早时间后，所有设备的历史间隔都会自动重新计算。</p>
       </article>
 
       <section class="panel" aria-labelledby="historyTitle">
         <div class="panel-head"><h2 id="historyTitle">历史记录</h2><span class="count" id="historyCount">0 条</span></div>
-        <div class="empty-history" id="emptyHistory">暂无记录。每一次打水都会按时间顺序留在这里。</div>
+        <div class="empty-history" id="emptyHistory">正在同步共享记录，请稍候。</div>
         <ol class="history-list" id="historyList"></ol>
         <button class="clear-button" id="clearAll" type="button" hidden>清空全部记录</button>
       </section>
     </section>
 
-    <footer>数据保存在此浏览器的 localStorage 中，不会上传；清除浏览器数据或更换设备后不会同步。</footer>
+    <footer>所有打开此页面的人共用同一份记录；新增、删除和清空都会同步。页面每 15 秒刷新一次共享数据。</footer>
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -314,11 +315,17 @@
     (() => {
       'use strict';
 
-      const STORAGE_KEY = 'ai-page.water-tracker.records.v1';
+      const LEGACY_STORAGE_KEY = 'ai-page.water-tracker.records.v1';
+      const API_BASE = /(^|\.)vercel\.app$/.test(location.hostname)
+        ? location.origin
+        : 'https://ai-page-github.vercel.app';
+      const API_URL = `${API_BASE}/api/water-records`;
       const DAY_MS = 24 * 60 * 60 * 1000;
       const elements = {
         timerEmpty: document.getElementById('timerEmpty'),
         timerContent: document.getElementById('timerContent'),
+        emptyTitle: document.getElementById('emptyTitle'),
+        emptyHint: document.getElementById('emptyHint'),
         elapsedDaysWrap: document.getElementById('elapsedDaysWrap'),
         elapsedDays: document.getElementById('elapsedDays'),
         elapsedClock: document.getElementById('elapsedClock'),
@@ -332,59 +339,139 @@
         clearAll: document.getElementById('clearAll'),
         recordNow: document.getElementById('recordNow'),
         manualForm: document.getElementById('manualForm'),
+        manualSubmit: document.getElementById('manualSubmit'),
         manualTime: document.getElementById('manualTime'),
         formError: document.getElementById('formError'),
+        syncStatus: document.getElementById('syncStatus'),
         toast: document.getElementById('toast')
       };
 
-      let storageWarning = false;
+      let records = [];
+      let loaded = false;
+      let loadFailed = false;
+      let mutationPending = false;
+      let syncInFlight = false;
+      let requestVersion = 0;
+      let serverOffset = 0;
       let toastTimer = 0;
-      let records = loadRecords();
-
-      function createId() {
-        if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
-        return `water-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      }
 
       function normalizeRecords(value) {
         if (!Array.isArray(value)) return [];
         const seenTimes = new Set();
         return value
           .map((item) => ({
-            id: item && typeof item.id === 'string' ? item.id : createId(),
+            id: item && typeof item.id === 'string' ? item.id : `legacy-${Number(item && item.timestamp)}`,
             timestamp: typeof item === 'number' ? item : Number(item && item.timestamp)
           }))
           .filter((item) => {
-            if (!Number.isFinite(item.timestamp) || item.timestamp <= 0 || seenTimes.has(item.timestamp)) return false;
+            if (!Number.isSafeInteger(item.timestamp) || item.timestamp <= 0 || seenTimes.has(item.timestamp)) return false;
             seenTimes.add(item.timestamp);
             return true;
           })
           .sort((a, b) => a.timestamp - b.timestamp);
       }
 
-      function loadRecords() {
+      function readLegacyRecords() {
         try {
-          const raw = window.localStorage.getItem(STORAGE_KEY);
+          const raw = window.localStorage.getItem(LEGACY_STORAGE_KEY);
           return raw ? normalizeRecords(JSON.parse(raw)) : [];
-        } catch (error) {
-          storageWarning = true;
+        } catch {
           return [];
         }
       }
 
-      function saveRecords() {
-        try {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-        } catch (error) {
-          showToast('浏览器未允许本地存储，记录仅在当前页面保留');
-        }
+      function removeLegacyRecords() {
+        try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch {}
       }
 
       function showToast(message) {
         window.clearTimeout(toastTimer);
         elements.toast.textContent = message;
         elements.toast.classList.add('show');
-        toastTimer = window.setTimeout(() => elements.toast.classList.remove('show'), 2400);
+        toastTimer = window.setTimeout(() => elements.toast.classList.remove('show'), 2800);
+      }
+
+      function setBusy(value) {
+        mutationPending = value;
+        elements.recordNow.disabled = value;
+        elements.manualSubmit.disabled = value;
+        elements.clearAll.disabled = value;
+      }
+
+      function serverNow() {
+        return Date.now() + serverOffset;
+      }
+
+      function acceptPayload(data) {
+        if (Number.isFinite(data.serverTime)) serverOffset = data.serverTime - Date.now();
+        records = normalizeRecords(data.records);
+        loaded = true;
+        loadFailed = false;
+        render();
+      }
+
+      async function requestShared(method = 'GET', payload = null) {
+        const options = {
+          method,
+          cache: 'no-store',
+          headers: { Accept: 'application/json' }
+        };
+        if (payload) {
+          options.headers['Content-Type'] = 'application/json';
+          options.body = JSON.stringify(payload);
+        }
+        const response = await fetch(API_URL, options);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.ok) throw new Error(data.error || `共享服务请求失败（HTTP ${response.status}）`);
+        return data;
+      }
+
+      async function migrateLegacyRecords() {
+        const legacy = readLegacyRecords();
+        if (!legacy.length) return;
+        const missing = legacy.filter((oldRecord) => !records.some((record) => record.timestamp === oldRecord.timestamp));
+        if (!missing.length) {
+          removeLegacyRecords();
+          return;
+        }
+        showToast('正在将本机旧记录迁移到共享记录');
+        try {
+          for (const oldRecord of missing) {
+            const data = await requestShared('POST', { action: 'add', timestamp: oldRecord.timestamp });
+            acceptPayload(data);
+          }
+          removeLegacyRecords();
+          showToast('本机旧记录已合并到所有设备');
+        } catch {
+          showToast('部分旧记录尚未迁移，下次打开会自动重试');
+        }
+      }
+
+      async function syncRecords(initial = false) {
+        if (syncInFlight || (!initial && mutationPending)) return;
+        syncInFlight = true;
+        const version = ++requestVersion;
+        if (initial) elements.syncStatus.textContent = '正在连接共享记录';
+        try {
+          const data = await requestShared();
+          if (version !== requestVersion) return;
+          acceptPayload(data);
+          if (initial) await migrateLegacyRecords();
+          const time = new Intl.DateTimeFormat('zh-CN', {
+            hour: '2-digit', minute: '2-digit', hour12: false
+          }).format(new Date());
+          elements.syncStatus.textContent = `云端已同步 · ${time}`;
+        } catch {
+          if (!loaded) {
+            loaded = true;
+            loadFailed = true;
+            render();
+          }
+          elements.syncStatus.textContent = '连接失败，稍后自动重试';
+          if (initial) showToast('暂时无法连接共享服务，请检查网络');
+        } finally {
+          syncInFlight = false;
+        }
       }
 
       function pad(value) {
@@ -420,7 +507,7 @@
       function updateTimer() {
         if (!records.length) return;
         const latest = records[records.length - 1];
-        const elapsed = Math.max(0, Date.now() - latest.timestamp);
+        const elapsed = Math.max(0, serverNow() - latest.timestamp);
         const days = Math.floor(elapsed / DAY_MS);
         const hours = Math.floor((elapsed % DAY_MS) / 3600000);
         const minutes = Math.floor((elapsed % 3600000) / 60000);
@@ -493,6 +580,20 @@
         elements.totalCount.textContent = String(records.length);
         elements.historyCount.textContent = `${records.length} 条`;
 
+        if (!loaded) {
+          elements.emptyTitle.textContent = '正在读取共享记录';
+          elements.emptyHint.textContent = '正在从云端获取最新数据，请稍候。';
+          elements.emptyHistory.textContent = '正在同步共享记录，请稍候。';
+        } else if (loadFailed && !hasRecords) {
+          elements.emptyTitle.textContent = '暂时无法连接共享服务';
+          elements.emptyHint.textContent = '请检查网络，页面会自动重试。';
+          elements.emptyHistory.textContent = '共享记录暂时不可用，请稍后重试。';
+        } else if (!hasRecords) {
+          elements.emptyTitle.textContent = '还没有共享打水记录';
+          elements.emptyHint.textContent = '点击下方按钮，从这一次开始计时。';
+          elements.emptyHistory.textContent = '暂无记录。每一次打水都会同步到所有设备。';
+        }
+
         const now = new Date();
         elements.todayCount.textContent = String(records.filter((record) => sameLocalDay(record.timestamp, now)).length);
         if (records.length > 1) {
@@ -507,7 +608,7 @@
       }
 
       function setManualBounds() {
-        const now = new Date();
+        const now = new Date(serverNow());
         const localNow = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 19);
         elements.manualTime.max = localNow;
         if (!elements.manualTime.value) elements.manualTime.value = localNow;
@@ -518,84 +619,105 @@
         elements.formError.hidden = !message;
       }
 
-      function addRecord(timestamp) {
-        if (!Number.isFinite(timestamp) || timestamp <= 0) {
-          showFormError('请选择有效的打水时间。');
-          return false;
+      async function addRecord(timestamp = null) {
+        if (mutationPending) return false;
+        if (timestamp !== null) {
+          if (!Number.isSafeInteger(timestamp) || timestamp <= 0) {
+            showFormError('请选择有效的打水时间。');
+            return false;
+          }
+          if (timestamp > serverNow() + 1000) {
+            showFormError('不能记录未来的打水时间。');
+            return false;
+          }
+          if (records.some((record) => record.timestamp === timestamp)) {
+            showFormError('这个时间已经记录过了。');
+            return false;
+          }
         }
-        if (timestamp > Date.now() + 1000) {
-          showFormError('不能记录未来的打水时间。');
-          return false;
-        }
-        if (records.some((record) => record.timestamp === timestamp)) {
-          showFormError('这个时间已经记录过了。');
-          return false;
-        }
-        records.push({ id: createId(), timestamp });
-        records.sort((a, b) => a.timestamp - b.timestamp);
-        saveRecords();
-        render();
+
+        requestVersion += 1;
+        setBusy(true);
         showFormError('');
-        showToast('打水时间已记录');
-        return true;
+        try {
+          const payload = { action: 'add' };
+          if (timestamp !== null) payload.timestamp = timestamp;
+          const data = await requestShared('POST', payload);
+          acceptPayload(data);
+          showToast(data.duplicate ? '这个时间已经在共享记录中' : '已记录并同步到所有设备');
+          return !data.duplicate;
+        } catch (error) {
+          showFormError(error.message || '保存失败，请稍后重试。');
+          return false;
+        } finally {
+          setBusy(false);
+        }
       }
 
-      elements.recordNow.addEventListener('click', () => addRecord(Date.now()));
-
+      elements.recordNow.addEventListener('click', () => addRecord());
       elements.manualTime.addEventListener('focus', setManualBounds);
-      elements.manualForm.addEventListener('submit', (event) => {
+      elements.manualForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!elements.manualTime.value) {
           showFormError('请选择实际打水时间。');
           return;
         }
         const timestamp = new Date(elements.manualTime.value).getTime();
-        if (addRecord(timestamp)) {
+        if (await addRecord(timestamp)) {
           elements.manualTime.value = '';
           setManualBounds();
         }
       });
 
-      elements.historyList.addEventListener('click', (event) => {
+      elements.historyList.addEventListener('click', async (event) => {
         const button = event.target.closest('button[data-id]');
-        if (!button) return;
+        if (!button || mutationPending) return;
         const record = records.find((item) => item.id === button.dataset.id);
         if (!record) return;
-        if (!window.confirm(`删除 ${formatFullTime(record.timestamp)} 的打水记录？`)) return;
-        records = records.filter((item) => item.id !== record.id);
-        saveRecords();
-        render();
-        showToast('记录已删除');
-      });
-
-      elements.clearAll.addEventListener('click', () => {
-        if (!records.length || !window.confirm('确定清空全部打水记录？此操作无法撤销。')) return;
-        records = [];
-        saveRecords();
-        render();
-        showToast('全部记录已清空');
-      });
-
-      window.addEventListener('storage', (event) => {
-        if (event.key !== STORAGE_KEY) return;
+        if (!window.confirm(`删除 ${formatFullTime(record.timestamp)} 的共享记录？所有设备都会同步删除。`)) return;
+        requestVersion += 1;
+        setBusy(true);
         try {
-          records = event.newValue ? normalizeRecords(JSON.parse(event.newValue)) : [];
-          render();
+          const data = await requestShared('POST', { action: 'delete', id: record.id });
+          acceptPayload(data);
+          showToast('共享记录已删除');
         } catch (error) {
-          showToast('另一页面的记录格式无法读取');
+          showToast(error.message || '删除失败，请稍后重试');
+        } finally {
+          setBusy(false);
         }
       });
+
+      elements.clearAll.addEventListener('click', async () => {
+        if (mutationPending || !records.length) return;
+        if (!window.confirm('确定清空所有设备共用的打水记录？此操作无法撤销。')) return;
+        requestVersion += 1;
+        setBusy(true);
+        try {
+          const data = await requestShared('POST', { action: 'clear' });
+          acceptPayload(data);
+          showToast('全部共享记录已清空');
+        } catch (error) {
+          showToast(error.message || '清空失败，请稍后重试');
+        } finally {
+          setBusy(false);
+        }
+      });
+
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
           updateTimer();
-          render();
+          syncRecords();
         }
       });
+      window.addEventListener('online', () => syncRecords());
 
       setManualBounds();
+      setBusy(true);
       render();
+      syncRecords(true).finally(() => setBusy(false));
       window.setInterval(updateTimer, 1000);
-      if (storageWarning) showToast('本地存储不可用，记录仅在当前页面保留');
+      window.setInterval(() => syncRecords(), 15000);
     })();
   </script>
 </body>
