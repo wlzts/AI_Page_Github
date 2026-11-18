@@ -2,6 +2,7 @@
 window.AIPageLayout = {
   "version": 10,
   "order": [
+    "water-tracker",
     "Lyrictype Project",
     "wash-hair",
     "gomoku",
@@ -39,6 +40,16 @@ window.AIPageLayout = {
     "cardPadding": 22
   },
   "cards": {
+    "water-tracker": {
+      "desktop": {
+        "colSpan": 3,
+        "rowSpan": 2
+      },
+      "tablet": {
+        "colSpan": 3,
+        "rowSpan": 2
+      }
+    },
     "wash-hair": {
       "desktop": {
         "colSpan": 3,

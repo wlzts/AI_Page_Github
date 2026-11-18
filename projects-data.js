@@ -1,6 +1,18 @@
 /* 由 V8 在线管理员后台发布。AI_Page 首页与可玩简历共享此数据。 */
 window.AIProjects = [
   {
+    "id": "water-tracker",
+    "title": "打水时间簿",
+    "description": "记录每一次打水时间，实时查看距离上次打水已经过去多久，并保留完整历史间隔。",
+    "category": "工具",
+    "date": "2026.11.18",
+    "path": "water-tracker",
+    "accent": "#155b4a",
+    "keywords": "打水 饮水 时间 记录 倒计时 间隔",
+    "externalUrl": "",
+    "visible": true
+  },
+  {
     "id": "wash-hair",
     "title": "今晚洗头要不要",
     "description": "根据明日见人风险、当前头顶状态和剩余体力，审批今晚是否值得正式开工。",
