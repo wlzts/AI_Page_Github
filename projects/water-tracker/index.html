@@ -316,9 +316,7 @@
       'use strict';
 
       const LEGACY_STORAGE_KEY = 'ai-page.water-tracker.records.v1';
-      const API_BASE = /(^|\.)vercel\.app$/.test(location.hostname)
-        ? location.origin
-        : 'https://ai-page-github.vercel.app';
+      const API_BASE = 'https://wlzts.dpdns.org';
       const API_URL = `${API_BASE}/api/water-records`;
       const DAY_MS = 24 * 60 * 60 * 1000;
       const elements = {
